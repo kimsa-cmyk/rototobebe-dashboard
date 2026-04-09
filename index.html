@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rototobebe 마케팅 대시보드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --cream:#FDF8F3;--warm:#FEFCFA;
+  --coral:#E8614A;--coral-l:#F5D5CF;--coral-m:#F2A899;
+  --sage:#7A9E8E;--sage-l:#D4E8DF;
+  --amber:#F59E0B;--amber-l:#FEF3C7;
+  --purple:#7B75C9;--purple-l:#EEEDFE;
+  --td:#2C2420;--tm:#6B5D58;--ts:#A89890;
+  --bd:#EDE5DF;--bds:#D8CCC6;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--td);min-height:100vh;font-size:13px;}
+
+/* NAV */
+.nav{background:var(--warm);border-bottom:1px solid var(--bd);padding:0 1.2rem;display:flex;align-items:center;position:sticky;top:0;z-index:100;gap:0;}
+.brand{display:flex;align-items:center;gap:9px;padding:12px 0;margin-right:1rem;flex-shrink:0;}
+.logo{width:30px;height:30px;background:var(--coral);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700;}
+.brand-name{font-size:13px;font-weight:500;}
+.brand-sub{font-size:9px;color:var(--ts);}
+.tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:15px 13px;font-size:12px;color:var(--tm);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;transition:color .2s;}
+.tab:hover{color:var(--coral);}
+.tab.on{color:var(--coral);border-bottom-color:var(--coral);font-weight:500;}
+.nav-r{margin-left:auto;padding-left:.8rem;flex-shrink:0;}
+.nav-date{font-size:10px;color:var(--ts);}
+
+/* LAYOUT */
+.main{max-width:1200px;margin:0 auto;padding:1.4rem 1.2rem;}
+.sec{display:none;}.sec.on{display:block;}
+.sec-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:8px;}
+.sec-title{font-size:15px;font-weight:500;}
+.sec-sub{font-size:11px;color:var(--ts);margin-top:2px;}
+
+/* KPI */
+.krow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:1.3rem;}
+.kcard{background:var(--warm);border:1px solid var(--bd);border-radius:11px;padding:14px 12px;position:relative;overflow:hidden;}
+.kcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.c1::before{background:var(--coral);}
+.c2::before{background:var(--sage);}
+.c3::before{background:#E6A87C;}
+.c4::before{background:var(--ts);}
+.c5::before{background:var(--purple);}
+.c6::before{background:var(--amber);}
+.klbl{font-size:10px;color:var(--ts);margin-bottom:5px;}
+.kval{font-size:20px;font-weight:700;line-height:1;}
+.kinp{width:100%;border:none;background:transparent;font-size:20px;font-weight:700;color:var(--td);font-family:inherit;outline:none;cursor:pointer;}
+.kinp:focus{background:rgba(232,97,74,.05);border-radius:4px;padding:1px 3px;}
+.kdelta{font-size:10px;margin-top:4px;}
+.up{color:var(--sage);}.dn{color:var(--coral);}
+
+/* CARD */
+.card{background:var(--warm);border:1px solid var(--bd);border-radius:11px;padding:15px;}
+.ctitle{font-size:13px;font-weight:500;margin-bottom:3px;}
+.csub{font-size:11px;color:var(--ts);margin-bottom:11px;}
+.g2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:11px;margin-bottom:1.3rem;}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:1.3rem;}
+.g5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-bottom:1.3rem;}
+.mb{margin-bottom:1.3rem;}
+
+/* TABLE */
+.tw{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;min-width:520px;}
+.tbl th{font-size:10px;color:var(--ts);font-weight:400;text-align:left;padding:0 7px 7px;border-bottom:1px solid var(--bd);}
+.tbl td{font-size:11px;color:var(--tm);padding:7px;border-bottom:1px solid var(--bd);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--cream);}
+.tname{font-size:12px;font-weight:500;color:var(--td);}
+.tig{font-size:10px;color:var(--ts);}
+
+/* BADGE */
+.bdg{display:inline-flex;align-items:center;font-size:10px;padding:2px 5px;border-radius:4px;font-weight:500;white-space:nowrap;}
+.bi{background:var(--coral-l);color:#B03A26;}
+.bs{background:var(--sage-l);color:#3D6B57;}
+.bn{background:var(--purple-l);color:#4A42A0;}
+.be{background:var(--amber-l);color:#92600A;}
+.bok{background:#E6F4EA;color:#2E7D32;}
+.bno{background:#FFEBEE;color:#C62828;}
+.bne{background:var(--cream);color:var(--tm);border:1px solid var(--bd);}
+.bpos{background:#E6F4EA;color:#2E7D32;}
+.bneg{background:#FFEBEE;color:#C62828;}
+
+/* ACT NUM */
+.anum{font-size:13px;font-weight:700;color:var(--td);text-align:center;}
+.azero{font-size:13px;color:var(--bd);text-align:center;}
+
+/* POINT */
+.pt{font-size:12px;font-weight:700;color:var(--coral);text-align:right;}
+.pt0{font-size:12px;color:var(--bd);text-align:right;}
+
+/* FILTER */
+.frow{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.fbtn{padding:5px 10px;border-radius:15px;font-size:11px;border:1px solid var(--bd);background:var(--warm);color:var(--tm);cursor:pointer;font-family:inherit;transition:all .15s;}
+.fbtn:hover{border-color:var(--coral-m);color:var(--coral);}
+.fbtn.on{background:var(--td);color:#fff;border-color:var(--td);}
+.srch{padding:5px 9px;border:1px solid var(--bd);border-radius:7px;font-size:11px;font-family:inherit;background:var(--warm);color:var(--td);outline:none;width:150px;}
+.srch:focus{border-color:var(--coral);}
+
+/* PROGRESS */
+.prog{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;}
+.pb{height:100%;border-radius:3px;}
+.pc{background:var(--coral);}
+.ps{background:var(--sage);}
+.pp{background:var(--purple);}
+.pa{background:var(--amber);}
+
+/* STAT MINI */
+.sm{background:var(--cream);border-radius:9px;padding:11px;text-align:center;}
+.smv{font-size:19px;font-weight:700;}
+.smk{font-size:10px;color:var(--ts);margin-top:2px;}
+
+/* BUZZ ISSUE */
+.issue td{background:#FFF8F7!important;}
+.issue td:first-child{border-left:3px solid var(--coral);}
+
+/* REVIEW */
+.rtrack{background:var(--warm);border:1px solid var(--bd);border-radius:11px;padding:15px;margin-bottom:11px;}
+.rhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+.rpr{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.rpn{font-size:11px;color:var(--tm);width:110px;flex-shrink:0;}
+.rpw{flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden;}
+.rpb{height:100%;border-radius:3px;}
+.rpc{font-size:11px;font-weight:500;width:38px;text-align:right;}
+
+/* API NOTICE */
+.notice{background:var(--amber-l);border:1px solid var(--amber);border-radius:8px;padding:11px 13px;margin-bottom:1.2rem;font-size:11px;color:#92600A;line-height:1.6;}
+
+/* CAL */
+.cal{background:var(--warm);border:1px solid var(--bd);border-radius:11px;padding:16px;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-mnth{font-size:14px;font-weight:500;}
+.cal-btn{background:none;border:1px solid var(--bd);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--tm);display:flex;align-items:center;justify-content:center;}
+.cal-hr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px;}
+.cal-hc{text-align:center;font-size:9px;color:var(--ts);padding:3px 0;}
+.cal-gr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-c{min-height:64px;border-radius:7px;border:1px solid var(--bd);padding:5px;cursor:pointer;transition:all .15s;background:var(--warm);}
+.cal-c:hover{border-color:var(--coral-m);}
+.cal-c.om{background:var(--cream);opacity:.5;cursor:default;}
+.cal-c.td{border-color:var(--coral);border-width:2px;}
+.cal-n{font-size:10px;font-weight:500;color:var(--tm);margin-bottom:2px;}
+.cal-c.td .cal-n{color:var(--coral);font-weight:700;}
+.cal-evs{display:flex;flex-direction:column;gap:2px;}
+.cal-ev{font-size:9px;padding:1px 4px;border-radius:3px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.eig{background:var(--coral-l);color:#B03A26;}
+.ebl{background:var(--sage-l);color:#3D6B57;}
+.ens{background:var(--purple-l);color:#4A42A0;}
+.eco{background:var(--amber-l);color:#92600A;}
+
+/* MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(44,36,32,.4);z-index:200;align-items:center;justify-content:center;}
+.mov.on{display:flex;}
+.modal{background:var(--warm);border-radius:13px;padding:22px;width:310px;max-width:92vw;}
+.mtitle{font-size:14px;font-weight:500;margin-bottom:15px;}
+.mf{margin-bottom:10px;}
+.mf label{font-size:10px;color:var(--ts);margin-bottom:3px;display:block;}
+.mf input,.mf select{width:100%;padding:7px 9px;border:1px solid var(--bd);border-radius:7px;font-size:12px;font-family:inherit;background:var(--cream);color:var(--td);outline:none;}
+.mf input:focus,.mf select:focus{border-color:var(--coral);}
+.mbtns{display:flex;gap:6px;margin-top:15px;}
+.mcancel{flex:1;padding:8px;border:1px solid var(--bd);border-radius:7px;background:none;font-family:inherit;font-size:12px;cursor:pointer;color:var(--tm);}
+.msave{flex:1;padding:8px;border:none;border-radius:7px;background:var(--coral);color:#fff;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--td);color:#fff;padding:10px 15px;border-radius:8px;font-size:12px;transform:translateY(60px);opacity:0;transition:all .3s;z-index:300;}
+.toast.on{transform:translateY(0);opacity:1;}
+
+@media(max-width:680px){
+  .krow{grid-template-columns:repeat(2,1fr);}
+  .g2,.g3{grid-template-columns:1fr;}
+  .g5{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ===== 성과 리포트 CSS ===== */
+
+    
+    .report-wrap { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    
+    .report-wrap .report-wrap .header-bar {
+      background: white;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #e0e6ed;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .report-wrap .tab-buttons {
+      display: flex;
+      gap: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .report-wrap .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: #f9fafb;
+      border: 1px solid #e0e6ed;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .report-wrap .tab-btn:hover {
+      background: #f0f4ff;
+      color: #378ADD;
+    }
+
+    .report-wrap .tab-btn.active {
+      background: #378ADD;
+      color: white;
+      border-color: #378ADD;
+    }
+
+    .report-wrap .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .report-wrap .page {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .report-wrap .page.active {
+      display: block;
+    }
+
+    /* ===== 메인 서머리 페이지 ===== */
+    .report-wrap .summary-page {
+      padding: 3rem;
+    }
+
+    .report-wrap .header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid #e0e6ed;
+    }
+
+    .report-wrap .report-wrap .header-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+
+    .report-wrap .report-wrap .header-subtitle {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .report-wrap .report-wrap .header-period {
+      font-size: 13px;
+      color: #999;
+      margin-top: 0.5rem;
+    }
+
+    .report-wrap .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .report-wrap .kpi-card {
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid #378ADD;
+    }
+
+    .report-wrap .kpi-card.accent2 { border-left-color: #85B7EB; }
+    .report-wrap .kpi-card.accent3 { border-left-color: #E24B4A; }
+    .report-wrap .kpi-card.accent4 { border-left-color: #8B5CF6; }
+
+    .report-wrap .kpi-label {
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .report-wrap .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+
+    .report-wrap .kpi-change {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .report-wrap .kpi-change.up { color: #3B6D11; }
+
+    .section {
+      margin-bottom: 2.5rem;
+    }
+
+    .report-wrap .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e0e6ed;
+    }
+
+    .top-posts {
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    .post-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 0.5px solid #e0e6ed;
+    }
+
+    .post-item:last-child {
+      border-bottom: none;
+    }
+
+    .post-rank {
+      font-size: 16px;
+      font-weight: 700;
+      color: #378ADD;
+      min-width: 30px;
+    }
+
+    .post-info {
+      flex: 1;
+      margin: 0 1.5rem;
+    }
+
+    .report-wrap .post-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 0.3rem;
+    }
+
+    .report-wrap .post-type {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .post-stats {
+      display: flex;
+      gap: 2rem;
+      font-size: 12px;
+    }
+
+    .post-stat {
+      text-align: right;
+    }
+
+    .post-stat-label {
+      color: #999;
+      font-size: 11px;
+    }
+
+    .post-stat-value {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .content-type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .content-type-card {
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .content-type-icon {
+      font-size: 32px;
+      margin-bottom: 0.5rem;
+    }
+
+    .content-type-label {
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .content-type-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
+    }
+
+    .content-type-percentage {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-box {
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 1rem;
+    }
+
+    .mini-bar {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+      height: 150px;
+      margin-bottom: 1rem;
+    }
+
+    .bar {
+      flex: 1;
+      background: #85B7EB;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      min-height: 20px;
+    }
+
+    .bar.highlight {
+      background: #378ADD;
+    }
+
+    .bar-label {
+      position: absolute;
+      bottom: -20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      width: 100%;
+    }
+
+    .bar-value {
+      position: absolute;
+      top: -20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1a1a1a;
+      width: 100%;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      font-size: 13px;
+      border-bottom: 0.5px solid #e0e6ed;
+    }
+
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .report-wrap .metric-label {
+      color: #666;
+    }
+
+    .report-wrap .metric-value {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .summary-text {
+      background: #f0f4ff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid #8B5CF6;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #333;
+      margin-top: 1.5rem;
+    }
+
+    .summary-text strong {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+
+    /* ===== 세부 대시보드 ===== */
+    .detail-page {
+      padding: 2rem;
+    }
+
+    .detail-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e0e6ed;
+    }
+
+    .detail-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .report-wrap .report-wrap .filter-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .report-wrap .filter-tab {
+      padding: 0.5rem 1rem;
+      background: #f9fafb;
+      border: 1px solid #e0e6ed;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .report-wrap .filter-tab:hover, .report-wrap .filter-tab.active {
+      background: #378ADD;
+      color: white;
+      border-color: #378ADD;
+    }
+
+    .carousel-container {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      padding: 1rem 0;
+    }
+
+    .carousel-container::-webkit-scrollbar { 
+      height: 8px; 
+    }
+
+    .carousel-container::-webkit-scrollbar-track { 
+      background: #f9fafb; 
+      border-radius: 4px;
+    }
+
+    .carousel-container::-webkit-scrollbar-thumb { 
+      background: #e0e6ed; 
+      border-radius: 4px;
+    }
+
+    .carousel-container::-webkit-scrollbar-thumb:hover { 
+      background: #c0cdd8; 
+    }
+
+    .report-wrap .content-cards {
+      display: flex;
+      gap: 1.5rem;
+      width: fit-content;
+    }
+
+    .card {
+      width: 480px;
+      flex-shrink: 0;
+      background: #f9fafb;
+      border: 1px solid #e0e6ed;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 1rem;
+      background: white;
+      border-bottom: 1px solid #e0e6ed;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .card-emoji {
+      font-size: 32px;
+      min-width: 40px;
+    }
+
+    .card-meta {
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-date {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .card-classification {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      color: #378ADD;
+      background: #e6f1fb;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-.report-wrap {
+      padding: 1.5rem;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .metric {
+      text-align: center;
+      padding: 0.75rem;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .metric-num {
+      font-size: 16px;
+      font-weight: 700;
+      color: #378ADD;
+    }
+
+    .metric-name {
+      font-size: 11px;
+      color: #999;
+      margin-top: 0.3rem;
+      text-transform: uppercase;
+    }
+
+    .bar-section {
+      margin-bottom: 1rem;
+    }
+
+    .bar-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    .bar-container {
+      display: flex;
+      height: 20px;
+      background: #e0e6ed;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+    }
+
+    .report-wrap .bar-fill {
+      background: #378ADD;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .source-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      font-size: 12px;
+    }
+
+    .source-detail-label {
+      color: #666;
+    }
+
+    .source-detail-value {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .scroll-hint {
+      text-align: center;
+      padding: 1rem;
+      font-size: 12px;
+      color: #999;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .report-wrap .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .content-type-grid { grid-template-columns: 1fr; }
+      .chart-row { grid-template-columns: 1fr; }
+      .report-wrap .tab-buttons { flex-wrap: wrap; }
+      .card { width: 100%; }
+      .carousel-container { overflow-x: visible; }
+      .report-wrap .content-cards { flex-direction: column; }
+    }
+
+    @media print {
+      .report-wrap { background: white; }
+      .report-wrap .report-wrap .header-bar { display: none; }
+      .report-wrap .container { padding: 0; }
+      .report-wrap .page { margin-bottom: 0; box-shadow: none; page-break-after: always; }
+    }
+  
+/* 서브탭 스타일 */
+.sub-tabs{display:flex;gap:6px;margin-bottom:1.2rem;border-bottom:1px solid var(--bd);padding-bottom:0;}
+.sub-tab{padding:8px 14px;font-size:12px;color:var(--tm);cursor:pointer;border-bottom:2px solid transparent;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;white-space:nowrap;transition:color .2s;}
+.sub-tab:hover{color:var(--coral);}
+.sub-tab.on{color:var(--coral);border-bottom-color:var(--coral);font-weight:500;}
+.sub-panel{display:none;}.sub-panel.on{display:block;}
+.report-wrap{margin-top:0;}
+.report-wrap .container{padding:0;max-width:100%;}
+.report-wrap .page{box-shadow:none;border-radius:0;border:1px solid var(--bd);border-radius:11px;overflow:hidden;}
+.report-wrap .tab-buttons{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
+.report-wrap .tab-btn{padding:6px 12px;font-size:11px;border-radius:7px;font-weight:500;}
+.report-wrap .tab-btn.active{background:var(--coral);border-color:var(--coral);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">
+    <div class="logo">LB</div>
+    <div><div class="brand-name">rototobebe</div><div class="brand-sub">마케팅 대시보드</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="goTab('sns',this)">SNS 성과</button>
+    <button class="tab" onclick="goTab('rodem',this)">로덬메이트</button>
+    <button class="tab" onclick="goTab('buzz',this)">버즈 모니터링</button>
+    <button class="tab" onclick="goTab('review',this)">리뷰 현황</button>
+  </div>
+  <div class="nav-r"><div class="nav-date" id="ndate"></div></div>
+</nav>
+
+<main class="main">
+
+<!-- ===== SNS 성과 ===== -->
+<section class="sec on" id="sec-sns">
+  <div class="sec-hd">
+    <div><div class="sec-title">인스타그램 성과</div><div class="sec-sub">수치 클릭해서 직접 수정 가능</div></div>
+  </div>
+
+  <!-- 서브탭 -->
+  <div class="sub-tabs">
+    <button class="sub-tab on" onclick="goSub('overview',this)">채널 성과</button>
+    <button class="sub-tab" onclick="goSub('report',this)">4월 성과 리포트</button>
+  </div>
+
+  <!-- 채널 성과 패널 -->
+  <div class="sub-panel on" id="sub-overview">
+    <div class="krow">
+      <div class="kcard c1"><div class="klbl">팔로워</div><input class="kinp" value="24,820" onchange="toast('저장됐어요')"><div class="kdelta up">▲ 612 이번 달</div></div>
+      <div class="kcard c2"><div class="klbl">게시물 저장수</div><input class="kinp" value="1,840" onchange="toast('저장됐어요')"><div class="kdelta up">▲ 18.3%</div></div>
+      <div class="kcard c3"><div class="klbl">릴스 평균 조회</div><input class="kinp" value="9,100" onchange="toast('저장됐어요')"><div class="kdelta up">▲ 4주차 최고</div></div>
+      <div class="kcard c4"><div class="klbl">인게이지먼트율</div><input class="kinp" value="6.2%" onchange="toast('저장됐어요')"><div class="kdelta dn">▼ 0.3%p</div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="ctitle">주간 인게이지먼트</div><div class="csub">좋아요 + 저장 + 댓글</div><div style="position:relative;height:180px"><canvas id="engChart"></canvas></div></div>
+      <div class="card"><div class="ctitle">포맷별 저장율</div><div class="csub">이번 달 게시물 분석</div><div style="position:relative;height:180px"><canvas id="fmtChart"></canvas></div></div>
+    </div>
+    <div class="sec-hd" style="margin-bottom:.8rem;">
+      <div><div class="sec-title" style="font-size:14px;">발행 일정</div><div class="sec-sub">날짜 클릭 시 일정 추가</div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:10px;color:var(--ts);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#E8614A;display:inline-block;"></span>IG</span>
+        <span style="font-size:10px;color:var(--ts);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#7A9E8E;display:inline-block;"></span>블로그</span>
+        <span style="font-size:10px;color:var(--ts);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#7B75C9;display:inline-block;"></span>무신사</span>
+        <span style="font-size:10px;color:var(--ts);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#F59E0B;display:inline-block;"></span>협업</span>
+      </div>
+    </div>
+    <div class="cal mb">
+      <div class="cal-nav">
+        <button class="cal-btn" onclick="cm(-1)">‹</button>
+        <div class="cal-mnth" id="cml"></div>
+        <button class="cal-btn" onclick="cm(1)">›</button>
+      </div>
+      <div class="cal-hr"><div class="cal-hc">월</div><div class="cal-hc">화</div><div class="cal-hc">수</div><div class="cal-hc">목</div><div class="cal-hc">금</div><div class="cal-hc" style="color:var(--coral)">토</div><div class="cal-hc" style="color:var(--coral)">일</div></div>
+      <div class="cal-gr" id="calg"></div>
+    </div>
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:11px">인기 콘텐츠 TOP 5</div>
+      <div class="tw"><table class="tbl">
+        <thead><tr><th>콘텐츠</th><th>유형</th><th>좋아요</th><th>저장</th><th>댓글</th><th>성과</th></tr></thead>
+        <tbody>
+          <tr><td><div class="tname">지퍼 우주복 착용 — 새벽 수유 편</div></td><td><span class="bdg bi">릴스</span></td><td>2,341</td><td>489</td><td>87</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:95%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">역류방지쿠션 각도 꿀팁</div></td><td><span class="bdg bi">카드</span></td><td>1,892</td><td>712</td><td>63</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:88%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">봄 셋업 룩북 — 벚꽃 외출 편</div></td><td><span class="bdg bi">릴스</span></td><td>1,654</td><td>382</td><td>44</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:74%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">100일 OOTD 피드</div></td><td><span class="bdg bi">피드</span></td><td>1,230</td><td>194</td><td>102</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:58%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">이유식 시작 D-7 준비물 리스트</div></td><td><span class="bdg bi">카드</span></td><td>988</td><td>631</td><td>29</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:49%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div><!-- /sub-overview -->
+
+  <!-- 4월 성과 리포트 패널 -->
+  <div class="sub-panel" id="sub-report">
+<div class="report-wrap">
+
+  <!-- 탭 버튼 헤더 -->
+  <div class="header-bar">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="switchTab('summary')">
+        📊 성과 리포트
+      </button>
+      <button class="tab-btn" onclick="switchTab('detail')">
+        📋 포스트별 세부 분석
+      </button>
+    </div>
+  </div>
+
+  <!-- 메인 컨테이너 -->
+  <div class="container">
+    <!-- ===== 페이지 1: 메인 서머리 ===== -->
+    <div id="summary" class="page active">
+      <div class="summary-page">
+        <!-- 헤더 -->
+        <div class="header">
+          <div class="header-title">🎬 rototobebe 2026년 4월 성과 리포트</div>
+          <div class="header-subtitle">인스타그램 채널 월간 핵심 성과 요약</div>
+          <div class="header-period">4월 1일(수) ~ 4월 7일(월) | 9개 포스트 분석</div>
+        </div>
+
+        <!-- 핵심 KPI -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">총 조회수</div>
+            <div class="kpi-value">268.3K</div>
+            <div class="kpi-change up">↑ 전월 대비 25% 증가</div>
+          </div>
+          <div class="kpi-card accent2">
+            <div class="kpi-label">총 도달</div>
+            <div class="kpi-value">268.3K</div>
+            <div class="kpi-change up">↑ 평균 도달률 62%</div>
+          </div>
+          <div class="kpi-card accent3">
+            <div class="kpi-label">총 좋아요</div>
+            <div class="kpi-value">2,927</div>
+            <div class="kpi-change up">↑ 포스트당 평균 325개</div>
+          </div>
+          <div class="kpi-card accent4">
+            <div class="kpi-label">평균 조회</div>
+            <div class="kpi-value">29.8K</div>
+            <div class="kpi-change">포스트당 평균 성과</div>
+          </div>
+        </div>
+
+        <!-- 포스트별 성과 -->
+        <div class="section">
+          <div class="section-title">📈 TOP 3 최고 성과 포스트</div>
+          <div class="top-posts">
+            <div class="post-item">
+              <div class="post-rank">1</div>
+              <div class="post-info">
+                <div class="post-name">토이카메라(이벤트)</div>
+                <div class="post-type">[피드] 4월 3일 오후 8:00</div>
+              </div>
+              <div class="post-stats">
+                <div class="post-stat">
+                  <div class="post-stat-label">조회</div>
+                  <div class="post-stat-value">41.4K</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">반응</div>
+                  <div class="post-stat-value">1,234</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">저장</div>
+                  <div class="post-stat-value">412</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-item">
+              <div class="post-rank">2</div>
+              <div class="post-info">
+                <div class="post-name">아이스크림</div>
+                <div class="post-type">[피드] 4월 1일 오후 8:00</div>
+              </div>
+              <div class="post-stats">
+                <div class="post-stat">
+                  <div class="post-stat-label">조회</div>
+                  <div class="post-stat-value">39.6K</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">반응</div>
+                  <div class="post-stat-value">1,124</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">저장</div>
+                  <div class="post-stat-value">298</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-item">
+              <div class="post-rank">3</div>
+              <div class="post-info">
+                <div class="post-name">싱글 링거 티셔츠 화보컷</div>
+                <div class="post-type">[피드] 4월 6일 오후 4:06</div>
+              </div>
+              <div class="post-stats">
+                <div class="post-stat">
+                  <div class="post-stat-label">조회</div>
+                  <div class="post-stat-value">35.7K</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">반응</div>
+                  <div class="post-stat-value">1,287</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">저장</div>
+                  <div class="post-stat-value">312</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 콘텐츠 유형별 성과 -->
+        <div class="section">
+          <div class="section-title">📊 콘텐츠 유형별 성과</div>
+          <div class="content-type-grid">
+            <div class="content-type-card">
+              <div class="content-type-icon">📸</div>
+              <div class="content-type-label">피드</div>
+              <div class="content-type-value">8개</div>
+              <div class="content-type-percentage">평균 31.8K 조회</div>
+            </div>
+            <div class="content-type-card">
+              <div class="content-type-icon">🎬</div>
+              <div class="content-type-label">릴스</div>
+              <div class="content-type-value">1개</div>
+              <div class="content-type-percentage">20.8K 조회</div>
+            </div>
+            <div class="content-type-card">
+              <div class="content-type-icon">⭐</div>
+              <div class="content-type-label">최고 성과</div>
+              <div class="content-type-value">41.4K</div>
+              <div class="content-type-percentage">토이카메라 이벤트</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 주간 성과 트렌드 -->
+        <div class="section">
+          <div class="section-title">📅 주간 성과 트렌드</div>
+          <div class="chart-row">
+            <div class="chart-box">
+              <div class="chart-title">일일 평균 조회수</div>
+              <div class="mini-bar">
+                <div class="bar highlight" style="height: 68%;" title="월"><div class="bar-value">31.2K</div><div class="bar-label">월</div></div>
+                <div class="bar" style="height: 62%;" title="화"><div class="bar-value">28.4K</div><div class="bar-label">화</div></div>
+                <div class="bar" style="height: 58%;" title="수"><div class="bar-value">26.5K</div><div class="bar-label">수</div></div>
+                <div class="bar" style="height: 71%;" title="목"><div class="bar-value">32.8K</div><div class="bar-label">목</div></div>
+                <div class="bar highlight" style="height: 90%;" title="금"><div class="bar-value">41.4K</div><div class="bar-label">금</div></div>
+                <div class="bar" style="height: 52%;" title="토"><div class="bar-value">23.9K</div><div class="bar-label">토</div></div>
+                <div class="bar" style="height: 48%;" title="일"><div class="bar-value">22.1K</div><div class="bar-label">일</div></div>
+              </div>
+            </div>
+            <div class="chart-box">
+              <div class="chart-title">주요 성과 지표</div>
+              <div class="metric-row">
+                <div class="metric-label">포스트당 평균 좋아요</div>
+                <div class="metric-value">325개</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">포스트당 평균 저장</div>
+                <div class="metric-value">295개</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">포스트당 평균 댓글</div>
+                <div class="metric-value">169개</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">전체 팔로워 반응</div>
+                <div class="metric-value">8,324명</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">팔로워 반응률</div>
+                <div class="metric-value">62.3%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 핵심 인사이트 -->
+        <div class="section">
+          <div class="section-title">💡 핵심 인사이트</div>
+          <div class="summary-text">
+            <strong>✓ 강점</strong><br>
+            • 이벤트 콘텐츠(토이카메라) 최강 성과 - 41.4K 조회, 523 좋아요로 전체 최고<br>
+            • 피드 콘텐츠 평균 조회수 31.8K로 안정적이고 강력한 성과 유지<br>
+            • 금요일 발행 포스트 최고 성과 (41.4K) - 주중 후반 집중 전략 효과 입증<br>
+            • 포스트당 평균 반응율 62.3% - 매우 높은 팔로워 참여도<br>
+            <br>
+            <strong>✓ 개선 기회</strong><br>
+            • 릴스 콘텐츠 성과 상대적으로 낮음 (20.8K) - 릴스 포맷 및 길이 최적화 필요<br>
+            • 주말(토,일) 성과 저하 - 평일 집중 발행 전략 유지<br>
+            • 외부 링크 클릭율 개선 필요 - CTA(행동 유도) 강화 필요<br>
+            <br>
+            <strong>✓ 추천 액션</strong><br>
+            • 다음 달: 이벤트 콘텐츠 비중 증대 & 릴스 포맷 개선 (최소 30초 이상)<br>
+            • 금요일 오후 3시~8시 시간대 집중 발행 유지<br>
+            • 화장품/콜라보 관련 콘텐츠 강화 - 높은 저장율 기록
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 페이지 2: 포스트별 세부 분석 ===== -->
+    <div id="detail" class="page">
+      <div class="detail-page">
+        <div class="detail-header">
+          <div class="detail-title">📋 포스트별 세부 분석</div>
+          <p style="color: #999; margin-top: 0.5rem; font-size: 13px;">각 포스트의 상세 성과 지표 및 조회 출처 분석 - 오른쪽으로 스크롤하여 모든 포스트 확인</p>
+        </div>
+
+        <div class="filter-tabs" id="filterTabs"></div>
+
+        <div class="carousel-container">
+          <div class="content-cards" id="contentCards"></div>
+        </div>
+
+        <div class="scroll-hint">
+          👉 오른쪽으로 스크롤하여 모든 포스트의 세부 분석을 확인하세요.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const postsData = [
+      { id: 1, name: "스케이트보드", emoji: "🛹", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
+      { id: 2, name: "아이스크림", emoji: "🍦", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
+      { id: 3, name: "비눗방울", emoji: "🫧", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
+      { id: 4, name: "풍선껌 룩북 릴스", emoji: "🎬", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
+      { id: 5, name: "토이카메라(이벤트)", emoji: "📷", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
+      { id: 6, name: "도넛", emoji: "🍩", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
+      { id: 7, name: "싱글 링거 티셔츠 화보컷", emoji: "👕", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
+      { id: 8, name: "파프리카", emoji: "🫑", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
+      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", emoji: "👕", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
+    ];
+
+    function switchTab(tab) {
+      // 페이지 토글
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(tab).classList.add('active');
+
+      // 버튼 활성화
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function initTabs() {
+      const tabsContainer = document.getElementById('filterTabs');
+      const tabs = [
+        { label: '전체', value: 'all' },
+        { label: '[피드]', value: 'feed' },
+        { label: '[릴스]', value: 'reels' }
+      ];
+      
+      tabs.forEach((tab, index) => {
+        const button = document.createElement('button');
+        button.className = 'filter-tab' + (index === 0 ? ' active' : '');
+        button.textContent = tab.label;
+        button.onclick = () => {
+          document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+          button.classList.add('active');
+          filterByType(tab.value);
+        };
+        tabsContainer.appendChild(button);
+      });
+    }
+
+    function filterByType(type) {
+      const container = document.getElementById('contentCards');
+      let filtered = type === 'all' 
+        ? postsData 
+        : postsData.filter(post => {
+            if (type === 'feed') return post.type === '[피드]';
+            if (type === 'reels') return post.type === '[릴스]';
+            return true;
+          });
+
+      filtered.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+      renderCards(filtered);
+    }
+
+    function renderCards(posts) {
+      const container = document.getElementById('contentCards');
+      container.innerHTML = posts.map(post => {
+        const total_source = post.feed + post.profile_clicks + post.story;
+        const feedPct = Math.round((post.feed / total_source) * 100);
+        const profilePct = Math.round((post.profile_clicks / total_source) * 100);
+        const storyPct = Math.round((post.story / total_source) * 100);
+        const totalReactions = post.followers + Math.round(post.impressions * 0.4);
+        const followersPct = Math.round((post.followers / totalReactions) * 100);
+        
+        return `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-emoji">${post.emoji}</div>
+              <div class="card-meta">
+                <div class="card-classification">${post.type}</div>
+                <div class="card-title">${post.name}</div>
+                <div class="card-date">${post.date} ${post.time}</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- 개요 섹션 -->
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">조회</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${(post.impressions / 1000).toFixed(1)}K</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">도달</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${(post.impressions / 1000).toFixed(1)}K</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">프로필</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${post.profile_visits}</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">반응</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${post.followers}</div>
+                </div>
+              </div>
+
+              <!-- 반응 지표 -->
+              <div style="display: flex; gap: 0.25rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">좋아요</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.likes}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">댓글</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.comments}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">저장</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.saves}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">공유</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.shares}</div>
+                </div>
+              </div>
+
+              <!-- 프로필 활동 -->
+              <div style="display: flex; gap: 0.25rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">방문</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.profile_visits}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">링크</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.external_clicks !== null ? post.external_clicks : '-'}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">팔로우</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.follows !== null ? post.follows : '-'}</div>
+                </div>
+              </div>
+
+              <!-- 조회 출처 -->
+              <div style="margin-bottom: 1rem;">
+                <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">조회 출처</div>
+                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.75rem;">
+                  <div style="width: ${feedPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${feedPct > 15 ? feedPct + '%' : ''}</div>
+                  <div style="width: ${profilePct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${profilePct > 15 ? profilePct + '%' : ''}</div>
+                  <div style="width: ${storyPct}%; background: #B5D4F4; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${storyPct > 15 ? storyPct + '%' : ''}</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 12px;">
+                  <div><div style="color: #666;">피드</div><div style="font-weight: 600; color: #1a1a1a;">${post.feed.toLocaleString()}</div></div>
+                  <div><div style="color: #666;">프로필</div><div style="font-weight: 600; color: #1a1a1a;">${post.profile_clicks.toLocaleString()}</div></div>
+                  <div><div style="color: #666;">스토리</div><div style="font-weight: 600; color: #1a1a1a;">${post.story.toLocaleString()}</div></div>
+                </div>
+              </div>
+
+              <!-- 반응 비율 -->
+              <div>
+                <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">반응 비율</div>
+                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${followersPct}%</div>
+                  <div style="width: ${100-followersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${100-followersPct}%</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 11px;">
+                  <div style="color: #666;">팔로워</div>
+                  <div style="color: #666;">비팔로워</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 초기 로드
+    initTabs();
+    filterByType('all');
+  </script>
+
+</div>
+  </div><!-- /sub-report -->
+</section>
+  </div><!-- /sub-overview -->
+  <!-- 4월 리포트 패널 -->
+  <div class="sub-panel" id="sub-report">
+<div class="report-wrap">
+
+  <!-- 탭 버튼 헤더 -->
+  <div class="header-bar">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="switchTab('summary')">
+        📊 성과 리포트
+      </button>
+      <button class="tab-btn" onclick="switchTab('detail')">
+        📋 포스트별 세부 분석
+      </button>
+    </div>
+  </div>
+
+  <!-- 메인 컨테이너 -->
+  <div class="container">
+    <!-- ===== 페이지 1: 메인 서머리 ===== -->
+    <div id="summary" class="page active">
+      <div class="summary-page">
+        <!-- 헤더 -->
+        <div class="header">
+          <div class="header-title">🎬 rototobebe 2026년 4월 성과 리포트</div>
+          <div class="header-subtitle">인스타그램 채널 월간 핵심 성과 요약</div>
+          <div class="header-period">4월 1일(수) ~ 4월 7일(월) | 9개 포스트 분석</div>
+        </div>
+
+        <!-- 핵심 KPI -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">총 조회수</div>
+            <div class="kpi-value">268.3K</div>
+            <div class="kpi-change up">↑ 전월 대비 25% 증가</div>
+          </div>
+          <div class="kpi-card accent2">
+            <div class="kpi-label">총 도달</div>
+            <div class="kpi-value">268.3K</div>
+            <div class="kpi-change up">↑ 평균 도달률 62%</div>
+          </div>
+          <div class="kpi-card accent3">
+            <div class="kpi-label">총 좋아요</div>
+            <div class="kpi-value">2,927</div>
+            <div class="kpi-change up">↑ 포스트당 평균 325개</div>
+          </div>
+          <div class="kpi-card accent4">
+            <div class="kpi-label">평균 조회</div>
+            <div class="kpi-value">29.8K</div>
+            <div class="kpi-change">포스트당 평균 성과</div>
+          </div>
+        </div>
+
+        <!-- 포스트별 성과 -->
+        <div class="section">
+          <div class="section-title">📈 TOP 3 최고 성과 포스트</div>
+          <div class="top-posts">
+            <div class="post-item">
+              <div class="post-rank">1</div>
+              <div class="post-info">
+                <div class="post-name">토이카메라(이벤트)</div>
+                <div class="post-type">[피드] 4월 3일 오후 8:00</div>
+              </div>
+              <div class="post-stats">
+                <div class="post-stat">
+                  <div class="post-stat-label">조회</div>
+                  <div class="post-stat-value">41.4K</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">반응</div>
+                  <div class="post-stat-value">1,234</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">저장</div>
+                  <div class="post-stat-value">412</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-item">
+              <div class="post-rank">2</div>
+              <div class="post-info">
+                <div class="post-name">아이스크림</div>
+                <div class="post-type">[피드] 4월 1일 오후 8:00</div>
+              </div>
+              <div class="post-stats">
+                <div class="post-stat">
+                  <div class="post-stat-label">조회</div>
+                  <div class="post-stat-value">39.6K</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">반응</div>
+                  <div class="post-stat-value">1,124</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">저장</div>
+                  <div class="post-stat-value">298</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-item">
+              <div class="post-rank">3</div>
+              <div class="post-info">
+                <div class="post-name">싱글 링거 티셔츠 화보컷</div>
+                <div class="post-type">[피드] 4월 6일 오후 4:06</div>
+              </div>
+              <div class="post-stats">
+                <div class="post-stat">
+                  <div class="post-stat-label">조회</div>
+                  <div class="post-stat-value">35.7K</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">반응</div>
+                  <div class="post-stat-value">1,287</div>
+                </div>
+                <div class="post-stat">
+                  <div class="post-stat-label">저장</div>
+                  <div class="post-stat-value">312</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 콘텐츠 유형별 성과 -->
+        <div class="section">
+          <div class="section-title">📊 콘텐츠 유형별 성과</div>
+          <div class="content-type-grid">
+            <div class="content-type-card">
+              <div class="content-type-icon">📸</div>
+              <div class="content-type-label">피드</div>
+              <div class="content-type-value">8개</div>
+              <div class="content-type-percentage">평균 31.8K 조회</div>
+            </div>
+            <div class="content-type-card">
+              <div class="content-type-icon">🎬</div>
+              <div class="content-type-label">릴스</div>
+              <div class="content-type-value">1개</div>
+              <div class="content-type-percentage">20.8K 조회</div>
+            </div>
+            <div class="content-type-card">
+              <div class="content-type-icon">⭐</div>
+              <div class="content-type-label">최고 성과</div>
+              <div class="content-type-value">41.4K</div>
+              <div class="content-type-percentage">토이카메라 이벤트</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 주간 성과 트렌드 -->
+        <div class="section">
+          <div class="section-title">📅 주간 성과 트렌드</div>
+          <div class="chart-row">
+            <div class="chart-box">
+              <div class="chart-title">일일 평균 조회수</div>
+              <div class="mini-bar">
+                <div class="bar highlight" style="height: 68%;" title="월"><div class="bar-value">31.2K</div><div class="bar-label">월</div></div>
+                <div class="bar" style="height: 62%;" title="화"><div class="bar-value">28.4K</div><div class="bar-label">화</div></div>
+                <div class="bar" style="height: 58%;" title="수"><div class="bar-value">26.5K</div><div class="bar-label">수</div></div>
+                <div class="bar" style="height: 71%;" title="목"><div class="bar-value">32.8K</div><div class="bar-label">목</div></div>
+                <div class="bar highlight" style="height: 90%;" title="금"><div class="bar-value">41.4K</div><div class="bar-label">금</div></div>
+                <div class="bar" style="height: 52%;" title="토"><div class="bar-value">23.9K</div><div class="bar-label">토</div></div>
+                <div class="bar" style="height: 48%;" title="일"><div class="bar-value">22.1K</div><div class="bar-label">일</div></div>
+              </div>
+            </div>
+            <div class="chart-box">
+              <div class="chart-title">주요 성과 지표</div>
+              <div class="metric-row">
+                <div class="metric-label">포스트당 평균 좋아요</div>
+                <div class="metric-value">325개</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">포스트당 평균 저장</div>
+                <div class="metric-value">295개</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">포스트당 평균 댓글</div>
+                <div class="metric-value">169개</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">전체 팔로워 반응</div>
+                <div class="metric-value">8,324명</div>
+              </div>
+              <div class="metric-row">
+                <div class="metric-label">팔로워 반응률</div>
+                <div class="metric-value">62.3%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 핵심 인사이트 -->
+        <div class="section">
+          <div class="section-title">💡 핵심 인사이트</div>
+          <div class="summary-text">
+            <strong>✓ 강점</strong><br>
+            • 이벤트 콘텐츠(토이카메라) 최강 성과 - 41.4K 조회, 523 좋아요로 전체 최고<br>
+            • 피드 콘텐츠 평균 조회수 31.8K로 안정적이고 강력한 성과 유지<br>
+            • 금요일 발행 포스트 최고 성과 (41.4K) - 주중 후반 집중 전략 효과 입증<br>
+            • 포스트당 평균 반응율 62.3% - 매우 높은 팔로워 참여도<br>
+            <br>
+            <strong>✓ 개선 기회</strong><br>
+            • 릴스 콘텐츠 성과 상대적으로 낮음 (20.8K) - 릴스 포맷 및 길이 최적화 필요<br>
+            • 주말(토,일) 성과 저하 - 평일 집중 발행 전략 유지<br>
+            • 외부 링크 클릭율 개선 필요 - CTA(행동 유도) 강화 필요<br>
+            <br>
+            <strong>✓ 추천 액션</strong><br>
+            • 다음 달: 이벤트 콘텐츠 비중 증대 & 릴스 포맷 개선 (최소 30초 이상)<br>
+            • 금요일 오후 3시~8시 시간대 집중 발행 유지<br>
+            • 화장품/콜라보 관련 콘텐츠 강화 - 높은 저장율 기록
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 페이지 2: 포스트별 세부 분석 ===== -->
+    <div id="detail" class="page">
+      <div class="detail-page">
+        <div class="detail-header">
+          <div class="detail-title">📋 포스트별 세부 분석</div>
+          <p style="color: #999; margin-top: 0.5rem; font-size: 13px;">각 포스트의 상세 성과 지표 및 조회 출처 분석 - 오른쪽으로 스크롤하여 모든 포스트 확인</p>
+        </div>
+
+        <div class="filter-tabs" id="filterTabs"></div>
+
+        <div class="carousel-container">
+          <div class="content-cards" id="contentCards"></div>
+        </div>
+
+        <div class="scroll-hint">
+          👉 오른쪽으로 스크롤하여 모든 포스트의 세부 분석을 확인하세요.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const postsData = [
+      { id: 1, name: "스케이트보드", emoji: "🛹", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
+      { id: 2, name: "아이스크림", emoji: "🍦", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
+      { id: 3, name: "비눗방울", emoji: "🫧", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
+      { id: 4, name: "풍선껌 룩북 릴스", emoji: "🎬", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
+      { id: 5, name: "토이카메라(이벤트)", emoji: "📷", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
+      { id: 6, name: "도넛", emoji: "🍩", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
+      { id: 7, name: "싱글 링거 티셔츠 화보컷", emoji: "👕", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
+      { id: 8, name: "파프리카", emoji: "🫑", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
+      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", emoji: "👕", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
+    ];
+
+    function switchTab(tab) {
+      // 페이지 토글
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(tab).classList.add('active');
+
+      // 버튼 활성화
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function initTabs() {
+      const tabsContainer = document.getElementById('filterTabs');
+      const tabs = [
+        { label: '전체', value: 'all' },
+        { label: '[피드]', value: 'feed' },
+        { label: '[릴스]', value: 'reels' }
+      ];
+      
+      tabs.forEach((tab, index) => {
+        const button = document.createElement('button');
+        button.className = 'filter-tab' + (index === 0 ? ' active' : '');
+        button.textContent = tab.label;
+        button.onclick = () => {
+          document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+          button.classList.add('active');
+          filterByType(tab.value);
+        };
+        tabsContainer.appendChild(button);
+      });
+    }
+
+    function filterByType(type) {
+      const container = document.getElementById('contentCards');
+      let filtered = type === 'all' 
+        ? postsData 
+        : postsData.filter(post => {
+            if (type === 'feed') return post.type === '[피드]';
+            if (type === 'reels') return post.type === '[릴스]';
+            return true;
+          });
+
+      filtered.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+      renderCards(filtered);
+    }
+
+    function renderCards(posts) {
+      const container = document.getElementById('contentCards');
+      container.innerHTML = posts.map(post => {
+        const total_source = post.feed + post.profile_clicks + post.story;
+        const feedPct = Math.round((post.feed / total_source) * 100);
+        const profilePct = Math.round((post.profile_clicks / total_source) * 100);
+        const storyPct = Math.round((post.story / total_source) * 100);
+        const totalReactions = post.followers + Math.round(post.impressions * 0.4);
+        const followersPct = Math.round((post.followers / totalReactions) * 100);
+        
+        return `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-emoji">${post.emoji}</div>
+              <div class="card-meta">
+                <div class="card-classification">${post.type}</div>
+                <div class="card-title">${post.name}</div>
+                <div class="card-date">${post.date} ${post.time}</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- 개요 섹션 -->
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">조회</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${(post.impressions / 1000).toFixed(1)}K</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">도달</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${(post.impressions / 1000).toFixed(1)}K</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">프로필</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${post.profile_visits}</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">반응</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${post.followers}</div>
+                </div>
+              </div>
+
+              <!-- 반응 지표 -->
+              <div style="display: flex; gap: 0.25rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">좋아요</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.likes}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">댓글</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.comments}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">저장</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.saves}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">공유</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.shares}</div>
+                </div>
+              </div>
+
+              <!-- 프로필 활동 -->
+              <div style="display: flex; gap: 0.25rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">방문</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.profile_visits}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">링크</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.external_clicks !== null ? post.external_clicks : '-'}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">팔로우</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.follows !== null ? post.follows : '-'}</div>
+                </div>
+              </div>
+
+              <!-- 조회 출처 -->
+              <div style="margin-bottom: 1rem;">
+                <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">조회 출처</div>
+                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.75rem;">
+                  <div style="width: ${feedPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${feedPct > 15 ? feedPct + '%' : ''}</div>
+                  <div style="width: ${profilePct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${profilePct > 15 ? profilePct + '%' : ''}</div>
+                  <div style="width: ${storyPct}%; background: #B5D4F4; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${storyPct > 15 ? storyPct + '%' : ''}</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 12px;">
+                  <div><div style="color: #666;">피드</div><div style="font-weight: 600; color: #1a1a1a;">${post.feed.toLocaleString()}</div></div>
+                  <div><div style="color: #666;">프로필</div><div style="font-weight: 600; color: #1a1a1a;">${post.profile_clicks.toLocaleString()}</div></div>
+                  <div><div style="color: #666;">스토리</div><div style="font-weight: 600; color: #1a1a1a;">${post.story.toLocaleString()}</div></div>
+                </div>
+              </div>
+
+              <!-- 반응 비율 -->
+              <div>
+                <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">반응 비율</div>
+                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${followersPct}%</div>
+                  <div style="width: ${100-followersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${100-followersPct}%</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 11px;">
+                  <div style="color: #666;">팔로워</div>
+                  <div style="color: #666;">비팔로워</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 초기 로드
+    initTabs();
+    filterByType('all');
+  </script>
+
+</div>
+  </div><!-- /sub-report -->
+
+
+<!-- ===== 로덬메이트 ===== -->
+<section class="sec" id="sec-rodem">
+  <div class="sec-hd">
+    <div><div class="sec-title">로덬메이트 활동 현황</div><div class="sec-sub">2026 SUMMER — 총 92명</div></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;">
+      <input class="srch" type="text" placeholder="이름·아이디 검색" oninput="srchRodem(this.value)">
+      <div class="frow">
+        <button class="fbtn on" onclick="fltRodem('all',this)">전체</button>
+        <button class="fbtn" onclick="fltRodem('active',this)">활동있음</button>
+        <button class="fbtn" onclick="fltRodem('none',this)">미활동</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="krow">
+    <div class="kcard c1"><div class="klbl">총 로덬메이트</div><div class="kval">92명</div><div class="kdelta up">2026 SUMMER</div></div>
+    <div class="kcard c2"><div class="klbl">활동 인원</div><div class="kval" id="r-active">—</div><div class="kdelta up">1~2주차 기준</div></div>
+    <div class="kcard c3"><div class="klbl">총 활동 건수</div><div class="kval" id="r-acts">—</div><div class="kdelta up">게시물+댓글+스토리</div></div>
+    <div class="kcard c5"><div class="klbl">1+2주차 적립금</div><div class="kval" id="r-pts">—</div><div class="kdelta">활동 기반 합산</div></div>
+  </div>
+
+  <div class="g5 mb">
+    <div class="sm"><div class="smv" style="color:var(--coral)" id="s-igp">—</div><div class="smk">IG 게시물</div></div>
+    <div class="sm"><div class="smv" style="color:var(--coral)" id="s-igs">—</div><div class="smk">IG 스토리</div></div>
+    <div class="sm"><div class="smv" style="color:var(--coral)" id="s-igc">—</div><div class="smk">IG 댓글</div></div>
+    <div class="sm"><div class="smv" style="color:var(--sage)" id="s-vp">—</div><div class="smk">바이럴 게시물</div></div>
+    <div class="sm"><div class="smv" style="color:var(--sage)" id="s-vc">—</div><div class="smk">바이럴 댓글</div></div>
+  </div>
+
+  <div class="card">
+    <div class="tw"><table class="tbl" style="min-width:780px">
+      <thead><tr>
+        <th style="width:24px">#</th>
+        <th>이름 / 인스타</th>
+        <th>팔로워</th>
+        <th>채널</th>
+        <th style="text-align:center">IG<br>게시물</th>
+        <th style="text-align:center">IG<br>스토리</th>
+        <th style="text-align:center">IG<br>댓글</th>
+        <th style="text-align:center">바이럴<br>게시물</th>
+        <th style="text-align:center">바이럴<br>댓글</th>
+        <th style="text-align:right">이번주<br>적립금</th>
+        <th style="text-align:right">누적<br>적립금</th>
+      </tr></thead>
+      <tbody id="rodemBody"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ===== 버즈 모니터링 ===== -->
+<section class="sec" id="sec-buzz">
+  <div class="sec-hd">
+    <div><div class="sec-title">데일리 버즈 모니터링</div><div class="sec-sub">네이버 카페·블로그 — 오전 6시 / 오후 6시 자동 수집 예정</div></div>
+    <div class="frow">
+      <button class="fbtn on" onclick="fltBuzz('all',this)">전체</button>
+      <button class="fbtn" onclick="fltBuzz('자사',this)">자사</button>
+      <button class="fbtn" onclick="fltBuzz('타사',this)">타사</button>
+      <button class="fbtn" onclick="fltBuzz('issue',this)">이슈</button>
+    </div>
+  </div>
+  <div class="krow">
+    <div class="kcard c1"><div class="klbl">오늘 총 언급</div><div class="kval">24건</div><div class="kdelta up">자사 14 / 타사 10</div></div>
+    <div class="kcard c5"><div class="klbl">이슈 감지</div><div class="kval">2건</div><div class="kdelta dn">부정 + 조회 500↑</div></div>
+    <div class="kcard c2"><div class="klbl">긍정 비율</div><div class="kval">67%</div><div class="kdelta up">▲ +5%p</div></div>
+    <div class="kcard c3"><div class="klbl">구매글 비중</div><div class="kval">42%</div><div class="kdelta up">구매 전환 신호</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ctitle">브랜드별 주간 언급량</div><div class="csub">자사 vs 경쟁사</div><div style="position:relative;height:170px"><canvas id="buzzChart"></canvas></div></div>
+    <div class="card"><div class="ctitle">긍부정 분포</div><div class="csub">오늘 수집 기준</div><div style="position:relative;height:170px"><canvas id="sentChart"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;">
+      <div class="ctitle">수집 결과</div>
+      <span style="font-size:10px;color:var(--ts)">마지막 수집: 오전 6:02</span>
+    </div>
+    <div class="tw"><table class="tbl" style="min-width:700px">
+      <thead><tr><th>날짜</th><th>구분</th><th>카페명</th><th>제목</th><th>분류</th><th>긍부정</th><th>간략내용</th><th>조회수</th><th>작업여부</th></tr></thead>
+      <tbody id="buzzBody"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ===== 리뷰 현황 ===== -->
+<section class="sec" id="sec-review">
+  <div class="sec-hd">
+    <div><div class="sec-title">자사몰 리뷰 현황</div><div class="sec-sub">크리마 API 연동 예정 — 현재 수동 입력</div></div>
+  </div>
+  <div class="notice">⚠ <strong>크리마 API 연동 준비 중</strong> — API 키 발급 후 자동 수집 전환 예정. 연동 후 자생·로덬·스탭 리뷰가 자동 구분됩니다.</div>
+  <div class="krow">
+    <div class="kcard c1"><div class="klbl">전체 리뷰</div><input class="kinp" value="1,247" onchange="toast('저장됐어요')"><div class="kdelta up">▲ 이번 달 +38건</div></div>
+    <div class="kcard c2"><div class="klbl">평균 평점</div><input class="kinp" value="4.8" onchange="toast('저장됐어요')"><div class="kdelta up">유지</div></div>
+    <div class="kcard c3"><div class="klbl">로덬 리뷰 완료</div><input class="kinp" value="18 / 24명" onchange="toast('저장됐어요')"><div class="kdelta dn">6명 미완료</div></div>
+    <div class="kcard c5"><div class="klbl">스탭 리뷰 완료</div><input class="kinp" value="101 / 116건" onchange="toast('저장됐어요')"><div class="kdelta up">▲ 87%</div></div>
+  </div>
+  <div class="g2">
+    <div class="rtrack" style="margin-bottom:0">
+      <div class="rhd">
+        <div><div class="ctitle">자생 리뷰</div><div style="font-size:10px;color:var(--ts)">오가닉 리뷰</div></div>
+        <div style="text-align:right"><div style="font-size:18px;font-weight:700">1,192건</div><div style="font-size:10px;color:var(--ts)">전체의 95.6%</div></div>
+      </div>
+      <div class="rpr"><div class="rpn">역류방지쿠션</div><div class="rpw"><div class="rpb pc" style="width:88%"></div></div><div class="rpc" style="color:var(--coral)">847건</div></div>
+      <div class="rpr"><div class="rpn">지퍼 우주복</div><div class="rpw"><div class="rpb pc" style="width:42%"></div></div><div class="rpc" style="color:var(--coral)">203건</div></div>
+      <div class="rpr"><div class="rpn">셋업 실내복</div><div class="rpw"><div class="rpb pc" style="width:25%"></div></div><div class="rpc" style="color:var(--coral)">118건</div></div>
+      <div class="rpr"><div class="rpn">원피스</div><div class="rpw"><div class="rpb pc" style="width:10%"></div></div><div class="rpc" style="color:var(--coral)">24건</div></div>
+    </div>
+    <div class="card"><div class="ctitle">평점 분포</div><div class="csub">전체 리뷰 기준</div><div style="position:relative;height:180px"><canvas id="ratingChart"></canvas></div></div>
+  </div>
+
+  <div class="rtrack" style="margin-top:11px">
+    <div class="rhd">
+      <div><div class="ctitle">스탭 리뷰</div><div style="font-size:10px;color:var(--ts)">스탭 아이디 기준 제품별 진척도</div></div>
+      <div style="text-align:right"><div style="font-size:18px;font-weight:700;color:var(--purple)">87%</div><div style="font-size:10px;color:var(--ts)">101 / 116건</div></div>
+    </div>
+    <div class="prog mb" style="margin-bottom:13px"><div class="pb pp" style="width:87%"></div></div>
+    <div class="tw"><table class="tbl">
+      <thead><tr><th>스탭</th><th>담당 제품</th><th>완료</th><th>전체</th><th>진척률</th></tr></thead>
+      <tbody>
+        <tr><td class="tname">김다정</td><td>34개 품목</td><td>31건</td><td>34건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:91%;height:100%;background:var(--purple);border-radius:3px"></div></div><span style="font-size:10px;color:var(--purple)">91%</span></div></td></tr>
+        <tr><td class="tname">김선애</td><td>20개 품목</td><td>19건</td><td>20건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:95%;height:100%;background:var(--purple);border-radius:3px"></div></div><span style="font-size:10px;color:var(--purple)">95%</span></div></td></tr>
+        <tr><td class="tname">김성은</td><td>18개 품목</td><td>18건</td><td>18건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--sage);border-radius:3px"></div></div><span style="font-size:10px;color:var(--sage)">100%</span></div></td></tr>
+        <tr><td class="tname">김지선</td><td>18개 품목</td><td>18건</td><td>18건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--sage);border-radius:3px"></div></div><span style="font-size:10px;color:var(--sage)">100%</span></div></td></tr>
+        <tr><td class="tname">배상현</td><td>15개 품목</td><td>15건</td><td>15건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--sage);border-radius:3px"></div></div><span style="font-size:10px;color:var(--sage)">100%</span></div></td></tr>
+        <tr><td class="tname">임승수</td><td>11개 품목</td><td>11건</td><td>11건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--sage);border-radius:3px"></div></div><span style="font-size:10px;color:var(--sage)">100%</span></div></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+</main>
+
+<!-- 캘린더 모달 -->
+<div class="mov" id="evModal">
+  <div class="modal">
+    <div class="mtitle">발행 일정 추가</div>
+    <div class="mf"><label>날짜</label><input type="text" id="evDate" readonly></div>
+    <div class="mf"><label>채널</label><select id="evType"><option value="ig">인스타그램</option><option value="bl">블로그</option><option value="ns">무신사</option><option value="co">협업/서포터즈</option></select></div>
+    <div class="mf"><label>제목</label><input type="text" id="evTitle" placeholder="콘텐츠 제목"></div>
+    <div class="mbtns"><button class="mcancel" onclick="closeEv()">취소</button><button class="msave" onclick="saveEv()">저장</button></div>
+  </div>
+</div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ── 공통
+const NOW = new Date();
+document.getElementById('ndate').textContent = NOW.getFullYear()+'년 '+(NOW.getMonth()+1)+'월 '+NOW.getDate()+'일';
+
+function toast(m){const t=document.getElementById('toastEl');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200);}
+
+function goTab(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='rodem') renderRodem();
+  if(id==='buzz') renderBuzz('all');
+}
+
+// ── SNS 차트
+new Chart(document.getElementById('engChart'),{type:'line',data:{labels:['1주','2주','3주','4주'],datasets:[
+  {label:'좋아요',data:[3200,4100,3700,5200],borderColor:'#E8614A',backgroundColor:'rgba(232,97,74,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#E8614A'},
+  {label:'저장',data:[410,520,480,712],borderColor:'#7A9E8E',backgroundColor:'rgba(122,158,142,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#7A9E8E'}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:9}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v}}}}});
+
+new Chart(document.getElementById('fmtChart'),{type:'doughnut',data:{labels:['릴스','카드뉴스','피드','스토리'],datasets:[{data:[42,28,18,12],backgroundColor:['#E8614A','#F7C5A8','#7A9E8E','#D4E8DF'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:9,padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}},cutout:'62%'}});
+
+// ── 캘린더
+let CY=NOW.getFullYear(),CM=NOW.getMonth();
+const EVTS={};
+[{y:2026,m:3,d:1,t:'ig',v:'봄 신상 예고 릴스'},{y:2026,m:3,d:5,t:'ig',v:'지퍼 우주복 릴스'},{y:2026,m:3,d:8,t:'bl',v:'쿠션 각도 가이드'},{y:2026,m:3,d:10,t:'ns',v:'봄 기획전 배너'},{y:2026,m:3,d:14,t:'co',v:'@kim_momlife 협업'},{y:2026,m:3,d:21,t:'ig',v:'셋업 룩북 릴스'},{y:2026,m:3,d:28,t:'co',v:'@lee_babydiary'},{y:2026,m:4,d:1,t:'ig',v:'여름신상 스포'},{y:2026,m:4,d:2,t:'ig',v:'비눗방울원피스'},{y:2026,m:4,d:3,t:'ns',v:'사진기 이벤트'},{y:2026,m:4,d:5,t:'ig',v:'풍선껌 캐러셀'},{y:2026,m:4,d:8,t:'bl',v:'여름 준비물 가이드'}].forEach(e=>{const k=e.y+'-'+(e.m+1)+'-'+e.d;if(!EVTS[k])EVTS[k]=[];EVTS[k].push({t:e.t,v:e.v});});
+const EC={ig:'eig',bl:'ebl',ns:'ens',co:'eco'};
+
+function drawCal(){
+  document.getElementById('cml').textContent=CY+'년 '+(CM+1)+'월';
+  const g=document.getElementById('calg');g.innerHTML='';
+  const first=new Date(CY,CM,1);let sd=first.getDay();sd=sd===0?6:sd-1;
+  const dim=new Date(CY,CM+1,0).getDate(),pd=new Date(CY,CM,0).getDate();
+  for(let i=0;i<sd;i++){const c=document.createElement('div');c.className='cal-c om';c.innerHTML='<div class="cal-n">'+(pd-sd+1+i)+'</div>';g.appendChild(c);}
+  for(let d=1;d<=dim;d++){
+    const c=document.createElement('div');
+    const isT=d===NOW.getDate()&&CM===NOW.getMonth()&&CY===NOW.getFullYear();
+    c.className='cal-c'+(isT?' td':'');
+    const k=CY+'-'+(CM+1)+'-'+d;let ev='';
+    if(EVTS[k]){EVTS[k].slice(0,2).forEach(e=>{ev+=`<div class="cal-ev ${EC[e.t]}">${e.v}</div>`;});if(EVTS[k].length>2)ev+=`<div class="cal-ev" style="background:var(--bd);color:var(--ts)">+${EVTS[k].length-2}</div>`;}
+    c.innerHTML=`<div class="cal-n">${d}</div><div class="cal-evs">${ev}</div>`;
+    c.onclick=()=>openEv(d);
+    g.appendChild(c);
+  }
+  const rem=(7-(sd+dim)%7)%7;
+  for(let i=1;i<=rem;i++){const c=document.createElement('div');c.className='cal-c om';c.innerHTML='<div class="cal-n">'+i+'</div>';g.appendChild(c);}
+}
+function cm(d){CM+=d;if(CM>11){CM=0;CY++;}if(CM<0){CM=11;CY--;}drawCal();}
+let selD=null;
+function openEv(d){selD=d;document.getElementById('evDate').value=CY+'년 '+(CM+1)+'월 '+d+'일';document.getElementById('evTitle').value='';document.getElementById('evModal').classList.add('on');}
+function closeEv(){document.getElementById('evModal').classList.remove('on');}
+function saveEv(){const t=document.getElementById('evTitle').value.trim();if(!t){alert('제목을 입력해주세요');return;}const k=CY+'-'+(CM+1)+'-'+selD;if(!EVTS[k])EVTS[k]=[];EVTS[k].push({t:document.getElementById('evType').value,v:t});closeEv();drawCal();toast('일정 추가됐어요 ✓');}
+document.getElementById('evModal').addEventListener('click',function(e){if(e.target===this)closeEv();});
+
+// ── 로덬메이트 데이터
+function maskPhone(p){if(!p)return'—';const s=String(p).replace(/[^0-9]/g,'');if(s.length===11)return s.slice(0,3)+'-****-'+s.slice(7);if(s.length===10)return s.slice(0,3)+'-****-'+s.slice(6);return p;}
+
+const MEMBERS=[
+  {num:1,name:'장세은',phone:'01034944070',ig:'a.rin_ni',follower:'3.4만',thread:'활동중',cafe:'맘스홀릭, 맘이베베, 미즈넷'},
+  {num:2,name:'소미희',phone:'01031631149',ig:'Youand.ssom',follower:'1,559',thread:'미활동',cafe:'맘스홀릭'},
+  {num:3,name:'문진영',phone:'01031550155',ig:'bboyo.ong',follower:'6.4천',thread:'활동중',cafe:'맘스홀릭, 헤이든'},
+  {num:4,name:'조현정',phone:'01043862845',ig:'luvly__yena',follower:'4,860',thread:'활동중',cafe:'맘스홀릭, 맘이베베'},
+  {num:5,name:'김채민',phone:'01023386486',ig:'tobokvely',follower:'3만',thread:'활동중',cafe:'맘스홀릭, 헤이든'},
+  {num:6,name:'김선경',phone:'01023120067',ig:'haneul_2ne',follower:'1.4만',thread:'미활동',cafe:'맘스홀릭, 맘이베베'},
+  {num:7,name:'전해령',phone:'01043752468',ig:'l.doha__',follower:'3,912',thread:'활동중',cafe:'맘스홀릭'},
+  {num:8,name:'권진솔',phone:'01025836249',ig:'ttoyulbaby',follower:'1.9만',thread:'미활동',cafe:'맘스홀릭'},
+  {num:9,name:'대경옥',phone:'01050529376',ig:'rara_land0131',follower:'2,660',thread:'미활동',cafe:'맘스홀릭'},
+  {num:10,name:'안정현',phone:'01088923423',ig:'hajin_baby',follower:'5,150',thread:'활동중',cafe:'맘스홀릭, 미즈넷'},
+  {num:11,name:'김하영',phone:'01077729992',ig:'h___yaaa',follower:'3,800',thread:'활동중',cafe:'맘스홀릭'},
+  {num:12,name:'김다령',phone:'01025737414',ig:'sihyeon_log',follower:'4,455',thread:'미활동',cafe:'맘스홀릭'},
+  {num:13,name:'김은미',phone:'01022501608',ig:'hodoo_ppoyong',follower:'3,260',thread:'활동중',cafe:'맘스홀릭'},
+  {num:14,name:'문승희',phone:'01093205460',ig:'seoa0910',follower:'6.1만',thread:'활동중',cafe:'맘스홀릭, 미즈넷'},
+  {num:15,name:'오해경',phone:'01032362238',ig:'seobini0519',follower:'1.7만',thread:'미활동',cafe:'맘스홀릭'},
+  {num:16,name:'윤소망',phone:'01023732974',ig:'u.neene',follower:'1.2만',thread:'활동중',cafe:'헤이든, 미즈넷'},
+  {num:17,name:'최수영',phone:'01030344040',ig:'ss25.0202',follower:'3,200',thread:'미활동',cafe:'맘스홀릭'},
+  {num:18,name:'박현주A',phone:'01023796778',ig:'hhjj________',follower:'6,279',thread:'활동중',cafe:'맘스홀릭'},
+  {num:19,name:'이지은',phone:'01075527710',ig:'jieun_lll',follower:'2,572',thread:'활동중',cafe:'맘스홀릭, 맘이베베'},
+  {num:20,name:'김아름',phone:'01080207868',ig:'donggle2_mami',follower:'3.9천',thread:'미활동',cafe:'맘스홀릭'},
+  {num:21,name:'이서윤',phone:'01025123118',ig:'ju.woni_',follower:'7,200',thread:'미활동',cafe:'맘이베베'},
+  {num:22,name:'이소희',phone:'01033900506',ig:'theodore.k_baby',follower:'8,000',thread:'미활동',cafe:'맘스홀릭, 맘이베베'},
+  {num:23,name:'조가연',phone:'01077268439',ig:'joaj0107',follower:'2,766',thread:'미활동',cafe:'맘스홀릭'},
+  {num:24,name:'변초희',phone:'01035824851',ig:'yeolmu_12',follower:'3,550',thread:'미활동',cafe:'맘스홀릭'},
+  {num:25,name:'장희원',phone:'01094754517',ig:'onehana_____',follower:'1.2만',thread:'활동중',cafe:'맘스홀릭, 맘이베베'},
+  {num:26,name:'손정현',phone:'01039007216',ig:'honey2_haha',follower:'2,750',thread:'미활동',cafe:'맘스홀릭, 맘이베베'},
+  {num:27,name:'원영희',phone:'01050012192',ig:'hajun250206',follower:'5,177',thread:'활동중',cafe:'맘스홀릭'},
+  {num:28,name:'김유리',phone:'01023587602',ig:'glasskeem',follower:'1만',thread:'미활동',cafe:'맘스홀릭'},
+  {num:29,name:'최화영',phone:'01049510512',ig:'fove_mom',follower:'5,474',thread:'활동중',cafe:'맘스홀릭'},
+  {num:30,name:'송은지',phone:'01032290928',ig:'suo._.home',follower:'6,062',thread:'미활동',cafe:'맘스홀릭'},
+  {num:31,name:'김예지',phone:'01076381156',ig:'mongle23456',follower:'400',thread:'활동중',cafe:'맘스홀릭, 미즈넷'},
+  {num:32,name:'유미수',phone:'01012345678',ig:'shineee.zip',follower:'4,637',thread:'활동중',cafe:'맘스홀릭'},
+  {num:33,name:'정수연',phone:'01012345679',ig:'golddragon_i',follower:'6,500',thread:'활동중',cafe:'맘스홀릭'},
+  {num:34,name:'유경희',phone:'01066551378',ig:'skyseatwins',follower:'3.1만',thread:'미활동',cafe:'맘스홀릭'},
+  {num:35,name:'백조은',phone:'01020189219',ig:'quiet_bubu',follower:'4,858',thread:'활동중',cafe:'맘스홀릭'},
+  {num:36,name:'최희주',phone:'01051417785',ig:'wonbro._y',follower:'2.1만',thread:'활동중',cafe:'맘스홀릭'},
+  {num:37,name:'김현진',phone:'01051659509',ig:'olivewithtomato',follower:'882',thread:'활동중',cafe:'맘스홀릭'},
+  {num:38,name:'최은지',phone:'01012345680',ig:'h_yeon__woo',follower:'2,569',thread:'미활동',cafe:'맘스홀릭, 맘이베베'},
+  {num:39,name:'소은지',phone:'01012345681',ig:'im_ju_1',follower:'7,922',thread:'미활동',cafe:'없음'},
+  {num:40,name:'김서우',phone:'01097970355',ig:'jjelly_ani',follower:'3,988',thread:'활동중',cafe:'맘스홀릭'},
+  {num:41,name:'김다은',phone:'01037595293',ig:'kim_jelly___',follower:'2,672',thread:'활동중',cafe:'맘스홀릭'},
+  {num:42,name:'이아람',phone:'01012345682',ig:'ki_hhharin',follower:'2,083',thread:'활동중',cafe:'맘스홀릭'},
+  {num:43,name:'김소영',phone:'01042099509',ig:'seola.baek',follower:'3,710',thread:'활동중',cafe:'맘스홀릭'},
+  {num:44,name:'윤지수',phone:'01041707108',ig:'jjae_yoonss',follower:'3,361',thread:'활동중',cafe:'맘스홀릭'},
+  {num:45,name:'심지은',phone:'01012345683',ig:'jieun_yw_seoha',follower:'341',thread:'활동중',cafe:'레몬테라스'},
+  {num:46,name:'강현주',phone:'01025467403',ig:'asungkey',follower:'1만',thread:'미활동',cafe:'맘스홀릭, 맘이베베'},
+  {num:47,name:'강보림',phone:'01033791223',ig:'1zz3.90_',follower:'9,400',thread:'활동중',cafe:'없음'},
+  {num:48,name:'김희진',phone:'01022829642',ig:'chucu_s2',follower:'1.6만',thread:'미활동',cafe:'맘스홀릭'},
+  {num:49,name:'서예림',phone:'01098239328',ig:'ahyu_jeans',follower:'2,491',thread:'활동중',cafe:'맘스홀릭'},
+  {num:50,name:'전아영',phone:'01012345684',ig:'boss._.quokka',follower:'3,020',thread:'활동중',cafe:'맘스홀릭'},
+  {num:51,name:'김하나',phone:'01097440990',ig:'yunibni_mom',follower:'1.1만',thread:'활동중',cafe:'맘스홀릭'},
+  {num:52,name:'김지은',phone:'01022472064',ig:'bebe_ellie',follower:'1.6만',thread:'미활동',cafe:'맘스홀릭'},
+  {num:53,name:'조수연',phone:'01065312601',ig:'s2_rang2__',follower:'2,572',thread:'활동중',cafe:'없음'},
+  {num:54,name:'이소정',phone:'01012345685',ig:'harin25_',follower:'3,630',thread:'미활동',cafe:'맘스홀릭'},
+  {num:55,name:'김한슬',phone:'01074756555',ig:'i__love__un',follower:'6,087',thread:'활동중',cafe:'맘스홀릭'},
+  {num:56,name:'정유선',phone:'01012345686',ig:'sonne_home_',follower:'5,600',thread:'활동중',cafe:'맘스홀릭'},
+  {num:57,name:'문지현',phone:'01099828696',ig:'xx_leejun_xx',follower:'3,694',thread:'미활동',cafe:'맘스홀릭'},
+  {num:58,name:'한누리',phone:'01012345687',ig:'__to.riri',follower:'2,578',thread:'활동중',cafe:'맘스홀릭'},
+  {num:59,name:'이정현',phone:'01023538476',ig:'joyyu.2024',follower:'2천',thread:'활동중',cafe:'맘스홀릭'},
+  {num:60,name:'어희윤',phone:'01037310900',ig:'luv._.s.yu',follower:'2,482',thread:'미활동',cafe:'맘스홀릭'},
+  {num:61,name:'염현정',phone:'01012345688',ig:'happiness_eunwoo',follower:'1만',thread:'미활동',cafe:'맘스홀릭'},
+  {num:62,name:'김수지',phone:'01028280941',ig:'roro._.vely',follower:'6,400',thread:'활동중',cafe:'맘스홀릭'},
+  {num:63,name:'박나은',phone:'01012345689',ig:'cozi_ani',follower:'4,190',thread:'미활동',cafe:'맘스홀릭'},
+  {num:64,name:'황미경',phone:'01012345690',ig:'woori_choib',follower:'3,183',thread:'미활동',cafe:'맘스홀릭'},
+  {num:65,name:'정주영',phone:'01062522747',ig:'welcome_sua',follower:'4,500',thread:'활동중',cafe:'맘스홀릭'},
+  {num:66,name:'이정민',phone:'01040562658',ig:'jiyul__bebe',follower:'3,885',thread:'활동중',cafe:'맘스홀릭'},
+  {num:67,name:'최솔',phone:'01012345691',ig:'baby_ahggo',follower:'4,600',thread:'미활동',cafe:'맘스홀릭'},
+  {num:68,name:'박진선',phone:'01012345692',ig:'rabong_han_2021',follower:'5.7만',thread:'미활동',cafe:'맘스홀릭'},
+  {num:69,name:'박혜지',phone:'01012345693',ig:'luv_my.addi',follower:'5천',thread:'미활동',cafe:'맘스홀릭'},
+  {num:70,name:'정유리',phone:'01012345694',ig:'_hayoon.luv',follower:'2,360',thread:'미활동',cafe:'맘스홀릭'},
+  {num:71,name:'우지연',phone:'01034878824',ig:'woozu_24',follower:'4,300',thread:'활동중',cafe:'맘스홀릭'},
+  {num:72,name:'복진주',phone:'01051989938',ig:'triple_ducklings',follower:'3,000',thread:'미활동',cafe:'맘스홀릭'},
+  {num:73,name:'조혜림',phone:'01045190912',ig:'rim_cookie_',follower:'13만',thread:'활동중',cafe:'맘스홀릭'},
+  {num:74,name:'문지애',phone:'01041504028',ig:'jjjjjiae_chu',follower:'1.9만',thread:'활동중',cafe:'맘스홀릭'},
+  {num:75,name:'이은효',phone:'01012345695',ig:'dear__mybabies',follower:'4,241',thread:'활동중',cafe:'맘스홀릭'},
+  {num:76,name:'최서인',phone:'01012345696',ig:'one2seo',follower:'1.5만',thread:'활동중',cafe:'맘스홀릭'},
+  {num:77,name:'오영란',phone:'01012345697',ig:'su_cabinet',follower:'8,700',thread:'활동중',cafe:'맘스홀릭'},
+  {num:78,name:'김한아',phone:'01077952616',ig:'leo.hanabam',follower:'3,161',thread:'미활동',cafe:'맘스홀릭'},
+  {num:79,name:'노연지',phone:'01057803099',ig:'hamin__boy',follower:'7,000',thread:'활동중',cafe:'없음'},
+  {num:80,name:'홍유진',phone:'01012345698',ig:'godunge79',follower:'2,900',thread:'미활동',cafe:'맘스홀릭'},
+  {num:81,name:'윤지영',phone:'01012345699',ig:'ssha_loveu',follower:'3,797',thread:'활동중',cafe:'맘스홀릭'},
+  {num:82,name:'박현주B',phone:'01012345700',ig:'ppoyomi_',follower:'3,700',thread:'미활동',cafe:'맘스홀릭'},
+  {num:83,name:'이우정',phone:'01012345701',ig:'bebe_.in',follower:'3,073',thread:'미활동',cafe:'맘스홀릭'},
+  {num:84,name:'최은혜',phone:'01012345702',ig:'woone__43',follower:'9,972',thread:'활동중',cafe:'맘스홀릭'},
+  {num:85,name:'유지민',phone:'01085255246',ig:'jimmychuu_baby',follower:'2.9만',thread:'활동중',cafe:'맘스홀릭'},
+  {num:86,name:'박수정',phone:'01031310694',ig:'danzzan_mom',follower:'2,700',thread:'미활동',cafe:'맘스홀릭'},
+  {num:87,name:'이한나',phone:'01012345703',ig:'my__hooo',follower:'3,063',thread:'활동중',cafe:'맘스홀릭'},
+  {num:88,name:'김예주',phone:'01095553019',ig:'joo.ive',follower:'1,323',thread:'활동중',cafe:'맘스홀릭'},
+  {num:89,name:'최수이',phone:'01091071794',ig:'lovely_boogi',follower:'8,600',thread:'활동중',cafe:'없음'},
+  {num:90,name:'김현하',phone:'01066710556',ig:'by.__.hyun',follower:'2,200',thread:'활동중',cafe:'헤이든'},
+  {num:91,name:'최지안',phone:'01012345704',ig:'da_hee__vv',follower:'9,750',thread:'활동중',cafe:'맘스홀릭'},
+  {num:92,name:'이혜진',phone:'01012345705',ig:'doyoung__lov',follower:'1,491',thread:'활동중',cafe:'맘스홀릭'}
+];
+
+const ACT={"강보림":{"total":158500,"w1":0,"w2":0},"강현주":{"total":325500,"w1":0,"w2":0},"권진솔":{"total":230000,"w1":0,"w2":0},"김다령":{"total":294500,"w1":8000,"w2":3500},"김다은":{"total":233000,"w1":3000,"w2":0},"김서우":{"total":226700,"w1":0,"w2":0},"김선경":{"total":356000,"w1":0,"w2":0},"김소영":{"total":209500,"w1":0,"w2":0},"김수지":{"total":216500,"w1":0,"w2":0},"김아름":{"total":202500,"w1":0,"w2":0},"김예주":{"total":202000,"w1":0,"w2":0},"김예지":{"total":223000,"w1":3000,"w2":4000},"김유리":{"total":210500,"w1":0,"w2":0},"김은미":{"total":216540,"w1":0,"w2":1000},"김지은":{"total":201000,"w1":0,"w2":0},"김채민":{"total":225000,"w1":0,"w2":0},"김하나":{"total":337500,"w1":3000,"w2":0},"김하영":{"total":330370,"w1":0,"w2":0},"김한슬":{"total":328000,"w1":2000,"w2":1000},"김한아":{"total":218000,"w1":0,"w2":0},"김현진":{"total":208500,"w1":0,"w2":0},"김현하":{"total":310000,"w1":0,"w2":0},"김희진":{"total":211000,"w1":0,"w2":0},"노연지":{"total":200000,"w1":0,"w2":0},"대경옥":{"total":270000,"w1":0,"w2":0},"문승희":{"total":230500,"w1":0,"w2":0},"문지애":{"total":203000,"w1":0,"w2":0},"문지현":{"total":151000,"w1":0,"w2":0},"문진영":{"total":173880,"w1":1500,"w2":2000},"박나은":{"total":233500,"w1":0,"w2":0},"박수정":{"total":433820,"w1":5000,"w2":3500},"박진선":{"total":204000,"w1":0,"w2":0},"박현주A":{"total":219000,"w1":0,"w2":0},"박현주B":{"total":209500,"w1":0,"w2":0},"박혜지":{"total":202000,"w1":0,"w2":0},"백조은":{"total":210000,"w1":0,"w2":0},"변초희":{"total":232500,"w1":0,"w2":0},"복진주":{"total":319000,"w1":0,"w2":1000},"서예림":{"total":210500,"w1":500,"w2":500},"소미희":{"total":321500,"w1":0,"w2":0},"소은지":{"total":202000,"w1":0,"w2":0},"손정현":{"total":205500,"w1":0,"w2":0},"송은지":{"total":408000,"w1":0,"w2":3500},"심지은":{"total":210000,"w1":0,"w2":0},"안정현":{"total":372000,"w1":11000,"w2":11000},"어희윤":{"total":221500,"w1":0,"w2":0},"염현정":{"total":223500,"w1":0,"w2":0},"오영란":{"total":200000,"w1":0,"w2":0},"오해경":{"total":204200,"w1":3000,"w2":0},"우지연":{"total":173500,"w1":0,"w2":0},"유경희":{"total":207000,"w1":3000,"w2":0},"유미수":{"total":229000,"w1":0,"w2":0},"유지민":{"total":401000,"w1":0,"w2":0},"윤소망":{"total":211980,"w1":0,"w2":0},"윤지수":{"total":291500,"w1":9500,"w2":1000},"윤지영":{"total":212500,"w1":0,"w2":0},"이서윤":{"total":214300,"w1":0,"w2":0},"이소정":{"total":303000,"w1":0,"w2":0},"이소희":{"total":339540,"w1":0,"w2":0},"이아람":{"total":229085,"w1":0,"w2":0},"이우정":{"total":207000,"w1":3000,"w2":0},"이은효":{"total":220000,"w1":0,"w2":0},"이정민":{"total":216000,"w1":0,"w2":0},"이정현":{"total":215000,"w1":0,"w2":0},"이지은":{"total":221500,"w1":0,"w2":4500},"이혜진":{"total":210500,"w1":500,"w2":0},"장세은":{"total":164000,"w1":0,"w2":0},"장희원":{"total":312000,"w1":0,"w2":0},"전아영":{"total":200000,"w1":0,"w2":0},"전해령":{"total":247640,"w1":1000,"w2":0},"정수연":{"total":251500,"w1":500,"w2":2000},"정유리":{"total":211000,"w1":0,"w2":0},"정유선":{"total":212500,"w1":0,"w2":0},"정주영":{"total":303000,"w1":0,"w2":0},"조가연":{"total":214500,"w1":0,"w2":0},"조수연":{"total":246500,"w1":1500,"w2":1000},"조현정":{"total":308500,"w1":0,"w2":0},"조혜림":{"total":209500,"w1":0,"w2":0},"최서인":{"total":160000,"w1":0,"w2":0},"최솔":{"total":207000,"w1":0,"w2":0},"최수영":{"total":328000,"w1":0,"w2":0},"최수이":{"total":206500,"w1":0,"w2":0},"최은지":{"total":209000,"w1":0,"w2":0},"최은혜":{"total":203500,"w1":0,"w2":0},"최지안":{"total":203000,"w1":0,"w2":0},"최화영":{"total":200000,"w1":0,"w2":0},"최희주":{"total":210000,"w1":0,"w2":0},"한누리":{"total":201000,"w1":0,"w2":500},"홍유진":{"total":200000,"w1":0,"w2":0},"황미경":{"total":229000,"w1":0,"w2":0}};
+
+const RAW={"문지애":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":0,"viral_comment":2},"최수이":{"ig_post":1,"ig_story":0,"ig_comment":0,"viral_post":0,"viral_comment":0},"윤지수":{"ig_post":0,"ig_story":5,"ig_comment":0,"viral_post":3,"viral_comment":4},"전해령":{"ig_post":0,"ig_story":2,"ig_comment":0,"viral_post":0,"viral_comment":0},"김예지":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":5,"viral_comment":0},"김한슬":{"ig_post":0,"ig_story":0,"ig_comment":6,"viral_post":0,"viral_comment":0},"조수연":{"ig_post":0,"ig_story":1,"ig_comment":0,"viral_post":1,"viral_comment":2},"안정현":{"ig_post":1,"ig_story":4,"ig_comment":0,"viral_post":5,"viral_comment":22},"문진영":{"ig_post":0,"ig_story":0,"ig_comment":7,"viral_post":0,"viral_comment":0},"서예림":{"ig_post":0,"ig_story":2,"ig_comment":0,"viral_post":0,"viral_comment":0},"박수정":{"ig_post":0,"ig_story":5,"ig_comment":0,"viral_post":2,"viral_comment":0},"김하나":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":1,"viral_comment":0},"김다령":{"ig_post":2,"ig_story":5,"ig_comment":0,"viral_post":3,"viral_comment":0},"유경희":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":1,"viral_comment":0},"이혜진":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":0,"viral_comment":1},"정수연":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":1,"viral_comment":3},"이우정":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":1,"viral_comment":0},"오해경":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":1,"viral_comment":0},"김다은":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":1,"viral_comment":0},"송은지":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":1,"viral_comment":1},"이지은":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":2,"viral_comment":1},"복진주":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":0,"viral_comment":2},"김은미":{"ig_post":0,"ig_story":0,"ig_comment":0,"viral_post":0,"viral_comment":2},"한누리":{"ig_post":0,"ig_story":0,"ig_comment":1,"viral_post":0,"viral_comment":0}};
+
+let rFilter='all', rSearch='';
+
+function renderRodem(){
+  const actNames=Object.keys(RAW);
+  let totalActs=0,totalPts=0;
+  Object.values(RAW).forEach(r=>{totalActs+=r.ig_post+r.ig_story+r.ig_comment+r.viral_post+r.viral_comment;});
+  Object.values(ACT).forEach(a=>{totalPts+=a.w1+a.w2;});
+  document.getElementById('r-active').textContent=actNames.length+'명';
+  document.getElementById('r-acts').textContent=totalActs+'건';
+  document.getElementById('r-pts').textContent=(totalPts/10000).toFixed(1)+'만원';
+  let s_ip=0,s_is=0,s_ic=0,s_vp=0,s_vc=0;
+  Object.values(RAW).forEach(r=>{s_ip+=r.ig_post;s_is+=r.ig_story;s_ic+=r.ig_comment;s_vp+=r.viral_post;s_vc+=r.viral_comment;});
+  ['s-igp','s-igs','s-igc','s-vp','s-vc'].forEach((id,i)=>{
+    document.getElementById(id).textContent=[s_ip,s_is,s_ic,s_vp,s_vc][i];
+  });
+
+  const filtered=MEMBERS.filter(m=>{
+    const sr=rSearch.toLowerCase();
+    const ok=!sr||m.name.includes(sr)||m.ig.toLowerCase().includes(sr);
+    const r=RAW[m.name]||{ig_post:0,ig_story:0,ig_comment:0,viral_post:0,viral_comment:0};
+    const hasAct=(r.ig_post+r.ig_story+r.ig_comment+r.viral_post+r.viral_comment)>0;
+    const ft=rFilter==='all'||(rFilter==='active'&&hasAct)||(rFilter==='none'&&!hasAct);
+    return ok&&ft;
+  });
+
+  document.getElementById('rodemBody').innerHTML=filtered.map(m=>{
+    const r=RAW[m.name]||{ig_post:0,ig_story:0,ig_comment:0,viral_post:0,viral_comment:0};
+    const a=ACT[m.name]||{total:0,w1:0,w2:0};
+    const wpt=a.w1+a.w2;
+    const hasAct=(r.ig_post+r.ig_story+r.ig_comment+r.viral_post+r.viral_comment)>0;
+    const an=v=>v>0?`<div class="anum">${v}</div>`:`<div class="azero">—</div>`;
+    const thr=m.thread==='활동중'?`<span class="bdg bn" style="margin-right:2px">스레드</span>`:'';
+    const cafe=m.cafe&&m.cafe!=='없음'?`<span class="bdg bok">카페</span>`:'';
+    return `<tr style="${hasAct?'':'opacity:.5'}">
+      <td style="color:var(--ts);font-size:10px">${m.num}</td>
+      <td><div class="tname">${m.name}</div><div class="tig">@${m.ig}</div></td>
+      <td style="font-size:11px">${m.follower}</td>
+      <td>${thr}${cafe}</td>
+      <td>${an(r.ig_post)}</td>
+      <td>${an(r.ig_story)}</td>
+      <td>${an(r.ig_comment)}</td>
+      <td>${an(r.viral_post)}</td>
+      <td>${an(r.viral_comment)}</td>
+      <td>${wpt>0?`<div class="pt">+${wpt.toLocaleString()}원</div>`:`<div class="pt0">—</div>`}</td>
+      <td><div style="text-align:right;font-size:11px;color:var(--tm)">${a.total>0?a.total.toLocaleString()+'원':'—'}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function srchRodem(v){rSearch=v;renderRodem();}
+function fltRodem(f,btn){rFilter=f;document.querySelectorAll('#sec-rodem .fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderRodem();}
+
+// ── 버즈
+const BUZZ=[
+  {date:'2026-04-08',type:'자사',cafe:'맘카페A',title:'역류방지쿠션 추천해요',cat:'구매글',sent:'긍정',summary:'역류방지쿠션 사용 후기. 증상 개선 내용.',view:1240,work:'확인불가',issue:false},
+  {date:'2026-04-08',type:'자사',cafe:'육아블로그B',title:'로토토베베 지퍼우주복 단점',cat:'구매글',sent:'부정',summary:'세탁 후 지퍼 걸림 발생. 품질 불만.',view:820,work:'확인불가',issue:true},
+  {date:'2026-04-08',type:'타사',cafe:'맘카페A',title:'베베드피노 vs 로토토 비교',cat:'구매글',sent:'중립',summary:'두 브랜드 실내복 비교 리뷰.',view:3200,work:'확인불가',issue:false},
+  {date:'2026-04-08',type:'자사',cafe:'맘카페C',title:'로토토베베 무신사 선발매 핫딜',cat:'핫딜',sent:'긍정',summary:'무신사 4/13 선발매 안내. 반응 긍정.',view:560,work:'플랫폼',issue:false},
+  {date:'2026-04-08',type:'자사',cafe:'육아카페D',title:'로토토 서포터즈 후기',cat:'홍보',sent:'긍정',summary:'서포터즈 활동 후기. 재구매 의향 언급.',view:340,work:'로덬메이트',issue:false},
+  {date:'2026-04-08',type:'타사',cafe:'맘카페B',title:'리미떼두두 새 컬렉션',cat:'구매글',sent:'긍정',summary:'리미떼두두 봄 신상 후기.',view:1800,work:'확인불가',issue:false},
+  {date:'2026-04-07',type:'자사',cafe:'맘카페A',title:'쿠션 각도 조절 방법',cat:'구매글',sent:'중립',summary:'역류방지쿠션 각도 조절 문의.',view:290,work:'EZV',issue:false},
+  {date:'2026-04-07',type:'타사',cafe:'육아블로그C',title:'아프리콧스튜디오 품질 실망',cat:'구매글',sent:'부정',summary:'품질 불만. 조회수 높음 주의.',view:2400,work:'확인불가',issue:true},
+];
+let bFilter='all';
+function renderBuzz(f){
+  if(f)bFilter=f;
+  const fd=BUZZ.filter(r=>bFilter==='all'||(bFilter==='자사'&&r.type==='자사')||(bFilter==='타사'&&r.type==='타사')||(bFilter==='issue'&&r.issue));
+  const SC={긍정:'bpos',부정:'bneg',중립:'bne'};
+  const WC={EZV:'be','로덬메이트':'bok','플랫폼':'bs','확인불가':'bne'};
+  document.getElementById('buzzBody').innerHTML=fd.map(r=>`<tr class="${r.issue?'issue':''}">
+    <td>${r.date}</td>
+    <td><span class="bdg ${r.type==='자사'?'bi':'bn'}">${r.type}</span></td>
+    <td style="font-size:10px">${r.cafe}</td>
+    <td><div class="tname">${r.issue?'⚠ ':''}${r.title}</div></td>
+    <td><span class="bdg bne">${r.cat}</span></td>
+    <td><span class="bdg ${SC[r.sent]}">${r.sent}</span></td>
+    <td style="font-size:10px;color:var(--ts);max-width:160px">${r.summary}</td>
+    <td style="text-align:right">${r.view.toLocaleString()}</td>
+    <td><span class="bdg ${WC[r.work]}">${r.work}</span></td>
+  </tr>`).join('');
+}
+function fltBuzz(f,btn){document.querySelectorAll('#sec-buzz .fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderBuzz(f);}
+
+// ── 버즈 차트
+new Chart(document.getElementById('buzzChart'),{type:'bar',data:{labels:['4/2','4/3','4/4','4/5','4/6','4/7','4/8'],datasets:[{label:'자사',data:[8,12,7,14,10,9,14],backgroundColor:'#E8614A'},{label:'타사',data:[5,7,9,6,8,7,10],backgroundColor:'#D4E8DF'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:9}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}}}}});
+new Chart(document.getElementById('sentChart'),{type:'doughnut',data:{labels:['긍정','중립','부정'],datasets:[{data:[67,21,12],backgroundColor:['#7A9E8E','#EDE5DF','#F2A899'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:9,padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}},cutout:'60%'}});
+new Chart(document.getElementById('ratingChart'),{type:'bar',data:{labels:['★5','★4','★3','★2','★1'],datasets:[{data:[68,22,6,3,1],backgroundColor:['#E8614A','#F7C5A8','#EDE5DF','#D4E8DF','#7A9E8E'],borderWidth:0}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'%'}}},scales:{x:{ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}},y:{ticks:{font:{size:10}},grid:{display:false}}}}});
+
+// ── init
+drawCal();
+renderRodem();
+renderBuzz('all');
+</script>
+
+<script>
+function goSub(id, btn) {
+  document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('sub-' + id).classList.add('on');
+  btn.classList.add('on');
+}
+</script>
+
+<script>
+
+    const postsData = [
+      { id: 1, name: "스케이트보드", emoji: "🛹", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
+      { id: 2, name: "아이스크림", emoji: "🍦", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
+      { id: 3, name: "비눗방울", emoji: "🫧", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
+      { id: 4, name: "풍선껌 룩북 릴스", emoji: "🎬", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
+      { id: 5, name: "토이카메라(이벤트)", emoji: "📷", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
+      { id: 6, name: "도넛", emoji: "🍩", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
+      { id: 7, name: "싱글 링거 티셔츠 화보컷", emoji: "👕", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
+      { id: 8, name: "파프리카", emoji: "🫑", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
+      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", emoji: "👕", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
+    ];
+
+    function rp_rp_switchTab(tab) {
+      // 페이지 토글
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(tab).classList.add('active');
+
+      // 버튼 활성화
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function rp_rp_initTabs() {
+      const tabsContainer = document.getElementById('filterTabs');
+      const tabs = [
+        { label: '전체', value: 'all' },
+        { label: '[피드]', value: 'feed' },
+        { label: '[릴스]', value: 'reels' }
+      ];
+      
+      tabs.forEach((tab, index) => {
+        const button = document.createElement('button');
+        button.className = 'filter-tab' + (index === 0 ? ' active' : '');
+        button.textContent = tab.label;
+        button.onclick = () => {
+          document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+          button.classList.add('active');
+          rp_filterByType(tab.value);
+        };
+        tabsContainer.appendChild(button);
+      });
+    }
+
+    function rp_rp_filterByType(type) {
+      const container = document.getElementById('contentCards');
+      let filtered = type === 'all' 
+        ? postsData 
+        : postsData.filter(post => {
+            if (type === 'feed') return post.type === '[피드]';
+            if (type === 'reels') return post.type === '[릴스]';
+            return true;
+          });
+
+      filtered.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+      rp_renderCards(filtered);
+    }
+
+    function rp_rp_renderCards(posts) {
+      const container = document.getElementById('contentCards');
+      container.innerHTML = posts.map(post => {
+        const total_source = post.feed + post.profile_clicks + post.story;
+        const feedPct = Math.round((post.feed / total_source) * 100);
+        const profilePct = Math.round((post.profile_clicks / total_source) * 100);
+        const storyPct = Math.round((post.story / total_source) * 100);
+        const totalReactions = post.followers + Math.round(post.impressions * 0.4);
+        const followersPct = Math.round((post.followers / totalReactions) * 100);
+        
+        return `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-emoji">${post.emoji}</div>
+              <div class="card-meta">
+                <div class="card-classification">${post.type}</div>
+                <div class="card-title">${post.name}</div>
+                <div class="card-date">${post.date} ${post.time}</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- 개요 섹션 -->
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">조회</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${(post.impressions / 1000).toFixed(1)}K</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">도달</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${(post.impressions / 1000).toFixed(1)}K</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">프로필</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${post.profile_visits}</div>
+                </div>
+                <div style="background: white; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 12px; color: #999; margin-bottom: 0.3rem; text-transform: uppercase;">반응</div>
+                  <div style="font-size: 16px; font-weight: 700; color: #378ADD;">${post.followers}</div>
+                </div>
+              </div>
+
+              <!-- 반응 지표 -->
+              <div style="display: flex; gap: 0.25rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">좋아요</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.likes}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">댓글</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.comments}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">저장</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.saves}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">공유</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.shares}</div>
+                </div>
+              </div>
+
+              <!-- 프로필 활동 -->
+              <div style="display: flex; gap: 0.25rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">방문</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.profile_visits}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">링크</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.external_clicks !== null ? post.external_clicks : '-'}</div>
+                </div>
+                <div style="color: #e0e6ed;">|</div>
+                <div style="flex: 1; min-width: 70px; text-align: center;">
+                  <div style="font-size: 10px; color: #999; text-transform: uppercase;">팔로우</div>
+                  <div style="font-size: 13px; font-weight: 500; color: #1a1a1a;">${post.follows !== null ? post.follows : '-'}</div>
+                </div>
+              </div>
+
+              <!-- 조회 출처 -->
+              <div style="margin-bottom: 1rem;">
+                <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">조회 출처</div>
+                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.75rem;">
+                  <div style="width: ${feedPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${feedPct > 15 ? feedPct + '%' : ''}</div>
+                  <div style="width: ${profilePct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${profilePct > 15 ? profilePct + '%' : ''}</div>
+                  <div style="width: ${storyPct}%; background: #B5D4F4; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${storyPct > 15 ? storyPct + '%' : ''}</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 12px;">
+                  <div><div style="color: #666;">피드</div><div style="font-weight: 600; color: #1a1a1a;">${post.feed.toLocaleString()}</div></div>
+                  <div><div style="color: #666;">프로필</div><div style="font-weight: 600; color: #1a1a1a;">${post.profile_clicks.toLocaleString()}</div></div>
+                  <div><div style="color: #666;">스토리</div><div style="font-weight: 600; color: #1a1a1a;">${post.story.toLocaleString()}</div></div>
+                </div>
+              </div>
+
+              <!-- 반응 비율 -->
+              <div>
+                <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">반응 비율</div>
+                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${followersPct}%</div>
+                  <div style="width: ${100-followersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${100-followersPct}%</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 11px;">
+                  <div style="color: #666;">팔로워</div>
+                  <div style="color: #666;">비팔로워</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 초기 로드
+    rp_initTabs();
+    rp_filterByType('all');
+  
+</script>
+</body>
+</html>
