@@ -847,11 +847,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       <div class="tw"><table class="tbl">
         <thead><tr><th>콘텐츠</th><th>유형</th><th>좋아요</th><th>저장</th><th>댓글</th><th>성과</th></tr></thead>
         <tbody>
-          <tr><td><div class="tname">지퍼 우주복 착용 — 새벽 수유 편</div></td><td><span class="bdg bi">릴스</span></td><td>2,341</td><td>489</td><td>87</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:95%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-          <tr><td><div class="tname">역류방지쿠션 각도 꿀팁</div></td><td><span class="bdg bi">카드</span></td><td>1,892</td><td>712</td><td>63</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:88%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-          <tr><td><div class="tname">봄 셋업 룩북 — 벚꽃 외출 편</div></td><td><span class="bdg bi">릴스</span></td><td>1,654</td><td>382</td><td>44</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:74%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-          <tr><td><div class="tname">100일 OOTD 피드</div></td><td><span class="bdg bi">피드</span></td><td>1,230</td><td>194</td><td>102</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:58%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-          <tr><td><div class="tname">이유식 시작 D-7 준비물 리스트</div></td><td><span class="bdg bi">카드</span></td><td>988</td><td>631</td><td>29</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:49%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">📷 토이카메라(이벤트)</div><div style="font-size:10px;color:var(--ts)">[피드] 4월 3일</div></td><td><span class="bdg bi">피드</span></td><td>523</td><td>412</td><td>367</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:100%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">🎬 풍선껌 룩북 릴스</div><div style="font-size:10px;color:var(--ts)">[릴스] 4월 2일</div></td><td><span class="bdg bi">릴스</span></td><td>421</td><td>89</td><td>145</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:73%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">👕 싱글 링거 티셔츠 화보컷</div><div style="font-size:10px;color:var(--ts)">[피드] 4월 6일</div></td><td><span class="bdg bi">피드</span></td><td>378</td><td>312</td><td>198</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:69%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">🍦 아이스크림</div><div style="font-size:10px;color:var(--ts)">[피드] 4월 1일</div></td><td><span class="bdg bi">피드</span></td><td>312</td><td>298</td><td>201</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:64%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
+          <tr><td><div class="tname">👕 싱글 소매 스트라이프 티셔츠</div><div style="font-size:10px;color:var(--ts)">[피드] 4월 7일</div></td><td><span class="bdg bi">피드</span></td><td>345</td><td>289</td><td>167</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:62%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
         </tbody>
       </table></div>
     </div>
@@ -1929,7 +1929,9 @@ new Chart(document.getElementById('engChart'),{type:'line',data:{labels:['1주',
   {label:'저장',data:[410,520,480,712],borderColor:'#7A9E8E',backgroundColor:'rgba(122,158,142,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#7A9E8E'}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:9}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v}}}}});
 
-new Chart(document.getElementById('fmtChart'),{type:'doughnut',data:{labels:['릴스','카드뉴스','피드','스토리'],datasets:[{data:[42,28,18,12],backgroundColor:['#E8614A','#F7C5A8','#7A9E8E','#D4E8DF'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:9,padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}},cutout:'62%'}});
+new Chart(document.getElementById('fmtChart'),{type:'doughnut',data:{labels:['피드','릴스'],datasets:[{data:[96,4],backgroundColor:['#7A9E8E','#E8614A'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:9,padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}},cutout:'62%'}});
+
+new Chart(document.getElementById('ratingChart'),{type:'bar',data:{labels:['5점','4점','3점','2점','1점'],datasets:[{data:[892,234,78,31,12],backgroundColor:['#7A9E8E','#8DB4A0','#C5D9D2','#F2A899','#E8614A'],borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'건'}}},scales:{x:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
 
 // ── 캘린더
 let CY=NOW.getFullYear(),CM=NOW.getMonth();
@@ -2115,7 +2117,7 @@ function renderBuzzDaily(){
     const linkBtn=p.link?'<a href="'+p.link+'" target="_blank" style="font-size:11px;color:var(--coral)">↗</a>':'—';
     return '<tr class="'+(p.sent==='부정'?'issue':'')+'">'
       +'<td style="font-size:10px;color:var(--ts);white-space:nowrap">'+p.date+'</td>'
-      +'<td style="font-size:11px">'+p.cafe+'</td>'
+      +'<td style="font-size:10px;white-space:nowrap">'+p.cafe+'</td>'
       +'<td style="font-size:11px">'+p.title+'</td>'
       +'<td><span class="bdg '+(SC[p.sent]||'bne')+'">'+p.sent+'</span></td>'
       +'<td style="font-size:10px;color:var(--ts)">'+p.summary+'</td>'
