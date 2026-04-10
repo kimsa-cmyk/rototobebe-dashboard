@@ -1960,7 +1960,7 @@ function renderRodem(){
     const musinsaCell=m.musinsa>0
       ?'<div style="text-align:center;font-size:11px;color:var(--sage)">✅</div><div style="text-align:center;font-size:10px;color:var(--coral)">+'+m.musinsa.toLocaleString()+'</div>'
       :'<div style="text-align:center;font-size:10px;color:var(--bd)">—</div>';
-    const w1cell=wkCell(0,(m.w1_r||0));
+    const w1cell=wkCell(0,(m.w1_r||0))+(m.w2>0?'<div style="text-align:center;font-size:10px;color:var(--ts)">('+m.w2.toLocaleString()+')</div>':'');
     return '<tr style="'+(hasAct?'':'opacity:.5')+'">'
       +'<td style="color:var(--ts);font-size:10px">'+m.num+'</td>'
       +'<td><a href="'+igLink+'" target="_blank" style="text-decoration:none"><div class="tname" style="color:var(--coral)">'+m.name+'</div></a><div class="tig">@'+m.ig+'</div></td>'
