@@ -1734,8 +1734,10 @@ function renderMgmt() {
 }
 
 function downloadMgmtCsv() {
-  const header = '일자,주문목적,출고분류,원가,상판가,소비자가\n';
-  const body = MGMT_DATA.map(r => `${r.d},${r.p},"${r.o}",${r.c},${r.s},${r.r}`).join('\n');
+  const cols = ['발송 요청일','주문번호','수령자명','수령자주소','수령자연락처','옵션명','수량','배송메모','출고분류','제품명만','원가','상판가','소비자가','후기'];
+  const header = cols.join(',') + '\n';
+  const esc = v => { const s = String(v==null?'':v); return (s.includes(',')||s.includes('"')||s.includes('\n')) ? `"${s.replace(/"/g,'""')}"` : s; };
+  const body = MGMT_DATA.map(r => [r.d,r.p,r.nm,r.addr,r.tel,r.opt,r.qty,r.memo,r.o,r.prd,r.c,r.s,r.r,r.rev].map(esc).join(',')).join('\n');
   // UTF-8 BOM 추가 → Excel에서 한글 깨짐 없음
   const blob = new Blob(['\uFEFF' + header + body], {type: 'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
