@@ -2,7 +2,7 @@ name: 네이버 버즈 자동 업데이트
 
 on:
   schedule:
-    - cron: '0 0 * * 1'   # 매주 월요일 오전 9시 (KST = UTC+9 → UTC 00:00)
+    - cron: '0 21 * * *'  # 매일 오전 6시 KST (KST = UTC+9 → UTC 21:00)
   workflow_dispatch:        # 수동 실행 버튼
 
 jobs:
