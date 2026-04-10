@@ -1730,17 +1730,28 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   </div>
 
   <div class="card">
-    <div class="tw"><table class="tbl" style="min-width:780px">
+    <div class="tw"><table class="tbl" style="min-width:640px;table-layout:fixed;width:100%">
+      <colgroup>
+        <col style="width:28px">
+        <col style="width:130px">
+        <col style="width:65px">
+        <col style="min-width:140px">
+        <col style="width:52px">
+        <col style="width:52px">
+        <col style="width:52px">
+        <col style="width:78px">
+        <col style="width:78px">
+      </colgroup>
       <thead><tr>
-        <th style="width:28px">#</th>
-        <th style="min-width:140px">이름 / 인스타</th>
-        <th style="min-width:80px">팔로워</th>
-        <th style="min-width:160px">제품 · 스펙</th>
-        <th style="text-align:center;min-width:70px">게시물</th>
-        <th style="text-align:center;min-width:70px">댓글</th>
-        <th style="text-align:center;min-width:70px">화력<br>지원</th>
-        <th style="text-align:right;min-width:90px">이번주<br>적립금</th>
-        <th style="text-align:right;min-width:90px">누적<br>적립금</th>
+        <th>#</th>
+        <th>이름 / 인스타</th>
+        <th>팔로워</th>
+        <th>제품 · 스펙</th>
+        <th style="text-align:center">게시물</th>
+        <th style="text-align:center">댓글</th>
+        <th style="text-align:center">화력<br>지원</th>
+        <th style="text-align:right">이번주<br>적립금</th>
+        <th style="text-align:right">누적<br>적립금</th>
       </tr></thead>
       <tbody id="rodemBody"></tbody>
     </table></div>
@@ -2060,7 +2071,7 @@ function renderRodem(){
       ?'<button class="fbtn" style="font-size:10px;padding:2px 7px;margin-top:3px" onclick="showProd(\''+m.phone+'\')">제품 '+prods.length+'개</button>'
       :'<span style="font-size:10px;color:var(--bd)">—</span>';
     const specStr=(m.h||m.w||m.s)
-      ?'<div style="font-size:10px;color:var(--ts);margin-top:3px;line-height:1.6">'+(m.h?m.h:'—')+' | '+(m.w?m.w:'—')+' | '+(m.s?m.s+'size':'—')+'</div>'
+      ?'<div style="font-size:9px;color:var(--ts);margin-top:2px;line-height:1.5;white-space:nowrap">'+(m.h?m.h:'—')+' / '+(m.w?m.w:'—')+' / '+(m.s?m.s+'S':'—')+'</div>'
       :'';
     const igLink=m.ig?'https://www.instagram.com/'+m.ig+'/':'#';
     const ptStr=wpt>0?'<div class="pt">+'+wpt.toLocaleString()+'원</div>':'<div class="pt0">—</div>';
