@@ -1,0 +1,17 @@
+# API 키 - 절대 커밋 금지
+.env
+
+# 로컬 전용 파일
+.claude/
+rototobebe_dashboard_v4.html
+
+# Excel / 로컬 데이터
+01 SNS 성과/
+02 로덬메이트/
+03 데일리 버즈 모니터링/
+04 제품 관련/
+김선애 클로드/
+
+# 기타
+__pycache__/
+*.pyc
