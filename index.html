@@ -1694,13 +1694,6 @@ function renderRodem(){
   // r-active removed
   document.getElementById('r-acts').textContent=totalActs+'건';
   document.getElementById('r-pts').textContent=(1761228).toLocaleString()+'원';
-  let s_p=0,s_c=0,s_ch=0;
-  Object.values(RAW).forEach(r=>{s_p+=r.post;s_c+=r.comment;s_ch+=r.cheer;});
-  document.getElementById('s-igp').textContent=s_p;
-  document.getElementById('s-igs').textContent=s_c;
-  document.getElementById('s-igc').textContent=s_ch;
-  document.getElementById('s-vp').textContent='—';
-  document.getElementById('s-vc').textContent='—';
 
   const filtered=MEMBERS.filter(m=>{
     const sr=rSearch.toLowerCase().trim();
