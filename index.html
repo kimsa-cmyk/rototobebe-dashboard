@@ -793,7 +793,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
     <button class="tab on" onclick="goTab('sns',this)">SNS 성과</button>
     <button class="tab" onclick="goTab('rodem',this)">로덬메이트</button>
     <button class="tab" onclick="goTab('buzz',this)">버즈 모니터링</button>
-    <button class="tab" onclick="goTab('review',this)">리뷰 현황</button>
+    <button class="tab" onclick="goTab('review',this)">스탭 리뷰</button>
   </div>
   <div class="nav-r"><div class="nav-date" id="ndate"></div></div>
 </nav>
@@ -1836,49 +1836,96 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   </div>
 </section>
 
-<!-- ===== 리뷰 현황 ===== -->
+<!-- ===== 스탭 리뷰 ===== -->
 <section class="sec" id="sec-review">
   <div class="sec-hd">
-    <div><div class="sec-title">자사몰 리뷰 현황</div><div class="sec-sub">크리마 API 연동 예정 — 현재 수동 입력</div></div>
-  </div>
-  <div class="notice">⚠ <strong>크리마 API 연동 준비 중</strong> — API 키 발급 후 자동 수집 전환 예정. 연동 후 자생·로덬·스탭 리뷰가 자동 구분됩니다.</div>
-  <div class="krow">
-    <div class="kcard c1"><div class="klbl">전체 리뷰</div><input class="kinp" value="1,247" onchange="toast('저장됐어요')"><div class="kdelta up">▲ 이번 달 +38건</div></div>
-    <div class="kcard c2"><div class="klbl">평균 평점</div><input class="kinp" value="4.8" onchange="toast('저장됐어요')"><div class="kdelta up">유지</div></div>
-    <div class="kcard c3"><div class="klbl">로덬 리뷰 완료</div><input class="kinp" value="18 / 24명" onchange="toast('저장됐어요')"><div class="kdelta dn">6명 미완료</div></div>
-    <div class="kcard c5"><div class="klbl">스탭 리뷰 완료</div><input class="kinp" value="101 / 116건" onchange="toast('저장됐어요')"><div class="kdelta up">▲ 87%</div></div>
-  </div>
-  <div class="g2">
-    <div class="rtrack" style="margin-bottom:0">
-      <div class="rhd">
-        <div><div class="ctitle">자생 리뷰</div><div style="font-size:10px;color:var(--ts)">오가닉 리뷰</div></div>
-        <div style="text-align:right"><div style="font-size:18px;font-weight:700">1,192건</div><div style="font-size:10px;color:var(--ts)">전체의 95.6%</div></div>
-      </div>
-      <div class="rpr"><div class="rpn">역류방지쿠션</div><div class="rpw"><div class="rpb pc" style="width:88%"></div></div><div class="rpc" style="color:var(--coral)">847건</div></div>
-      <div class="rpr"><div class="rpn">지퍼 우주복</div><div class="rpw"><div class="rpb pc" style="width:42%"></div></div><div class="rpc" style="color:var(--coral)">203건</div></div>
-      <div class="rpr"><div class="rpn">셋업 실내복</div><div class="rpw"><div class="rpb pc" style="width:25%"></div></div><div class="rpc" style="color:var(--coral)">118건</div></div>
-      <div class="rpr"><div class="rpn">원피스</div><div class="rpw"><div class="rpb pc" style="width:10%"></div></div><div class="rpc" style="color:var(--coral)">24건</div></div>
-    </div>
-    <div class="card"><div class="ctitle">평점 분포</div><div class="csub">전체 리뷰 기준</div><div style="position:relative;height:180px"><canvas id="ratingChart"></canvas></div></div>
+    <div><div class="sec-title">스탭 리뷰</div><div class="sec-sub">제품 수령 → 리뷰 등록 진행 현황 — 수치 클릭 직접 수정 가능</div></div>
   </div>
 
-  <div class="rtrack" style="margin-top:11px">
-    <div class="rhd">
-      <div><div class="ctitle">스탭 리뷰</div><div style="font-size:10px;color:var(--ts)">스탭 아이디 기준 제품별 진척도</div></div>
-      <div style="text-align:right"><div style="font-size:18px;font-weight:700;color:var(--purple)">87%</div><div style="font-size:10px;color:var(--ts)">101 / 116건</div></div>
+  <!-- KPI -->
+  <div class="krow">
+    <div class="kcard c1">
+      <div class="klbl">전체 리뷰</div>
+      <div style="display:flex;align-items:baseline;gap:5px">
+        <input class="kinp" id="rv-done" value="101" onchange="updateReviewKpi()" style="width:44px">
+        <span style="font-size:13px;color:var(--ts)">/</span>
+        <input class="kinp" id="rv-total" value="116" onchange="updateReviewKpi()" style="width:44px">
+        <span style="font-size:11px;color:var(--ts)">건</span>
+      </div>
+      <div class="kdelta up" id="rv-pct">87% 완료</div>
     </div>
-    <div class="prog mb" style="margin-bottom:13px"><div class="pb pp" style="width:87%"></div></div>
-    <div class="tw"><table class="tbl">
-      <thead><tr><th>스탭</th><th>담당 제품</th><th>완료</th><th>전체</th><th>진척률</th></tr></thead>
-      <tbody>
-        <tr><td class="tname">김다정</td><td>34개 품목</td><td>31건</td><td>34건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:91%;height:100%;background:var(--purple);border-radius:3px"></div></div><span style="font-size:10px;color:var(--purple)">91%</span></div></td></tr>
-        <tr><td class="tname">김선애</td><td>20개 품목</td><td>19건</td><td>20건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:95%;height:100%;background:var(--purple);border-radius:3px"></div></div><span style="font-size:10px;color:var(--purple)">95%</span></div></td></tr>
-        <tr><td class="tname">김성은</td><td>18개 품목</td><td>18건</td><td>18건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--sage);border-radius:3px"></div></div><span style="font-size:10px;color:var(--sage)">100%</span></div></td></tr>
-        <tr><td class="tname">김지선</td><td>18개 품목</td><td>18건</td><td>18건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--sage);border-radius:3px"></div></div><span style="font-size:10px;color:var(--sage)">100%</span></div></td></tr>
-        <tr><td class="tname">배상현</td><td>15개 품목</td><td>15건</td><td>15건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--sage);border-radius:3px"></div></div><span style="font-size:10px;color:var(--sage)">100%</span></div></td></tr>
-        <tr><td class="tname">임승수</td><td>11개 품목</td><td>11건</td><td>11건</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--sage);border-radius:3px"></div></div><span style="font-size:10px;color:var(--sage)">100%</span></div></td></tr>
-      </tbody>
-    </table></div>
+    <div class="kcard c2"><div class="klbl">완료 인원</div><div class="kval" id="rv-complete-cnt">5명</div><div class="kdelta up">100% 달성</div></div>
+    <div class="kcard c3"><div class="klbl">진행중</div><div class="kval" id="rv-ing-cnt">1명</div><div class="kdelta dn" id="rv-ing-who">김다정 91%</div></div>
+    <div class="kcard c5"><div class="klbl">잔여 리뷰</div><div class="kval" id="rv-remain">15건</div><div class="kdelta dn">등록 대기</div></div>
+  </div>
+
+  <!-- 진행 단계 -->
+  <div class="card" style="margin-bottom:11px;overflow:visible">
+    <div class="ctitle" style="margin-bottom:20px">진행 현황</div>
+    <div style="display:flex;align-items:flex-start;gap:0;position:relative;padding:0 20px">
+      <div style="position:absolute;top:18px;left:60px;right:60px;height:2px;background:var(--bd);z-index:0"></div>
+
+      <!-- STEP 1 -->
+      <div style="flex:1;text-align:center;position:relative;z-index:1">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--sage);color:white;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:15px">✓</div>
+        <div style="font-size:12px;font-weight:600;margin-top:8px">제품 셀렉</div>
+        <div style="font-size:10px;color:var(--sage);margin-top:2px">완료</div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div style="flex:2;text-align:center;position:relative;z-index:1">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--coral);color:white;display:flex;align-items:center;justify-content:center;margin:0 auto;font-weight:700;font-size:14px">2</div>
+        <div style="font-size:12px;font-weight:600;margin-top:8px;color:var(--coral)">제품 수령</div>
+        <div style="font-size:10px;color:var(--coral);margin-top:2px">3차 진행중</div>
+        <div style="margin-top:12px;background:var(--warm);border-radius:10px;padding:12px 14px;text-align:left">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:600;color:var(--ts)">1차 발송</span>
+            <div style="display:flex;align-items:center;gap:4px">
+              <span style="font-size:11px">총</span>
+              <input class="kinp" value="00" style="width:32px;text-align:center;padding:2px 4px;font-size:11px" onchange="toast('저장됐어요')">
+              <span style="font-size:11px;color:var(--ts)">종 중</span>
+              <input class="kinp" value="00" style="width:32px;text-align:center;padding:2px 4px;font-size:11px" onchange="toast('저장됐어요')">
+              <span style="font-size:11px;color:var(--ts)">종 발송</span>
+              <span class="bdg bpos" style="font-size:9px;margin-left:4px">완료</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:600;color:var(--ts)">2차 예정</span>
+            <div style="display:flex;align-items:center;gap:4px">
+              <span style="font-size:11px">총</span>
+              <input class="kinp" value="00" style="width:32px;text-align:center;padding:2px 4px;font-size:11px" onchange="toast('저장됐어요')">
+              <span style="font-size:11px;color:var(--ts)">종 중</span>
+              <input class="kinp" value="00" style="width:32px;text-align:center;padding:2px 4px;font-size:11px" onchange="toast('저장됐어요')">
+              <span style="font-size:11px;color:var(--ts)">종 발송 예정</span>
+              <span class="bdg bne" style="font-size:9px;margin-left:4px">예정</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px;font-weight:600;color:var(--ts)">3차</span>
+            <span class="bdg bne" style="font-size:9px">미정</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div style="flex:1;text-align:center;position:relative;z-index:1">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--bd);color:var(--ts);display:flex;align-items:center;justify-content:center;margin:0 auto;font-weight:700;font-size:14px">3</div>
+        <div style="font-size:12px;font-weight:600;margin-top:8px;color:var(--ts)">리뷰 완료</div>
+        <div style="font-size:10px;color:var(--ts);margin-top:2px">87% 진행중</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 인원별 진척도 그리드 -->
+  <div style="margin-bottom:11px">
+    <div class="ctitle" style="margin-bottom:12px">인원별 진행 진척도</div>
+    <div id="staffGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
+  </div>
+
+  <!-- 인원별 제품 리스트 아코디언 -->
+  <div class="card">
+    <div class="ctitle" style="margin-bottom:14px">인원별 담당 제품 리스트</div>
+    <div id="staffAccordion"></div>
   </div>
 </section>
 
@@ -1921,6 +1968,7 @@ function goTab(id,btn){
   btn.classList.add('on');
   if(id==='rodem') renderRodem();
   if(id==='buzz') renderBuzz('all');
+  if(id==='review') renderStaffReview();
 }
 
 // ── SNS 차트
@@ -2156,6 +2204,161 @@ function renderBuzzCharts(){
 new Chart(document.getElementById('buzzChart'),{type:'bar',data:{labels:['4/2','4/3','4/4','4/5','4/6','4/7','4/8'],datasets:[{label:'자사',data:[8,12,7,14,10,9,14],backgroundColor:'#E8614A'},{label:'타사',data:[5,7,9,6,8,7,10],backgroundColor:'#D4E8DF'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:9}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}}}}});
 new Chart(document.getElementById('sentChart'),{type:'doughnut',data:{labels:['긍정','중립','부정'],datasets:[{data:[67,21,12],backgroundColor:['#7A9E8E','#EDE5DF','#F2A899'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:9,padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}},cutout:'60%'}});
 new Chart(document.getElementById('ratingChart'),{type:'bar',data:{labels:['★5','★4','★3','★2','★1'],datasets:[{data:[68,22,6,3,1],backgroundColor:['#E8614A','#F7C5A8','#EDE5DF','#D4E8DF','#7A9E8E'],borderWidth:0}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'%'}}},scales:{x:{ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}},y:{ticks:{font:{size:10}},grid:{display:false}}}}});
+
+// ── 스탭 리뷰
+const STAFF_DATA = [
+  { name:'김다정', total:34, done:31, products:[
+    {n:'싱글 소매 스트라이프 티셔츠 (화이트)',done:true},{n:'싱글 소매 스트라이프 티셔츠 (네이비)',done:true},
+    {n:'미니쭈리 소매포인트 루즈 셋업 (그린)',done:true},{n:'미니쭈리 소매포인트 루즈 셋업 (베이지)',done:true},
+    {n:'면모달 올오버 헐렁 실내복 (화이트)',done:true},{n:'면모달 올오버 헐렁 실내복 (블루)',done:true},
+    {n:'싱글 링거 티셔츠 화보컷 (레드)',done:true},{n:'싱글 링거 티셔츠 화보컷 (그린)',done:true},
+    {n:'파프리카 셋업 (오렌지)',done:true},{n:'파프리카 셋업 (퍼플)',done:true},
+    {n:'풍선껌 룩북 릴스 협업 의상',done:true},{n:'역류방지쿠션 (소형)',done:true},
+    {n:'역류방지쿠션 (대형)',done:true},{n:'지퍼 우주복 (0-3M)',done:true},
+    {n:'지퍼 우주복 (3-6M)',done:true},{n:'지퍼 우주복 (6-9M)',done:true},
+    {n:'토이카메라 이벤트 세트',done:true},{n:'도넛 쿠션',done:true},
+    {n:'스케이트보드 셋업 (블루)',done:true},{n:'스케이트보드 셋업 (레드)',done:true},
+    {n:'아이스크림 셋업 (핑크)',done:true},{n:'아이스크림 셋업 (민트)',done:true},
+    {n:'비눗방울 원피스 (화이트)',done:true},{n:'비눗방울 원피스 (옐로)',done:true},
+    {n:'봄 신상 셋업 A (코랄)',done:true},{n:'봄 신상 셋업 A (세이지)',done:true},
+    {n:'봄 신상 셋업 B (스카이)',done:true},{n:'봄 신상 셋업 B (피치)',done:true},
+    {n:'키디 라이브 전용 세트',done:true},{n:'무신사 단독 셋업 (그린)',done:true},
+    {n:'무신사 단독 셋업 (화이트)',done:true},{n:'여름 신상 선발매 A',done:false},
+    {n:'여름 신상 선발매 B',done:false},{n:'여름 신상 선발매 C',done:false}
+  ]},
+  { name:'김선애', total:20, done:19, products:[
+    {n:'싱글 소매 스트라이프 (화이트)',done:true},{n:'미니쭈리 루즈 셋업 (그린)',done:true},
+    {n:'면모달 헐렁 실내복 (화이트)',done:true},{n:'싱글 링거 티셔츠 (레드)',done:true},
+    {n:'파프리카 셋업 (오렌지)',done:true},{n:'역류방지쿠션 (소형)',done:true},
+    {n:'지퍼 우주복 (0-3M)',done:true},{n:'토이카메라 이벤트 세트',done:true},
+    {n:'도넛 쿠션',done:true},{n:'스케이트보드 셋업 (블루)',done:true},
+    {n:'아이스크림 셋업 (핑크)',done:true},{n:'비눗방울 원피스 (화이트)',done:true},
+    {n:'봄 신상 셋업 A (코랄)',done:true},{n:'봄 신상 셋업 B (스카이)',done:true},
+    {n:'키디 라이브 전용 세트',done:true},{n:'무신사 단독 셋업 (그린)',done:true},
+    {n:'여름 신상 선발매 A',done:true},{n:'여름 신상 선발매 B',done:true},
+    {n:'여름 신상 선발매 C',done:true},{n:'여름 신상 신규 D',done:false}
+  ]},
+  { name:'김성은', total:18, done:18, products:[
+    {n:'싱글 소매 스트라이프 (네이비)',done:true},{n:'미니쭈리 루즈 셋업 (베이지)',done:true},
+    {n:'면모달 헐렁 실내복 (블루)',done:true},{n:'싱글 링거 티셔츠 (그린)',done:true},
+    {n:'파프리카 셋업 (퍼플)',done:true},{n:'역류방지쿠션 (대형)',done:true},
+    {n:'지퍼 우주복 (3-6M)',done:true},{n:'토이카메라 이벤트 세트',done:true},
+    {n:'스케이트보드 셋업 (레드)',done:true},{n:'아이스크림 셋업 (민트)',done:true},
+    {n:'비눗방울 원피스 (옐로)',done:true},{n:'봄 신상 셋업 A (세이지)',done:true},
+    {n:'봄 신상 셋업 B (피치)',done:true},{n:'무신사 단독 셋업 (화이트)',done:true},
+    {n:'여름 신상 선발매 A',done:true},{n:'여름 신상 선발매 B',done:true},
+    {n:'여름 신상 선발매 C',done:true},{n:'여름 신상 신규 D',done:true}
+  ]},
+  { name:'김지선', total:18, done:18, products:[
+    {n:'싱글 소매 스트라이프 (화이트)',done:true},{n:'미니쭈리 루즈 셋업 (그린)',done:true},
+    {n:'면모달 헐렁 실내복 (화이트)',done:true},{n:'싱글 링거 티셔츠 (레드)',done:true},
+    {n:'파프리카 셋업 (오렌지)',done:true},{n:'역류방지쿠션 (소형)',done:true},
+    {n:'지퍼 우주복 (6-9M)',done:true},{n:'도넛 쿠션',done:true},
+    {n:'스케이트보드 셋업 (블루)',done:true},{n:'아이스크림 셋업 (핑크)',done:true},
+    {n:'비눗방울 원피스 (화이트)',done:true},{n:'봄 신상 셋업 A (코랄)',done:true},
+    {n:'봄 신상 셋업 B (스카이)',done:true},{n:'키디 라이브 전용 세트',done:true},
+    {n:'여름 신상 선발매 A',done:true},{n:'여름 신상 선발매 B',done:true},
+    {n:'여름 신상 선발매 C',done:true},{n:'여름 신상 신규 D',done:true}
+  ]},
+  { name:'배상현', total:15, done:15, products:[
+    {n:'싱글 소매 스트라이프 (네이비)',done:true},{n:'미니쭈리 루즈 셋업 (베이지)',done:true},
+    {n:'면모달 헐렁 실내복 (블루)',done:true},{n:'역류방지쿠션 (대형)',done:true},
+    {n:'지퍼 우주복 (0-3M)',done:true},{n:'토이카메라 이벤트 세트',done:true},
+    {n:'스케이트보드 셋업 (레드)',done:true},{n:'아이스크림 셋업 (민트)',done:true},
+    {n:'비눗방울 원피스 (옐로)',done:true},{n:'봄 신상 셋업 A (세이지)',done:true},
+    {n:'봄 신상 셋업 B (피치)',done:true},{n:'무신사 단독 셋업 (그린)',done:true},
+    {n:'여름 신상 선발매 A',done:true},{n:'여름 신상 선발매 B',done:true},
+    {n:'여름 신상 선발매 C',done:true}
+  ]},
+  { name:'임승수', total:11, done:11, products:[
+    {n:'싱글 소매 스트라이프 (화이트)',done:true},{n:'미니쭈리 루즈 셋업 (그린)',done:true},
+    {n:'역류방지쿠션 (소형)',done:true},{n:'지퍼 우주복 (3-6M)',done:true},
+    {n:'스케이트보드 셋업 (블루)',done:true},{n:'아이스크림 셋업 (핑크)',done:true},
+    {n:'비눗방울 원피스 (화이트)',done:true},{n:'봄 신상 셋업 A (코랄)',done:true},
+    {n:'여름 신상 선발매 A',done:true},{n:'여름 신상 선발매 B',done:true},
+    {n:'여름 신상 선발매 C',done:true}
+  ]}
+];
+
+function updateReviewKpi(){
+  const done=parseInt(document.getElementById('rv-done').value)||0;
+  const total=parseInt(document.getElementById('rv-total').value)||0;
+  const pct=total>0?Math.round(done/total*100):0;
+  document.getElementById('rv-pct').textContent=pct+'% 완료';
+  document.getElementById('rv-remain').textContent=(total-done)+'건';
+  toast('저장됐어요');
+}
+
+function renderStaffReview(){
+  // 진척도 카드
+  const grid=document.getElementById('staffGrid');
+  if(!grid||grid.dataset.rendered) return;
+  grid.dataset.rendered='1';
+  const colors={100:'var(--sage)',91:'var(--purple)',95:'var(--purple)'};
+  grid.innerHTML=STAFF_DATA.map(s=>{
+    const pct=Math.round(s.done/s.total*100);
+    const col=pct===100?'var(--sage)':'var(--purple)';
+    const remaining=s.total-s.done;
+    return `<div class="card" style="padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="tname" style="font-size:13px">${s.name}</div>
+        <div style="font-size:18px;font-weight:700;color:${col}">${pct}%</div>
+      </div>
+      <div style="height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-bottom:8px">
+        <div style="width:${pct}%;height:100%;background:${col};border-radius:3px;transition:width .4s"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ts)">
+        <span>${s.done} / ${s.total}개</span>
+        <span style="color:${remaining>0?'var(--coral)':'var(--sage)'}">${remaining>0?remaining+'건 남음':'완료 ✓'}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 아코디언
+  const acc=document.getElementById('staffAccordion');
+  if(!acc) return;
+  acc.innerHTML=STAFF_DATA.map((s,i)=>{
+    const pct=Math.round(s.done/s.total*100);
+    const doneItems=s.products.filter(p=>p.done);
+    const pendItems=s.products.filter(p=>!p.done);
+    const col=pct===100?'var(--sage)':'var(--purple)';
+    const prodHtml=`
+      ${pendItems.length>0?`<div style="margin-bottom:10px">
+        <div style="font-size:10px;font-weight:600;color:var(--coral);margin-bottom:6px">진행중 (${pendItems.length}건)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          ${pendItems.map(p=>`<span style="font-size:10px;background:#FFF0EE;color:var(--coral);border:1px solid #FFCCC6;border-radius:5px;padding:2px 8px">${p.n}</span>`).join('')}
+        </div>
+      </div>`:''}
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--sage);margin-bottom:6px">완료 (${doneItems.length}건)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          ${doneItems.map(p=>`<span style="font-size:10px;background:#F0F5F2;color:var(--sage);border:1px solid #C5D9D2;border-radius:5px;padding:2px 8px">${p.n}</span>`).join('')}
+        </div>
+      </div>`;
+    return `<div style="border-bottom:1px solid var(--bd)">
+      <div onclick="toggleAcc(${i})" style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;cursor:pointer">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="tname" style="font-size:13px">${s.name}</span>
+          <span style="font-size:11px;color:var(--ts)">${s.total}개 품목</span>
+          ${pendItems.length>0?`<span class="bdg" style="background:#FFF0EE;color:var(--coral);border:none;font-size:9px">${pendItems.length}건 진행중</span>`:`<span class="bdg" style="background:#F0F5F2;color:var(--sage);border:none;font-size:9px">완료 ✓</span>`}
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:13px;font-weight:700;color:${col}">${pct}%</span>
+          <span id="acc-icon-${i}" style="color:var(--ts);font-size:12px;transition:transform .2s">▼</span>
+        </div>
+      </div>
+      <div id="acc-body-${i}" style="display:none;padding:0 4px 14px">${prodHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleAcc(i){
+  const body=document.getElementById('acc-body-'+i);
+  const icon=document.getElementById('acc-icon-'+i);
+  const open=body.style.display==='none';
+  body.style.display=open?'block':'none';
+  icon.style.transform=open?'rotate(180deg)':'';
+}
 
 // ── init
 drawCal();
