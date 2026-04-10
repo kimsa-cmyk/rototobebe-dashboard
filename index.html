@@ -2084,10 +2084,10 @@ function renderRodem(){
     const an=v=>v>0?'<div class="anum">'+v+'</div>':'<div class="azero">—</div>';
     const prods=PROD[m.phone]||[];
     const prodBtn=prods.length>0
-      ?'<button class="fbtn" style="font-size:10px;padding:2px 7px;margin-top:3px" onclick="showProd(\''+m.phone+'\')">제품 '+prods.length+'개</button>'
+      ?'<button class="fbtn" style="font-size:10px;padding:2px 7px;flex-shrink:0" onclick="showProd(\''+m.phone+'\')">제품 '+prods.length+'개</button>'
       :'<span style="font-size:10px;color:var(--bd)">—</span>';
     const specStr=(m.h||m.w||m.s)
-      ?'<div style="font-size:9px;color:var(--ts);margin-top:2px;line-height:1.5;white-space:nowrap">'+(m.h?m.h:'—')+' / '+(m.w?m.w:'—')+' / '+(m.s?m.s+'S':'—')+'</div>'
+      ?'<span style="font-size:9px;color:var(--ts);white-space:nowrap">'+(m.h?m.h:'—')+' / '+(m.w?m.w:'—')+' / '+(m.s?m.s+'S':'—')+'</span>'
       :'';
     const igLink=m.ig?'https://www.instagram.com/'+m.ig+'/':'#';
     const ptStr=wpt>0?'<div class="pt">+'+wpt.toLocaleString()+'원</div>':'<div class="pt0">—</div>';
@@ -2096,7 +2096,7 @@ function renderRodem(){
       +'<td style="color:var(--ts);font-size:10px">'+m.num+'</td>'
       +'<td><a href="'+igLink+'" target="_blank" style="text-decoration:none"><div class="tname" style="color:var(--coral)">'+m.name+'</div></a><div class="tig">@'+m.ig+'</div></td>'
       +'<td style="font-size:11px">'+(m.follower||'—')+'</td>'
-      +'<td>'+prodBtn+specStr+'</td>'
+      +'<td><div style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap">'+prodBtn+specStr+'</div></td>'
       +'<td>'+an(r.post)+'</td>'
       +'<td>'+an(r.comment)+'</td>'
       +'<td>'+an(r.cheer)+'</td>'
