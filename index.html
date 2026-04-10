@@ -773,6 +773,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 .sub-tab:hover{color:var(--coral);}
 .sub-tab.on{color:var(--coral);border-bottom-color:var(--coral);font-weight:500;}
 .sub-panel{display:none;}.sub-panel.on{display:block;}
+.period-tabs{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
+.ptab{padding:5px 14px;font-size:11px;font-weight:500;color:var(--tm);cursor:pointer;border:1px solid var(--bd);border-radius:20px;background:var(--warm);font-family:inherit;transition:all .15s;white-space:nowrap;}
+.ptab:hover{border-color:var(--coral-m);color:var(--coral);}
+.ptab.on{background:var(--coral-m);color:#fff;border-color:var(--coral-m);}
+.ptab-range{font-size:10px;margin-left:3px;opacity:.8;}
 .report-wrap{margin-top:0;}
 .report-wrap .container{padding:0.5rem 0;max-width:100%;}
 .report-wrap .page{display:none;box-shadow:none;border-radius:11px;border:1px solid var(--bd);overflow:hidden;}
@@ -828,274 +833,113 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       <div class="card"><div class="ctitle">주간 인게이지먼트</div><div class="csub">좋아요 + 저장 + 댓글</div><div style="position:relative;height:180px"><canvas id="engChart"></canvas></div></div>
       <div class="card"><div class="ctitle">포맷별 저장율</div><div class="csub">이번 달 게시물 분석</div><div style="position:relative;height:180px"><canvas id="fmtChart"></canvas></div></div>
     </div>
-    <div class="sec-hd" style="margin-bottom:.8rem;">
-      <div><div class="sec-title" style="font-size:14px;">발행 일정</div><div class="sec-sub">날짜 클릭 시 일정 추가</div></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <span style="font-size:10px;color:var(--ts);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#E8614A;display:inline-block;"></span>IG</span>
-        <span style="font-size:10px;color:var(--ts);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#7A9E8E;display:inline-block;"></span>블로그</span>
-        <span style="font-size:10px;color:var(--ts);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#7B75C9;display:inline-block;"></span>무신사</span>
-        <span style="font-size:10px;color:var(--ts);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#F59E0B;display:inline-block;"></span>협업</span>
-      </div>
+    <!-- 기간 탭 -->
+    <div class="period-tabs" id="periodTabs">
+      <button class="ptab on" onclick="switchPeriod('all',this)">🌞 여름 <span class="ptab-range">4월 누적</span></button>
+      <button class="ptab" onclick="switchPeriod('w1',this)">4월 1주차 <span class="ptab-range">3/29-4/4</span></button>
+      <button class="ptab" onclick="switchPeriod('w2',this)">4월 2주차 <span class="ptab-range">4/5-4/11</span></button>
     </div>
-    <div class="cal mb">
-      <div class="cal-nav">
-        <button class="cal-btn" onclick="cm(-1)">‹</button>
-        <div class="cal-mnth" id="cml"></div>
-        <button class="cal-btn" onclick="cm(1)">›</button>
-      </div>
-      <div class="cal-hr"><div class="cal-hc">월</div><div class="cal-hc">화</div><div class="cal-hc">수</div><div class="cal-hc">목</div><div class="cal-hc">금</div><div class="cal-hc" style="color:var(--coral)">토</div><div class="cal-hc" style="color:var(--coral)">일</div></div>
-      <div class="cal-gr" id="calg"></div>
+
+    <!-- KPI + 성과 섹션 -->
+    <div class="report-wrap" style="margin-bottom:0">
+      <div id="kpiGrid" class="kpi-grid" style="margin-bottom:1rem"></div>
     </div>
+
     <div class="card">
       <div class="ctitle" style="margin-bottom:11px">인기 콘텐츠 TOP 5</div>
       <div class="tw"><table class="tbl" style="width:100%">
-        <thead><tr><th>콘텐츠</th><th>유형</th><th>좋아요</th><th>저장</th><th>댓글</th><th>성과</th></tr></thead>
-        <tbody>
-          <tr><td><div class="tname">📷 토이카메라(이벤트)</div><div style="font-size:10px;color:var(--ts)">[피드] 4월 3일</div></td><td><span class="bdg bi">피드</span></td><td>523</td><td>412</td><td>367</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:100%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-          <tr><td><div class="tname">🎬 풍선껌 룩북 릴스</div><div style="font-size:10px;color:var(--ts)">[릴스] 4월 2일</div></td><td><span class="bdg bi">릴스</span></td><td>421</td><td>89</td><td>145</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:73%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-          <tr><td><div class="tname">👕 싱글 링거 티셔츠 화보컷</div><div style="font-size:10px;color:var(--ts)">[피드] 4월 6일</div></td><td><span class="bdg bi">피드</span></td><td>378</td><td>312</td><td>198</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:69%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-          <tr><td><div class="tname">🍦 아이스크림</div><div style="font-size:10px;color:var(--ts)">[피드] 4월 1일</div></td><td><span class="bdg bi">피드</span></td><td>312</td><td>298</td><td>201</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:64%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-          <tr><td><div class="tname">👕 싱글 소매 스트라이프 티셔츠</div><div style="font-size:10px;color:var(--ts)">[피드] 4월 7일</div></td><td><span class="bdg bi">피드</span></td><td>345</td><td>289</td><td>167</td><td><div style="width:70px;height:5px;background:var(--bd);border-radius:3px"><div style="width:62%;height:100%;background:var(--coral-m);border-radius:3px"></div></div></td></tr>
-        </tbody>
+        <thead><tr><th>콘텐츠</th><th>유형</th><th>조회</th><th>반응</th><th>좋아요</th><th>댓글</th><th>저장</th><th>공유</th><th>성과</th></tr></thead>
+        <tbody id="top5tbody"></tbody>
       </table></div>
+    </div>
+
+    <!-- 유형별 성과 · 트렌드 · 인사이트 -->
+    <div class="report-wrap" style="margin-top:12px;margin-bottom:0">
+      <div class="section" id="typeSection"></div>
+
+      <div class="section">
+        <div class="section-title">📅 주간 성과 트렌드</div>
+        <div class="chart-row">
+          <div class="chart-box">
+            <div class="chart-title">일일 평균 조회수</div>
+            <div class="mini-bar">
+              <div class="bar highlight" style="height:68%" title="월"><div class="bar-value">31.2K</div><div class="bar-label">월</div></div>
+              <div class="bar" style="height:62%" title="화"><div class="bar-value">28.4K</div><div class="bar-label">화</div></div>
+              <div class="bar" style="height:58%" title="수"><div class="bar-value">26.5K</div><div class="bar-label">수</div></div>
+              <div class="bar" style="height:71%" title="목"><div class="bar-value">32.8K</div><div class="bar-label">목</div></div>
+              <div class="bar highlight" style="height:90%" title="금"><div class="bar-value">41.4K</div><div class="bar-label">금</div></div>
+              <div class="bar" style="height:52%" title="토"><div class="bar-value">23.9K</div><div class="bar-label">토</div></div>
+              <div class="bar" style="height:48%" title="일"><div class="bar-value">22.1K</div><div class="bar-label">일</div></div>
+            </div>
+          </div>
+          <div class="chart-box" id="metricsBox"></div>
+        </div>
+      </div>
+
+      <div class="section" id="insightSection"></div>
+    </div>
+
+    <!-- 광고 집행 요청 -->
+    <div class="card" style="margin-top:12px">
+      <div class="ctitle" style="margin-bottom:11px">📢 광고 집행 요청 콘텐츠</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="https://www.instagram.com/p/DWlipegE-IS/?img_index=1" target="_blank" style="text-decoration:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f8f9fb;border-radius:10px;border-left:3px solid #FF6B9D">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1a1a1a">🍦 아이스크림</div>
+              <div style="font-size:11px;color:#999;margin-top:2px">요청일 4/10</div>
+            </div>
+            <span style="font-size:10px;font-weight:700;background:#FF6B9D;color:#fff;padding:3px 8px;border-radius:10px;white-space:nowrap">광고 집행</span>
+          </div>
+        </a>
+        <a href="https://www.instagram.com/p/DWntb-BE9dY/?img_index=1" target="_blank" style="text-decoration:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f8f9fb;border-radius:10px;border-left:3px solid #378ADD">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1a1a1a">🫧 비눗방울</div>
+              <div style="font-size:11px;color:#999;margin-top:2px">요청일 4/10</div>
+            </div>
+            <span style="font-size:10px;font-weight:700;background:#378ADD;color:#fff;padding:3px 8px;border-radius:10px;white-space:nowrap">광고 집행</span>
+          </div>
+        </a>
+        <a href="https://www.instagram.com/p/DWqsSnAkzAU/" target="_blank" style="text-decoration:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f8f9fb;border-radius:10px;border-left:3px solid #FF9500">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1a1a1a">📷 토이카메라(이벤트)</div>
+              <div style="font-size:11px;color:#999;margin-top:2px">요청일 4/10</div>
+            </div>
+            <span style="font-size:10px;font-weight:700;background:#FF9500;color:#fff;padding:3px 8px;border-radius:10px;white-space:nowrap">광고 집행</span>
+          </div>
+        </a>
+        <a href="https://www.instagram.com/p/DW3kv89Ey9g/?img_index=1" target="_blank" style="text-decoration:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f8f9fb;border-radius:10px;border-left:3px solid #34C759">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1a1a1a">👕 무신사 단독-민소매</div>
+              <div style="font-size:11px;color:#999;margin-top:2px">요청일 4/10</div>
+            </div>
+            <span style="font-size:10px;font-weight:700;background:#34C759;color:#fff;padding:3px 8px;border-radius:10px;white-space:nowrap">광고 집행</span>
+          </div>
+        </a>
+        <a href="https://www.instagram.com/p/DW6JFTLk_FO/?img_index=1" target="_blank" style="text-decoration:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#f8f9fb;border-radius:10px;border-left:3px solid #7B61FF">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1a1a1a">👕 무신사 단독-반팔</div>
+              <div style="font-size:11px;color:#999;margin-top:2px">요청일 4/10</div>
+            </div>
+            <span style="font-size:10px;font-weight:700;background:#7B61FF;color:#fff;padding:3px 8px;border-radius:10px;white-space:nowrap">광고 집행</span>
+          </div>
+        </a>
+      </div>
     </div>
   </div><!-- /sub-overview -->
 
-  <!-- 4월 성과 리포트 패널 -->
+  <!-- 콘텐츠별 세부 분석 패널 -->
   <div class="sub-panel" id="sub-report">
-<div class="report-wrap">
-
-  <!-- 탭 버튼 헤더 -->
-  <div class="header-bar">
-    <div class="tab-buttons">
-      <button class="tab-btn active" onclick="switchTab('summary')">
-        📊 성과 리포트
-      </button>
-      <button class="tab-btn" onclick="switchTab('detail')">
-        📋 콘텐츠별 세부 분석
-      </button>
-    </div>
-  </div>
-
-  <!-- 메인 컨테이너 -->
-  <div class="container">
-    <!-- ===== 페이지 1: 메인 서머리 ===== -->
-    <div id="summary" class="page active">
-      <div class="summary-page">
-        <!-- 헤더 -->
-        <div class="header">
-          <div class="header-title">🎬 rototobebe 2026년 4월 성과 리포트</div>
-          <div class="header-subtitle">인스타그램 채널 월간 핵심 성과 요약</div>
-          <div class="header-period">4월 1일(수) ~ 4월 7일(월) | 9개 콘텐츠 분석</div>
-        </div>
-
-        <!-- 핵심 KPI -->
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-label">총 조회수</div>
-            <div class="kpi-value">268.3K</div>
-            <div class="kpi-change up">↑ 전월 대비 25% 증가</div>
-          </div>
-          <div class="kpi-card accent2">
-            <div class="kpi-label">총 도달</div>
-            <div class="kpi-value">268.3K</div>
-            <div class="kpi-change up">↑ 평균 도달률 62%</div>
-          </div>
-          <div class="kpi-card accent3">
-            <div class="kpi-label">총 좋아요</div>
-            <div class="kpi-value">2,927</div>
-            <div class="kpi-change up">↑ 콘텐츠당 평균 325개</div>
-          </div>
-          <div class="kpi-card accent4">
-            <div class="kpi-label">평균 조회</div>
-            <div class="kpi-value">29.8K</div>
-            <div class="kpi-change">콘텐츠당 평균 성과</div>
-          </div>
-        </div>
-
-        <!-- 포스트별 성과 -->
-        <div class="section">
-          <div class="section-title">📈 TOP 3 최고 성과 콘텐츠</div>
-          <div class="top-posts">
-            <div class="post-item">
-              <div class="post-rank">1</div>
-              <div class="post-info">
-                <div class="post-name">토이카메라(이벤트)</div>
-                <div class="post-type">[피드] 4월 3일 오후 8:00</div>
-              </div>
-              <div class="post-stats">
-                <div class="post-stat">
-                  <div class="post-stat-label">조회</div>
-                  <div class="post-stat-value">41.4K</div>
-                </div>
-                <div class="post-stat">
-                  <div class="post-stat-label">반응</div>
-                  <div class="post-stat-value">1,234</div>
-                </div>
-                <div class="post-stat">
-                  <div class="post-stat-label">저장</div>
-                  <div class="post-stat-value">412</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="post-item">
-              <div class="post-rank">2</div>
-              <div class="post-info">
-                <div class="post-name">아이스크림</div>
-                <div class="post-type">[피드] 4월 1일 오후 8:00</div>
-              </div>
-              <div class="post-stats">
-                <div class="post-stat">
-                  <div class="post-stat-label">조회</div>
-                  <div class="post-stat-value">39.6K</div>
-                </div>
-                <div class="post-stat">
-                  <div class="post-stat-label">반응</div>
-                  <div class="post-stat-value">1,124</div>
-                </div>
-                <div class="post-stat">
-                  <div class="post-stat-label">저장</div>
-                  <div class="post-stat-value">298</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="post-item">
-              <div class="post-rank">3</div>
-              <div class="post-info">
-                <div class="post-name">싱글 링거 티셔츠 화보컷</div>
-                <div class="post-type">[피드] 4월 6일 오후 4:06</div>
-              </div>
-              <div class="post-stats">
-                <div class="post-stat">
-                  <div class="post-stat-label">조회</div>
-                  <div class="post-stat-value">35.7K</div>
-                </div>
-                <div class="post-stat">
-                  <div class="post-stat-label">반응</div>
-                  <div class="post-stat-value">1,287</div>
-                </div>
-                <div class="post-stat">
-                  <div class="post-stat-label">저장</div>
-                  <div class="post-stat-value">312</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 콘텐츠 유형별 성과 -->
-        <div class="section">
-          <div class="section-title">📊 콘텐츠 유형별 성과</div>
-          <div class="content-type-grid">
-            <div class="content-type-card">
-              <div class="content-type-icon">📸</div>
-              <div class="content-type-label">피드</div>
-              <div class="content-type-value">8개</div>
-              <div class="content-type-percentage">평균 31.8K 조회</div>
-            </div>
-            <div class="content-type-card">
-              <div class="content-type-icon">🎬</div>
-              <div class="content-type-label">릴스</div>
-              <div class="content-type-value">1개</div>
-              <div class="content-type-percentage">20.8K 조회</div>
-            </div>
-            <div class="content-type-card">
-              <div class="content-type-icon">⭐</div>
-              <div class="content-type-label">최고 성과</div>
-              <div class="content-type-value">41.4K</div>
-              <div class="content-type-percentage">토이카메라 이벤트</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 주간 성과 트렌드 -->
-        <div class="section">
-          <div class="section-title">📅 주간 성과 트렌드</div>
-          <div class="chart-row">
-            <div class="chart-box">
-              <div class="chart-title">일일 평균 조회수</div>
-              <div class="mini-bar">
-                <div class="bar highlight" style="height: 68%;" title="월"><div class="bar-value">31.2K</div><div class="bar-label">월</div></div>
-                <div class="bar" style="height: 62%;" title="화"><div class="bar-value">28.4K</div><div class="bar-label">화</div></div>
-                <div class="bar" style="height: 58%;" title="수"><div class="bar-value">26.5K</div><div class="bar-label">수</div></div>
-                <div class="bar" style="height: 71%;" title="목"><div class="bar-value">32.8K</div><div class="bar-label">목</div></div>
-                <div class="bar highlight" style="height: 90%;" title="금"><div class="bar-value">41.4K</div><div class="bar-label">금</div></div>
-                <div class="bar" style="height: 52%;" title="토"><div class="bar-value">23.9K</div><div class="bar-label">토</div></div>
-                <div class="bar" style="height: 48%;" title="일"><div class="bar-value">22.1K</div><div class="bar-label">일</div></div>
-              </div>
-            </div>
-            <div class="chart-box">
-              <div class="chart-title">주요 성과 지표</div>
-              <div class="metric-row">
-                <div class="metric-label">콘텐츠당 평균 좋아요</div>
-                <div class="metric-value">325개</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">콘텐츠당 평균 저장</div>
-                <div class="metric-value">295개</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">콘텐츠당 평균 댓글</div>
-                <div class="metric-value">169개</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">전체 팔로워 반응</div>
-                <div class="metric-value">8,324명</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">팔로워 반응률</div>
-                <div class="metric-value">62.3%</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 핵심 인사이트 -->
-        <div class="section">
-          <div class="section-title">💡 핵심 인사이트</div>
-          <div class="summary-text">
-            <strong>✓ 강점</strong><br>
-            • 이벤트 콘텐츠(토이카메라) 최강 성과 - 41.4K 조회, 523 좋아요로 전체 최고<br>
-            • 피드 콘텐츠 평균 조회수 31.8K로 안정적이고 강력한 성과 유지<br>
-            • 금요일 발행 콘텐츠 최고 성과 (41.4K) - 주중 후반 집중 전략 효과 입증<br>
-            • 콘텐츠당 평균 반응율 62.3% - 매우 높은 팔로워 참여도<br>
-            <br>
-            <strong>✓ 개선 기회</strong><br>
-            • 릴스 콘텐츠 성과 상대적으로 낮음 (20.8K) - 릴스 포맷 및 길이 최적화 필요<br>
-            • 주말(토,일) 성과 저하 - 평일 집중 발행 전략 유지<br>
-            • 외부 링크 클릭율 개선 필요 - CTA(행동 유도) 강화 필요<br>
-            <br>
-            <strong>✓ 추천 액션</strong><br>
-            • 다음 달: 이벤트 콘텐츠 비중 증대 & 릴스 포맷 개선 (최소 30초 이상)<br>
-            • 금요일 오후 3시~8시 시간대 집중 발행 유지<br>
-            • 화장품/콜라보 관련 콘텐츠 강화 - 높은 저장율 기록
-          </div>
-        </div>
+    <div class="report-wrap">
+      <div class="filter-tabs" id="filterTabs"></div>
+      <div class="carousel-container">
+        <div class="content-cards" id="contentCards"></div>
       </div>
     </div>
-
-    <!-- ===== 페이지 2: 콘텐츠별 세부 분석 ===== -->
-    <div id="detail" class="page">
-      <div class="detail-page">
-        <div class="detail-header">
-          <div class="detail-title">📋 콘텐츠별 세부 분석</div>
-          <p style="color: #999; margin-top: 0.5rem; font-size: 13px;">각 콘텐츠의 상세 성과 지표 및 조회 출처 분석 - 오른쪽으로 스크롤하여 모든 콘텐츠 확인</p>
-        </div>
-
-        <div class="filter-tabs" id="filterTabs"></div>
-
-        <div class="carousel-container">
-          <div class="content-cards" id="contentCards"></div>
-        </div>
-
-        <div class="scroll-hint">
-          👉 오른쪽으로 스크롤하여 모든 콘텐츠의 세부 분석을 확인하세요.
-        </div>
-      </div>
-    </div>
-  </div>
 
   <script>
     const postsData = [
@@ -1172,7 +1016,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
         const nonFollowerActs = totalActs - followerActs;
         
         return `
-          <div class="card">
+          <div class="card" data-id="${post.id}">
             <div class="card-header">
               <img class="card-thumb" src="${post.img}" alt="${post.name}">
               <div class="card-meta">
@@ -1276,9 +1120,195 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       }).join('');
     }
 
+    function renderTop5(dateFilter) {
+      const metricDefs = [
+        { key: 'impressions', label: '조회' },
+        { key: 'followers',   label: '반응' },
+        { key: 'likes',       label: '좋아요' },
+        { key: 'comments',    label: '댓글' },
+        { key: 'saves',       label: '저장' },
+        { key: 'shares',      label: '공유' }
+      ];
+      const maxVals = {};
+      metricDefs.forEach(({ key }) => {
+        maxVals[key] = Math.max(...postsData.map(p => p[key] || 0));
+      });
+
+      const pool = dateFilter
+        ? postsData.filter(p => p.date >= dateFilter.from && p.date <= dateFilter.to)
+        : postsData;
+      const scored = pool.map(p => ({
+        ...p,
+        score: (p.likes || 0) + (p.saves || 0) + (p.comments || 0) + (p.shares || 0)
+      })).sort((a, b) => b.score - a.score);
+
+      const top5 = scored.slice(0, 5);
+
+      const tbody = document.getElementById('top5tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = top5.map(p => {
+        const d = new Date(p.date);
+        const dateStr = `${d.getMonth() + 1}월 ${d.getDate()}일`;
+        const typeLabel = p.type === '[릴스]' ? '릴스' : '피드';
+        const emoji = p.type === '[릴스]' ? '🎬' : '📷';
+        const views = (p.impressions / 1000).toFixed(1) + 'K';
+
+        // 전체 대비 상위 지표 최대 3개 산출
+        const badgeColors = { '조회':'#378ADD', '반응':'#7B61FF', '좋아요':'#FF6B9D', '댓글':'#FF9500', '저장':'#34C759', '공유':'#FF3B30' };
+        const normed = metricDefs.map(({ key, label }) => ({
+          label,
+          norm: maxVals[key] > 0 ? (p[key] || 0) / maxVals[key] : 0
+        })).sort((a, b) => b.norm - a.norm);
+        const topMetrics = normed.filter((m, i) => i === 0 || m.norm >= normed[0].norm * 0.85).slice(0, 3);
+        const badges = topMetrics.map(m =>
+          `<span style="display:inline-block;background:${badgeColors[m.label]};color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;margin:1px 1px">${m.label} 최강</span>`
+        ).join('');
+
+        return `<tr style="cursor:pointer" onclick="goToDetailContent(${p.id})">
+          <td style="max-width:180px;width:180px"><div class="tname" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:175px">${emoji} ${p.name}</div><div style="font-size:10px;color:var(--ts)">${p.type} ${dateStr}</div></td>
+          <td><span class="bdg bi">${typeLabel}</span></td>
+          <td>${views}</td>
+          <td>${(p.followers || 0).toLocaleString()}</td>
+          <td>${p.likes}</td>
+          <td>${p.comments}</td>
+          <td>${p.saves}</td>
+          <td>${p.shares || 0}</td>
+          <td style="min-width:90px">${badges}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ===== 기간별 데이터 =====
+    const periodData = {
+      all: {
+        kpi: [
+          { label:'총 조회수',  value:'268.3K', note:'↑ 전월 대비 25% 증가', cls:'up', accent:'' },
+          { label:'총 도달',    value:'268.3K', note:'↑ 평균 도달률 62%',    cls:'up', accent:'accent2' },
+          { label:'총 좋아요',  value:'2,927',  note:'↑ 콘텐츠당 평균 325개', cls:'up', accent:'accent3' },
+          { label:'평균 조회',  value:'29.8K',  note:'콘텐츠당 평균 성과',    cls:'',   accent:'accent4' }
+        ],
+        types: [
+          { icon:'📸', label:'피드',    value:'8개',   pct:'평균 31.8K 조회' },
+          { icon:'🎬', label:'릴스',    value:'1개',   pct:'20.8K 조회' },
+          { icon:'⭐', label:'최고 성과', value:'41.4K', pct:'토이카메라 이벤트' }
+        ],
+        metrics: [
+          { label:'콘텐츠당 평균 좋아요', value:'325개' },
+          { label:'콘텐츠당 평균 저장',  value:'295개' },
+          { label:'콘텐츠당 평균 댓글',  value:'169개' },
+          { label:'전체 팔로워 반응',    value:'8,324명' },
+          { label:'팔로워 반응률',       value:'62.3%' }
+        ],
+        insight: {
+          strengths: ['이벤트 콘텐츠(토이카메라) 최강 성과 - 41.4K 조회, 523 좋아요로 전체 최고','피드 콘텐츠 평균 조회수 31.8K로 안정적이고 강력한 성과 유지','금요일 발행 콘텐츠 최고 성과 (41.4K) - 주중 후반 집중 전략 효과 입증','콘텐츠당 평균 반응율 62.3% - 매우 높은 팔로워 참여도'],
+          improve:   ['릴스 콘텐츠 성과 상대적으로 낮음 (20.8K) - 릴스 포맷 및 길이 최적화 필요','주말(토,일) 성과 저하 - 평일 집중 발행 전략 유지','외부 링크 클릭율 개선 필요 - CTA(행동 유도) 강화 필요'],
+          action:    ['다음 달: 이벤트 콘텐츠 비중 증대 & 릴스 포맷 개선 (최소 30초 이상)','금요일 오후 3시~8시 시간대 집중 발행 유지','화장품/콜라보 관련 콘텐츠 강화 - 높은 저장율 기록']
+        },
+        dateFilter: null
+      },
+      w1: {
+        kpi: [
+          { label:'총 조회수',  value:'159.1K', note:'↑ 5개 콘텐츠 기준',      cls:'up', accent:'' },
+          { label:'총 도달',    value:'159.1K', note:'↑ 평균 도달률 63%',      cls:'up', accent:'accent2' },
+          { label:'총 좋아요',  value:'1,781',  note:'콘텐츠당 평균 356개',    cls:'up', accent:'accent3' },
+          { label:'평균 조회',  value:'31.8K',  note:'콘텐츠당 평균 성과',     cls:'',   accent:'accent4' }
+        ],
+        types: [
+          { icon:'📸', label:'피드',    value:'4개',   pct:'평균 34.6K 조회' },
+          { icon:'🎬', label:'릴스',    value:'1개',   pct:'20.8K 조회' },
+          { icon:'⭐', label:'최고 성과', value:'41.4K', pct:'토이카메라 이벤트' }
+        ],
+        metrics: [
+          { label:'콘텐츠당 평균 좋아요', value:'356개' },
+          { label:'콘텐츠당 평균 저장',  value:'247개' },
+          { label:'콘텐츠당 평균 댓글',  value:'212개' },
+          { label:'전체 팔로워 반응',    value:'5,146명' },
+          { label:'팔로워 반응률',       value:'63.1%' }
+        ],
+        insight: {
+          strengths: ['토이카메라 이벤트 41.4K 조회로 주차 최고 성과','아이스크림·비눗방울 피드 평균 조달 34.6K - 강력한 피드 성과','이벤트+화보 조합으로 저장율 높은 콘텐츠 다수'],
+          improve:   ['릴스(풍선껌) 성과 상대적으로 낮음 (20.8K)','주말 발행 없어 주중 집중 - 고르게 분산 필요'],
+          action:    ['이벤트 콘텐츠 기획 지속 확대','피드 화보컷 + 이벤트 조합 유지']
+        },
+        dateFilter: { from:'2026-03-29', to:'2026-04-04' }
+      },
+      w2: {
+        kpi: [
+          { label:'총 조회수',  value:'109.1K', note:'4개 콘텐츠 기준',        cls:'',   accent:'' },
+          { label:'총 도달',    value:'109.1K', note:'평균 도달률 60%',        cls:'',   accent:'accent2' },
+          { label:'총 좋아요',  value:'1,146',  note:'콘텐츠당 평균 287개',    cls:'',   accent:'accent3' },
+          { label:'평균 조회',  value:'27.3K',  note:'콘텐츠당 평균 성과',     cls:'',   accent:'accent4' }
+        ],
+        types: [
+          { icon:'📸', label:'피드',    value:'4개',   pct:'평균 27.3K 조회' },
+          { icon:'🎬', label:'릴스',    value:'0개',   pct:'-' },
+          { icon:'⭐', label:'최고 성과', value:'35.7K', pct:'싱글 링거 티셔츠' }
+        ],
+        metrics: [
+          { label:'콘텐츠당 평균 좋아요', value:'287개' },
+          { label:'콘텐츠당 평균 저장',  value:'270개' },
+          { label:'콘텐츠당 평균 댓글',  value:'146개' },
+          { label:'전체 팔로워 반응',    value:'3,934명' },
+          { label:'팔로워 반응률',       value:'60.2%' }
+        ],
+        insight: {
+          strengths: ['싱글 링거 티셔츠 화보컷 35.7K 조회로 주차 최고','저장율 높은 아이템 화보 콘텐츠 안정적 성과 유지'],
+          improve:   ['1주차 대비 전반적 조회수 하락 (31.8K → 27.3K)','릴스 콘텐츠 부재 - 다양성 보완 필요'],
+          action:    ['주차별 릴스 1편 이상 포함 권장','화보컷 퀄리티 유지하며 이벤트성 콘텐츠 추가']
+        },
+        dateFilter: { from:'2026-04-05', to:'2026-04-11' }
+      }
+    };
+
+    function switchPeriod(key, btn) {
+      document.querySelectorAll('.ptab').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      const d = periodData[key];
+
+      // KPI
+      document.getElementById('kpiGrid').innerHTML = d.kpi.map(k => `
+        <div class="kpi-card ${k.accent}">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value">${k.value}</div>
+          <div class="kpi-change ${k.cls}">${k.cls==='up'?'↑ ':''}${k.note}</div>
+        </div>`).join('');
+
+      // 유형별 성과
+      document.getElementById('typeSection').innerHTML = `
+        <div class="section-title">📊 콘텐츠 유형별 성과</div>
+        <div class="content-type-grid">${d.types.map(t=>`
+          <div class="content-type-card">
+            <div class="content-type-icon">${t.icon}</div>
+            <div class="content-type-label">${t.label}</div>
+            <div class="content-type-value">${t.value}</div>
+            <div class="content-type-percentage">${t.pct}</div>
+          </div>`).join('')}
+        </div>`;
+
+      // 주요 성과 지표
+      document.getElementById('metricsBox').innerHTML = `
+        <div class="chart-title">주요 성과 지표</div>
+        ${d.metrics.map(m=>`<div class="metric-row"><div class="metric-label">${m.label}</div><div class="metric-value">${m.value}</div></div>`).join('')}`;
+
+      // 핵심 인사이트
+      const ins = d.insight;
+      document.getElementById('insightSection').innerHTML = `
+        <div class="section-title">💡 핵심 인사이트</div>
+        <div class="summary-text">
+          <strong>✓ 강점</strong><br>${ins.strengths.map(s=>`• ${s}`).join('<br>')}<br><br>
+          <strong>✓ 개선 기회</strong><br>${ins.improve.map(s=>`• ${s}`).join('<br>')}<br><br>
+          <strong>✓ 추천 액션</strong><br>${ins.action.map(s=>`• ${s}`).join('<br>')}
+        </div>`;
+
+      // TOP5 (기간 필터)
+      renderTop5(d.dateFilter);
+    }
+
     // 초기 로드
     initTabs();
     filterByType('all');
+    switchPeriod('all', document.querySelector('.ptab'));
   </script>
 
 </div>
@@ -2242,6 +2272,22 @@ function goSub(id, btn) {
   document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('on'));
   document.getElementById('sub-' + id).classList.add('on');
   btn.classList.add('on');
+}
+
+function goToDetailContent(postId) {
+  // 콘텐츠 리포트 패널로 전환
+  document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('sub-report').classList.add('on');
+  document.querySelectorAll('.sub-tab').forEach(b => {
+    if (b.textContent.includes('콘텐츠 리포트')) b.classList.add('on');
+  });
+
+  // 해당 카드로 스크롤
+  setTimeout(() => {
+    const card = document.querySelector(`.card[data-id="${postId}"]`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+  }, 100);
 }
 </script>
 
