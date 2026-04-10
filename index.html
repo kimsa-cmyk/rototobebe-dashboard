@@ -2056,7 +2056,7 @@ function renderRodem(){
   const actPhones=Object.keys(RAW);
   let totalActs=0,totalPts=0;
   Object.values(RAW).forEach(r=>{totalActs+=r.post+r.comment+r.cheer;});
-  Object.values(ACT).forEach(a=>{totalPts+=a.w1+a.w2;});
+  Object.values(ACT).forEach(a=>{totalPts+=Object.entries(a).filter(([k])=>/^w\d+$/.test(k)).reduce((s,[,v])=>s+v,0);});
   document.getElementById('r-active').textContent=actPhones.length+'명';
   document.getElementById('r-acts').textContent=totalActs+'건';
   document.getElementById('r-pts').textContent=(totalPts/10000).toFixed(1)+'만원';
@@ -2080,6 +2080,7 @@ function renderRodem(){
     const r=RAW[m.phone]||{post:0,comment:0,cheer:0};
     const a=ACT[m.phone]||{total:0,w1:0,w2:0};
     const wpt=a.w1+a.w2;
+    const cumPt=Object.entries(a).filter(([k])=>/^w\d+$/.test(k)).reduce((s,[,v])=>s+v,0);
     const hasAct=(r.post+r.comment+r.cheer)>0;
     const an=v=>v>0?'<div class="anum">'+v+'</div>':'<div class="azero">—</div>';
     const prods=PROD[m.phone]||[];
@@ -2091,7 +2092,7 @@ function renderRodem(){
       :'';
     const igLink=m.ig?'https://www.instagram.com/'+m.ig+'/':'#';
     const ptStr=wpt>0?'<div class="pt">+'+wpt.toLocaleString()+'원</div>':'<div class="pt0">—</div>';
-    const totStr=a.total>0?'<div style="text-align:right;font-size:11px;color:var(--tm)">'+a.total.toLocaleString()+'원</div>':'—';
+    const totStr=cumPt>0?'<div style="text-align:right;font-size:11px;color:var(--tm)">'+cumPt.toLocaleString()+'원</div>':'—';
     return '<tr style="'+(hasAct?'':'opacity:.5')+'">'
       +'<td style="color:var(--ts);font-size:10px">'+m.num+'</td>'
       +'<td><a href="'+igLink+'" target="_blank" style="text-decoration:none"><div class="tname" style="color:var(--coral)">'+m.name+'</div></a><div class="tig">@'+m.ig+'</div></td>'
