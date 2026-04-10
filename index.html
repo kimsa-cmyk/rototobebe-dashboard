@@ -772,7 +772,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 .sub-panel{display:none;}.sub-panel.on{display:block;}
 .report-wrap{margin-top:0;}
 .report-wrap .container{padding:0;max-width:100%;}
-.report-wrap .page{box-shadow:none;border-radius:0;border:1px solid var(--bd);border-radius:11px;overflow:hidden;}
+.report-wrap .page{box-shadow:none;border-radius:11px;border:1px solid var(--bd);overflow:hidden;display:block!important;flex:1;min-width:0;}
+.report-wrap .header-bar{display:none!important;}
+.report-wrap .container{display:flex!important;gap:1.2rem;align-items:flex-start;padding:1rem 0;}
+#summary{flex:0 0 460px;max-width:460px;}
+#detail{flex:1;min-width:0;}
 .report-wrap .tab-buttons{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
 .report-wrap .tab-btn{padding:6px 12px;font-size:11px;border-radius:7px;font-weight:500;}
 .report-wrap .tab-btn.active{background:var(--coral);border-color:var(--coral);}
@@ -805,7 +809,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   <!-- 서브탭 -->
   <div class="sub-tabs">
     <button class="sub-tab on" onclick="goSub('overview',this)">채널 성과</button>
-    <button class="sub-tab" onclick="goSub('report',this)">4월 성과 리포트</button>
+    <button class="sub-tab" onclick="goSub('report',this)">콘텐츠 리포트</button>
   </div>
 
   <!-- 채널 성과 패널 -->
@@ -1154,8 +1158,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
         const feedPct = Math.round((post.feed / total_source) * 100);
         const profilePct = Math.round((post.profile_clicks / total_source) * 100);
         const storyPct = Math.round((post.story / total_source) * 100);
-        const totalReactions = post.followers + Math.round(post.impressions * 0.4);
-        const followersPct = Math.round((post.followers / totalReactions) * 100);
+        const nonFollowerReach = post.followers;
+        const followerReach = Math.max(0, post.impressions - post.followers);
+        const totalReach = post.impressions;
+        const followersPct = totalReach > 0 ? Math.round((followerReach / totalReach) * 100) : 0;
+        const nonFollowersPct = 100 - followersPct;
+        const totalActs = post.likes + post.comments + post.saves + post.shares;
+        const followerActs = Math.round(totalActs * followersPct / 100);
+        const nonFollowerActs = totalActs - followerActs;
         
         return `
           <div class="card">
@@ -1247,13 +1257,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
               <!-- 반응 비율 -->
               <div>
                 <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">반응 비율</div>
-                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
-                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${followersPct}%</div>
-                  <div style="width: ${100-followersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${100-followersPct}%</div>
+                <div style="display: flex; height: 24px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
+                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600; overflow: hidden;">${followersPct >= 14 ? followersPct+'%' : ''}</div>
+                  <div style="width: ${nonFollowersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600; overflow: hidden;">${nonFollowersPct >= 14 ? nonFollowersPct+'%' : ''}</div>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 11px;">
-                  <div style="color: #666;">팔로워</div>
-                  <div style="color: #666;">비팔로워</div>
+                <div style="display: flex; font-size: 11px; margin-top: 2px;">
+                  <div style="flex: 1; color: #378ADD; font-weight: 600;">팔로워<div style="font-size: 10px; color: #888; font-weight: 400;">${followersPct}% · ${followerActs.toLocaleString()}건</div></div>
+                  <div style="flex: 1; text-align: right; color: #85B7EB; font-weight: 600;">비팔로워<div style="font-size: 10px; color: #888; font-weight: 400;">${nonFollowersPct}% · ${nonFollowerActs.toLocaleString()}건</div></div>
                 </div>
               </div>
             </div>
@@ -1572,8 +1582,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
         const feedPct = Math.round((post.feed / total_source) * 100);
         const profilePct = Math.round((post.profile_clicks / total_source) * 100);
         const storyPct = Math.round((post.story / total_source) * 100);
-        const totalReactions = post.followers + Math.round(post.impressions * 0.4);
-        const followersPct = Math.round((post.followers / totalReactions) * 100);
+        const nonFollowerReach = post.followers;
+        const followerReach = Math.max(0, post.impressions - post.followers);
+        const totalReach = post.impressions;
+        const followersPct = totalReach > 0 ? Math.round((followerReach / totalReach) * 100) : 0;
+        const nonFollowersPct = 100 - followersPct;
+        const totalActs = post.likes + post.comments + post.saves + post.shares;
+        const followerActs = Math.round(totalActs * followersPct / 100);
+        const nonFollowerActs = totalActs - followerActs;
         
         return `
           <div class="card">
@@ -1665,13 +1681,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
               <!-- 반응 비율 -->
               <div>
                 <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">반응 비율</div>
-                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
-                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${followersPct}%</div>
-                  <div style="width: ${100-followersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${100-followersPct}%</div>
+                <div style="display: flex; height: 24px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
+                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600; overflow: hidden;">${followersPct >= 14 ? followersPct+'%' : ''}</div>
+                  <div style="width: ${nonFollowersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600; overflow: hidden;">${nonFollowersPct >= 14 ? nonFollowersPct+'%' : ''}</div>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 11px;">
-                  <div style="color: #666;">팔로워</div>
-                  <div style="color: #666;">비팔로워</div>
+                <div style="display: flex; font-size: 11px; margin-top: 2px;">
+                  <div style="flex: 1; color: #378ADD; font-weight: 600;">팔로워<div style="font-size: 10px; color: #888; font-weight: 400;">${followersPct}% · ${followerActs.toLocaleString()}건</div></div>
+                  <div style="flex: 1; text-align: right; color: #85B7EB; font-weight: 600;">비팔로워<div style="font-size: 10px; color: #888; font-weight: 400;">${nonFollowersPct}% · ${nonFollowerActs.toLocaleString()}건</div></div>
                 </div>
               </div>
             </div>
@@ -2092,8 +2108,14 @@ function goSub(id, btn) {
         const feedPct = Math.round((post.feed / total_source) * 100);
         const profilePct = Math.round((post.profile_clicks / total_source) * 100);
         const storyPct = Math.round((post.story / total_source) * 100);
-        const totalReactions = post.followers + Math.round(post.impressions * 0.4);
-        const followersPct = Math.round((post.followers / totalReactions) * 100);
+        const nonFollowerReach = post.followers;
+        const followerReach = Math.max(0, post.impressions - post.followers);
+        const totalReach = post.impressions;
+        const followersPct = totalReach > 0 ? Math.round((followerReach / totalReach) * 100) : 0;
+        const nonFollowersPct = 100 - followersPct;
+        const totalActs = post.likes + post.comments + post.saves + post.shares;
+        const followerActs = Math.round(totalActs * followersPct / 100);
+        const nonFollowerActs = totalActs - followerActs;
         
         return `
           <div class="card">
@@ -2185,13 +2207,13 @@ function goSub(id, btn) {
               <!-- 반응 비율 -->
               <div>
                 <div style="font-size: 12px; font-weight: 600; color: #666; margin-bottom: 0.5rem;">반응 비율</div>
-                <div style="display: flex; height: 20px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
-                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${followersPct}%</div>
-                  <div style="width: ${100-followersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600;">${100-followersPct}%</div>
+                <div style="display: flex; height: 24px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
+                  <div style="width: ${followersPct}%; background: #378ADD; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600; overflow: hidden;">${followersPct >= 14 ? followersPct+'%' : ''}</div>
+                  <div style="width: ${nonFollowersPct}%; background: #85B7EB; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 600; overflow: hidden;">${nonFollowersPct >= 14 ? nonFollowersPct+'%' : ''}</div>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 11px;">
-                  <div style="color: #666;">팔로워</div>
-                  <div style="color: #666;">비팔로워</div>
+                <div style="display: flex; font-size: 11px; margin-top: 2px;">
+                  <div style="flex: 1; color: #378ADD; font-weight: 600;">팔로워<div style="font-size: 10px; color: #888; font-weight: 400;">${followersPct}% · ${followerActs.toLocaleString()}건</div></div>
+                  <div style="flex: 1; text-align: right; color: #85B7EB; font-weight: 600;">비팔로워<div style="font-size: 10px; color: #888; font-weight: 400;">${nonFollowersPct}% · ${nonFollowerActs.toLocaleString()}건</div></div>
                 </div>
               </div>
             </div>
