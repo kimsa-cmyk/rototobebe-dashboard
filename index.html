@@ -771,15 +771,16 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 .sub-tab.on{color:var(--coral);border-bottom-color:var(--coral);font-weight:500;}
 .sub-panel{display:none;}.sub-panel.on{display:block;}
 .report-wrap{margin-top:0;}
-.report-wrap .container{padding:0;max-width:100%;}
-.report-wrap .page{box-shadow:none;border-radius:11px;border:1px solid var(--bd);overflow:hidden;display:block!important;flex:1;min-width:0;}
-.report-wrap .header-bar{display:none!important;}
-.report-wrap .container{display:flex!important;gap:1.2rem;align-items:flex-start;padding:1rem 0;}
-#summary{flex:0 0 460px;max-width:460px;}
-#detail{flex:1;min-width:0;}
-.report-wrap .tab-buttons{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
-.report-wrap .tab-btn{padding:6px 12px;font-size:11px;border-radius:7px;font-weight:500;}
-.report-wrap .tab-btn.active{background:var(--coral);border-color:var(--coral);}
+.report-wrap .container{padding:0.5rem 0;max-width:100%;}
+.report-wrap .page{display:none;box-shadow:none;border-radius:11px;border:1px solid var(--bd);overflow:hidden;}
+.report-wrap .page.active{display:block;}
+.report-wrap .header-bar{display:flex;align-items:center;gap:8px;padding:0;margin-bottom:10px;background:none;border:none;}
+.report-wrap .tab-buttons{display:flex;gap:6px;flex-wrap:wrap;}
+.report-wrap .tab-btn{padding:6px 14px;font-size:11px;border-radius:7px;font-weight:500;}
+.report-wrap .tab-btn.active{background:var(--coral);border-color:var(--coral);color:white;}
+.report-wrap .container .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:1.2rem;}
+.report-wrap .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;max-width:100%;}
+.report-wrap .post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;padding:1.2rem;overflow-x:visible;}
 </style>
 </head>
 <body>
@@ -1927,16 +1928,28 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
     </div>
   </div>
 
-  <!-- 인원별 진척도 그리드 -->
-  <div style="margin-bottom:11px">
-    <div class="ctitle" style="margin-bottom:12px">인원별 진행 진척도</div>
-    <div id="staffGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
-  </div>
-
-  <!-- 인원별 제품 리스트 아코디언 -->
+  <!-- 인원별 진척도 + 제품 리스트 통합 테이블 -->
   <div class="card">
-    <div class="ctitle" style="margin-bottom:14px">인원별 담당 제품 리스트</div>
-    <div id="staffAccordion"></div>
+    <div class="ctitle" style="margin-bottom:13px">인원별 진행 진척도 · 제품 리스트</div>
+    <div class="tw"><table class="tbl" id="staffTable" style="min-width:640px;table-layout:fixed;width:100%">
+      <colgroup>
+        <col style="width:26px">
+        <col style="width:100px">
+        <col style="width:80px">
+        <col style="width:80px">
+        <col style="min-width:280px">
+        <col style="width:64px">
+      </colgroup>
+      <thead><tr>
+        <th>#</th>
+        <th>이름</th>
+        <th style="text-align:center">완료/전체</th>
+        <th style="text-align:center">진척률</th>
+        <th>담당 제품</th>
+        <th style="text-align:center">상태</th>
+      </tr></thead>
+      <tbody id="staffBody"></tbody>
+    </table></div>
   </div>
 </section>
 
@@ -2301,74 +2314,62 @@ function updateReviewKpi(){
 }
 
 function renderStaffReview(){
-  // 진척도 카드
-  const grid=document.getElementById('staffGrid');
-  if(!grid||grid.dataset.rendered) return;
-  grid.dataset.rendered='1';
-  const colors={100:'var(--sage)',91:'var(--purple)',95:'var(--purple)'};
-  grid.innerHTML=STAFF_DATA.map(s=>{
+  const tbody=document.getElementById('staffBody');
+  if(!tbody||tbody.dataset.rendered) return;
+  tbody.dataset.rendered='1';
+
+  let rows='';
+  STAFF_DATA.forEach((s,si)=>{
     const pct=Math.round(s.done/s.total*100);
     const col=pct===100?'var(--sage)':'var(--purple)';
     const remaining=s.total-s.done;
-    return `<div class="card" style="padding:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div class="tname" style="font-size:13px">${s.name}</div>
-        <div style="font-size:18px;font-weight:700;color:${col}">${pct}%</div>
+    const bar=`<div style="display:flex;align-items:center;gap:5px">
+      <div style="flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${col};border-radius:3px"></div>
       </div>
-      <div style="height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-bottom:8px">
-        <div style="width:${pct}%;height:100%;background:${col};border-radius:3px;transition:width .4s"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ts)">
-        <span>${s.done} / ${s.total}개</span>
-        <span style="color:${remaining>0?'var(--coral)':'var(--sage)'}">${remaining>0?remaining+'건 남음':'완료 ✓'}</span>
-      </div>
+      <span style="font-size:10px;font-weight:600;color:${col};white-space:nowrap">${pct}%</span>
     </div>`;
-  }).join('');
 
-  // 아코디언
-  const acc=document.getElementById('staffAccordion');
-  if(!acc) return;
-  acc.innerHTML=STAFF_DATA.map((s,i)=>{
-    const pct=Math.round(s.done/s.total*100);
-    const doneItems=s.products.filter(p=>p.done);
-    const pendItems=s.products.filter(p=>!p.done);
-    const col=pct===100?'var(--sage)':'var(--purple)';
-    const prodHtml=`
-      ${pendItems.length>0?`<div style="margin-bottom:10px">
-        <div style="font-size:10px;font-weight:600;color:var(--coral);margin-bottom:6px">진행중 (${pendItems.length}건)</div>
-        <div style="display:flex;flex-wrap:wrap;gap:5px">
-          ${pendItems.map(p=>`<span style="font-size:10px;background:#FFF0EE;color:var(--coral);border:1px solid #FFCCC6;border-radius:5px;padding:2px 8px">${p.n}</span>`).join('')}
-        </div>
-      </div>`:''}
-      <div>
-        <div style="font-size:10px;font-weight:600;color:var(--sage);margin-bottom:6px">완료 (${doneItems.length}건)</div>
-        <div style="display:flex;flex-wrap:wrap;gap:5px">
-          ${doneItems.map(p=>`<span style="font-size:10px;background:#F0F5F2;color:var(--sage);border:1px solid #C5D9D2;border-radius:5px;padding:2px 8px">${p.n}</span>`).join('')}
-        </div>
-      </div>`;
-    return `<div style="border-bottom:1px solid var(--bd)">
-      <div onclick="toggleAcc(${i})" style="display:flex;align-items:center;justify-content:space-between;padding:12px 4px;cursor:pointer">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="tname" style="font-size:13px">${s.name}</span>
-          <span style="font-size:11px;color:var(--ts)">${s.total}개 품목</span>
-          ${pendItems.length>0?`<span class="bdg" style="background:#FFF0EE;color:var(--coral);border:none;font-size:9px">${pendItems.length}건 진행중</span>`:`<span class="bdg" style="background:#F0F5F2;color:var(--sage);border:none;font-size:9px">완료 ✓</span>`}
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13px;font-weight:700;color:${col}">${pct}%</span>
-          <span id="acc-icon-${i}" style="color:var(--ts);font-size:12px;transition:transform .2s">▼</span>
-        </div>
-      </div>
-      <div id="acc-body-${i}" style="display:none;padding:0 4px 14px">${prodHtml}</div>
-    </div>`;
-  }).join('');
-}
+    // 진행중 먼저, 완료 나중에 정렬
+    const sorted=[...s.products.filter(p=>!p.done), ...s.products.filter(p=>p.done)];
 
-function toggleAcc(i){
-  const body=document.getElementById('acc-body-'+i);
-  const icon=document.getElementById('acc-icon-'+i);
-  const open=body.style.display==='none';
-  body.style.display=open?'block':'none';
-  icon.style.transform=open?'rotate(180deg)':'';
+    sorted.forEach((p,pi)=>{
+      const isDone=p.done;
+      const statusBadge=isDone
+        ?'<span class="bdg" style="background:#F0F5F2;color:var(--sage);border:none;font-size:9px">완료</span>'
+        :'<span class="bdg" style="background:#FFF0EE;color:var(--coral);border:none;font-size:9px">진행중</span>';
+
+      if(pi===0){
+        // 첫 번째 제품 행 — 이름/완료수/진척률 rowspan
+        rows+=`<tr style="${!isDone?'background:#FFFAF9':''}" class="${si%2===0?'':'tr-alt'}">
+          <td rowspan="${s.total}" style="color:var(--ts);font-size:10px;vertical-align:middle;text-align:center;border-right:1px solid var(--bd)">${si+1}</td>
+          <td rowspan="${s.total}" style="vertical-align:middle;border-right:1px solid var(--bd)">
+            <div class="tname">${s.name}</div>
+            <div style="font-size:10px;color:var(--ts);margin-top:2px">${s.total}개 품목</div>
+            <div style="font-size:10px;margin-top:1px;color:${remaining>0?'var(--coral)':'var(--sage)'}">${remaining>0?remaining+'건 남음':'완료 ✓'}</div>
+          </td>
+          <td rowspan="${s.total}" style="text-align:center;vertical-align:middle;border-right:1px solid var(--bd)">
+            <div style="font-size:12px;font-weight:600">${s.done}<span style="color:var(--ts);font-weight:400"> / ${s.total}</span></div>
+          </td>
+          <td rowspan="${s.total}" style="vertical-align:middle;border-right:1px solid var(--bd);padding:6px 8px">${bar}</td>
+          <td style="font-size:11px;${isDone?'color:var(--ts)':''}">${p.n}</td>
+          <td style="text-align:center">${statusBadge}</td>
+        </tr>`;
+      } else {
+        rows+=`<tr style="${!isDone?'background:#FFFAF9':''}">
+          <td style="font-size:11px;${isDone?'color:var(--ts)':''}">${p.n}</td>
+          <td style="text-align:center">${statusBadge}</td>
+        </tr>`;
+      }
+    });
+
+    // 구분선 행
+    if(si < STAFF_DATA.length-1){
+      rows+=`<tr><td colspan="6" style="height:4px;background:var(--bd);padding:0"></td></tr>`;
+    }
+  });
+
+  tbody.innerHTML=rows;
 }
 
 // ── init
