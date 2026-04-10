@@ -55,6 +55,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 .kinp{width:100%;border:none;background:transparent;font-size:20px;font-weight:700;color:var(--td);font-family:inherit;outline:none;cursor:pointer;}
 .kinp:focus{background:rgba(232,97,74,.05);border-radius:4px;padding:1px 3px;}
 .kdelta{font-size:10px;margin-top:4px;}
+.kcomment{font-size:10px;color:var(--ts);line-height:1.4;margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,0,0,.07);}
 .up{color:var(--sage);}.dn{color:var(--coral);}
 
 /* CARD */
@@ -831,7 +832,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
     </div>
     <div id="krow" class="krow"></div>
     <div class="g2">
-      <div class="card"><div class="ctitle">주간 인게이지먼트</div><div class="csub">좋아요 + 저장 + 댓글</div><div style="position:relative;height:180px"><canvas id="engChart"></canvas></div></div>
+      <div class="card"><div class="ctitle">주간 인게이지먼트</div><div class="csub">좋아요 + 저장 + 댓글 + 공유</div><div style="position:relative;height:200px"><canvas id="engChart"></canvas></div></div>
       <div class="card"><div class="ctitle">포맷별 저장율</div><div class="csub">이번 달 게시물 분석</div><div style="position:relative;height:180px"><canvas id="fmtChart"></canvas></div></div>
     </div>
 
@@ -1178,10 +1179,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
     const periodData = {
       all: {
         krow: [
-          { cls:'c1', label:'팔로워',       value:'24,820', delta:'up', note:'▲ 612 이번 달' },
-          { cls:'c2', label:'게시물 저장수', value:'1,840',  delta:'up', note:'▲ 18.3%' },
-          { cls:'c3', label:'릴스 평균 조회', value:'9,100', delta:'up', note:'▲ 4주차 최고' },
-          { cls:'c4', label:'인게이지먼트율', value:'6.2%',  delta:'dn', note:'▼ 0.3%p' }
+          { cls:'c1', label:'팔로워',       value:'24,820', delta:'up', note:'▲ 612 이번 달', comment:'4월 누적 신규 +612명. 이벤트 주차(1주) 유입 집중, 매주 안정적 성장세 유지 중.' },
+          { cls:'c2', label:'게시물 저장수', value:'1,840',  delta:'up', note:'▲ 18.3%', comment:'전월 대비 18.3% 증가. 화보·이벤트 콘텐츠 저장율 높아 누적 상승 견인.' },
+          { cls:'c3', label:'릴스 평균 조회', value:'9,100', delta:'up', note:'▲ 4주차 최고', comment:'릴스 1편(풍선껌) 기준. 피드 평균 대비 낮아 릴스 포맷 최적화 여지 있음.' },
+          { cls:'c4', label:'인게이지먼트율', value:'6.2%',  delta:'dn', note:'▼ 0.3%p', comment:'전월(6.5%) 대비 소폭 하락. 2주차 이벤트 부재가 원인, 목표 범위(6%↑) 유지 중.' }
         ],
         kpi: [
           { label:'총 조회수',  value:'268.3K', note:'↑ 전월 대비 25% 증가', cls:'up', accent:'' },
@@ -1210,10 +1211,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       },
       w1: {
         krow: [
-          { cls:'c1', label:'팔로워',       value:'24,820', delta:'up', note:'▲ 612 이번 달' },
-          { cls:'c2', label:'게시물 저장수', value:'1,233',  delta:'up', note:'▲ 주차 누적' },
-          { cls:'c3', label:'릴스 평균 조회', value:'20,806', delta:'up', note:'▲ 풍선껌 릴스' },
-          { cls:'c4', label:'인게이지먼트율', value:'7.1%',  delta:'up', note:'▲ 전주 대비' }
+          { cls:'c1', label:'팔로워',       value:'24,820', delta:'up', note:'▲ 612 이번 달', comment:'이벤트 콘텐츠(토이카메라) 발행 주차로 신규 팔로워 유입 집중. 월 전체 성장의 핵심 주.' },
+          { cls:'c2', label:'게시물 저장수', value:'1,233',  delta:'up', note:'▲ 주차 누적', comment:'5개 콘텐츠 합산. 토이카메라 이벤트·아이스크림 화보 저장 최다, 이벤트 참여 효과.' },
+          { cls:'c3', label:'릴스 평균 조회', value:'20,806', delta:'up', note:'▲ 풍선껌 릴스', comment:'풍선껌 릴스 1편 기준. 피드 평균(34.6K) 대비 낮아 릴스 편집·길이 개선 필요.' },
+          { cls:'c4', label:'인게이지먼트율', value:'7.1%',  delta:'up', note:'▲ 전주 대비', comment:'이벤트 콘텐츠 댓글·좋아요 급증으로 전주 대비 상승. 이벤트 없는 주와 격차 큼.' }
         ],
         kpi: [
           { label:'총 조회수',  value:'159.1K', note:'↑ 5개 콘텐츠 기준',      cls:'up', accent:'' },
@@ -1242,10 +1243,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       },
       w2: {
         krow: [
-          { cls:'c1', label:'팔로워',       value:'24,820', delta:'up', note:'▲ 612 이번 달' },
-          { cls:'c2', label:'게시물 저장수', value:'1,080',  delta:'',  note:'주차 누적' },
-          { cls:'c3', label:'릴스 평균 조회', value:'-',     delta:'',  note:'릴스 없음' },
-          { cls:'c4', label:'인게이지먼트율', value:'5.4%',  delta:'dn', note:'▼ 전주 대비' }
+          { cls:'c1', label:'팔로워',       value:'24,820', delta:'up', note:'▲ 612 이번 달', comment:'월 누적치 동일. 이벤트 없는 주차로 신규 유입 감소, 기존 팔로워 유지 중심.' },
+          { cls:'c2', label:'게시물 저장수', value:'1,080',  delta:'',  note:'주차 누적', comment:'4개 콘텐츠 합산. 싱글 링거 티셔츠 화보 저장 최다, 아이템 화보 저장율 안정적.' },
+          { cls:'c3', label:'릴스 평균 조회', value:'-',     delta:'',  note:'릴스 없음', comment:'이번 주차 릴스 콘텐츠 미발행. 다음 주차에 릴스 최소 1편 보완 필요.' },
+          { cls:'c4', label:'인게이지먼트율', value:'5.4%',  delta:'dn', note:'▼ 전주 대비', comment:'1주차(7.1%) 대비 하락. 이벤트·릴스 부재의 직접 영향, 화보 콘텐츠만으로는 한계.' }
         ],
         kpi: [
           { label:'총 조회수',  value:'109.1K', note:'4개 콘텐츠 기준',        cls:'',   accent:'' },
@@ -1285,6 +1286,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
           <div class="klbl">${k.label}</div>
           <div class="kinp" style="font-weight:600;font-size:15px;padding:4px 0">${k.value}</div>
           <div class="kdelta ${k.delta}">${k.note}</div>
+          ${k.comment ? `<div class="kcomment">${k.comment}</div>` : ''}
         </div>`).join('');
 
       // KPI
@@ -1634,8 +1636,10 @@ function goTab(id,btn){
 
 // ── SNS 차트
 new Chart(document.getElementById('engChart'),{type:'line',data:{labels:['1주','2주','3주','4주'],datasets:[
-  {label:'좋아요',data:[3200,4100,3700,5200],borderColor:'#E8614A',backgroundColor:'rgba(232,97,74,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#E8614A'},
-  {label:'저장',data:[410,520,480,712],borderColor:'#7A9E8E',backgroundColor:'rgba(122,158,142,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#7A9E8E'}
+  {label:'좋아요',data:[1781,1146,null,null],borderColor:'#E8614A',backgroundColor:'rgba(232,97,74,.08)',tension:.4,fill:false,pointRadius:4,pointBackgroundColor:'#E8614A'},
+  {label:'저장',data:[1235,1080,null,null],borderColor:'#7A9E8E',backgroundColor:'rgba(122,158,142,.08)',tension:.4,fill:false,pointRadius:4,pointBackgroundColor:'#7A9E8E'},
+  {label:'댓글',data:[1060,584,null,null],borderColor:'#F4A261',backgroundColor:'rgba(244,162,97,.08)',tension:.4,fill:false,pointRadius:4,pointBackgroundColor:'#F4A261'},
+  {label:'공유',data:[420,280,null,null],borderColor:'#9B8EC4',backgroundColor:'rgba(155,142,196,.08)',tension:.4,fill:false,pointRadius:4,pointBackgroundColor:'#9B8EC4'}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:9}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v}}}}});
 
 new Chart(document.getElementById('fmtChart'),{type:'doughnut',data:{labels:['피드','릴스'],datasets:[{data:[96,4],backgroundColor:['#7A9E8E','#E8614A'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:9,padding:8}},tooltip:{callbacks:{label:c=>c.label+': '+c.raw+'%'}}},cutout:'62%'}});
