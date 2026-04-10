@@ -2,6 +2,23 @@ import json, re, sys, os
 sys.stdout.reconfigure(encoding='utf-8')
 import pandas as pd
 import numpy as np
+from json import JSONDecoder
+
+
+def replace_json_var(html: str, var_name: str, new_data) -> str:
+    """HTML 내 'const VAR_NAME=...' 를 JSON 파서로 정확히 찾아 교체. 특수문자 안전."""
+    marker = f'const {var_name}='
+    start = html.find(marker)
+    if start < 0:
+        return html
+    data_start = start + len(marker)
+    decoder = JSONDecoder()
+    _, length = decoder.raw_decode(html[data_start:])
+    end = data_start + length
+    if html[end:end+1] == ';':
+        end += 1
+    new_str = marker + json.dumps(new_data, ensure_ascii=False) + ';'
+    return html[:start] + new_str + html[end:]
 
 xl = pd.ExcelFile('03 데일리 버즈 모니터링/00.데일리 버즈  모니터링.xlsx')
 
@@ -114,16 +131,10 @@ print(f'최신주 ({w0["week"]}): 총계 {w0["total"]} / 전주대비 {w0["delta
 with open('rototobebe_dashboard_v4.html', 'r', encoding='utf-8') as f:
     html = f.read()
 
-# JS 데이터 상수 교체 또는 추가
-js_block = f"""const BUZZ_WEEKLY={json.dumps(BUZZ_WEEKLY, ensure_ascii=False)};
-const BUZZ_DAILY_CHART={json.dumps(BUZZ_DAILY_CHART, ensure_ascii=False)};
-const BUZZ_POSTS={json.dumps(BUZZ_POSTS, ensure_ascii=False)};"""
-
-# 기존 BUZZ 배열 제거하고 새 데이터 삽입
-if 'const BUZZ_WEEKLY=' in html:
-    html = re.sub(r'const BUZZ_WEEKLY=.*?const BUZZ_POSTS=.*?;', js_block, html, flags=re.DOTALL)
-else:
-    html = re.sub(r'const BUZZ=\[.*?\];', js_block, html, flags=re.DOTALL)
+# JS 데이터 상수 교체 (JSON 파서 기반 - 특수문자 안전)
+html = replace_json_var(html, 'BUZZ_WEEKLY',    BUZZ_WEEKLY)
+html = replace_json_var(html, 'BUZZ_DAILY_CHART', BUZZ_DAILY_CHART)
+html = replace_json_var(html, 'BUZZ_POSTS',     BUZZ_POSTS)
 
 # ── 버즈 섹션 HTML 교체
 delta_str = (f'+{w0["delta"]}건 ↑' if w0["delta"] and w0["delta"] > 0
