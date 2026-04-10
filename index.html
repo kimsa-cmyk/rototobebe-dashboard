@@ -628,9 +628,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       align-items: flex-start;
     }
 
-    .card-emoji {
-      font-size: 32px;
-      min-width: 40px;
+    .card-thumb {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
     }
 
     .card-meta {
@@ -1096,15 +1099,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 
   <script>
     const postsData = [
-      { id: 1, name: "스케이트보드", emoji: "🛹", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
-      { id: 2, name: "아이스크림", emoji: "🍦", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
-      { id: 3, name: "비눗방울", emoji: "🫧", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
-      { id: 4, name: "풍선껌 룩북 릴스", emoji: "🎬", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
-      { id: 5, name: "토이카메라(이벤트)", emoji: "📷", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
-      { id: 6, name: "도넛", emoji: "🍩", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
-      { id: 7, name: "싱글 링거 티셔츠 화보컷", emoji: "👕", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
-      { id: 8, name: "파프리카", emoji: "🫑", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
-      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", emoji: "👕", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
+      { id: 1, name: "스케이트보드", img: "images/ig_0401_4x5_1_1.jpg", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
+      { id: 2, name: "아이스크림", img: "images/ig_0401_4x5_2_1.jpg", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
+      { id: 3, name: "비눗방울", img: "images/ig_0402_4x5_1_1.jpg", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
+      { id: 4, name: "풍선껌 룩북 릴스", img: "images/ig_0402_9x16_2_1.jpg", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
+      { id: 5, name: "토이카메라(이벤트)", img: "images/ig_0403_3x4_1.jpg", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
+      { id: 6, name: "도넛", img: "images/ig_0405_4x5_1_1.jpg", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
+      { id: 7, name: "싱글 링거 티셔츠 화보컷", img: "images/ig_0406_3x4_1.jpg", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
+      { id: 8, name: "파프리카", img: "images/ig_0406_3x4_2.jpg", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
+      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", img: "images/ig_0407_3x4_1.jpg", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
     ];
 
     function switchTab(tab) {
@@ -1171,7 +1174,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
         return `
           <div class="card">
             <div class="card-header">
-              <div class="card-emoji">${post.emoji}</div>
+              <img class="card-thumb" src="${post.img}" alt="${post.name}">
               <div class="card-meta">
                 <div class="card-classification">${post.type}</div>
                 <div class="card-title">${post.name}</div>
@@ -1520,15 +1523,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 
   <script>
     const postsData = [
-      { id: 1, name: "스케이트보드", emoji: "🛹", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
-      { id: 2, name: "아이스크림", emoji: "🍦", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
-      { id: 3, name: "비눗방울", emoji: "🫧", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
-      { id: 4, name: "풍선껌 룩북 릴스", emoji: "🎬", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
-      { id: 5, name: "토이카메라(이벤트)", emoji: "📷", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
-      { id: 6, name: "도넛", emoji: "🍩", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
-      { id: 7, name: "싱글 링거 티셔츠 화보컷", emoji: "👕", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
-      { id: 8, name: "파프리카", emoji: "🫑", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
-      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", emoji: "👕", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
+      { id: 1, name: "스케이트보드", img: "images/ig_0401_4x5_1_1.jpg", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
+      { id: 2, name: "아이스크림", img: "images/ig_0401_4x5_2_1.jpg", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
+      { id: 3, name: "비눗방울", img: "images/ig_0402_4x5_1_1.jpg", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
+      { id: 4, name: "풍선껌 룩북 릴스", img: "images/ig_0402_9x16_2_1.jpg", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
+      { id: 5, name: "토이카메라(이벤트)", img: "images/ig_0403_3x4_1.jpg", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
+      { id: 6, name: "도넛", img: "images/ig_0405_4x5_1_1.jpg", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
+      { id: 7, name: "싱글 링거 티셔츠 화보컷", img: "images/ig_0406_3x4_1.jpg", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
+      { id: 8, name: "파프리카", img: "images/ig_0406_3x4_2.jpg", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
+      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", img: "images/ig_0407_3x4_1.jpg", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
     ];
 
     function switchTab(tab) {
@@ -1595,7 +1598,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
         return `
           <div class="card">
             <div class="card-header">
-              <div class="card-emoji">${post.emoji}</div>
+              <img class="card-thumb" src="${post.img}" alt="${post.name}">
               <div class="card-meta">
                 <div class="card-classification">${post.type}</div>
                 <div class="card-title">${post.name}</div>
@@ -2390,15 +2393,15 @@ function goSub(id, btn) {
 <script>
 
     const postsData = [
-      { id: 1, name: "스케이트보드", emoji: "🛹", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
-      { id: 2, name: "아이스크림", emoji: "🍦", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
-      { id: 3, name: "비눗방울", emoji: "🫧", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
-      { id: 4, name: "풍선껌 룩북 릴스", emoji: "🎬", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
-      { id: 5, name: "토이카메라(이벤트)", emoji: "📷", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
-      { id: 6, name: "도넛", emoji: "🍩", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
-      { id: 7, name: "싱글 링거 티셔츠 화보컷", emoji: "👕", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
-      { id: 8, name: "파프리카", emoji: "🫑", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
-      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", emoji: "👕", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
+      { id: 1, name: "스케이트보드", img: "images/ig_0401_4x5_1_1.jpg", date: "2026-04-01", time: "15:08", type: "[피드]", likes: 258, comments: 189, saves: 156, shares: 42, impressions: 23500, followers: 987, profile_visits: 34, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 61, follows: 8 },
+      { id: 2, name: "아이스크림", img: "images/ig_0401_4x5_2_1.jpg", date: "2026-04-01", time: "20:00", type: "[피드]", likes: 312, comments: 201, saves: 298, shares: 87, impressions: 39562, followers: 1124, profile_visits: 43, feed: 28686, profile_clicks: 5934, story: 3162, external_clicks: null, follows: 12 },
+      { id: 3, name: "비눗방울", img: "images/ig_0402_4x5_1_1.jpg", date: "2026-04-02", time: "16:12", type: "[피드]", likes: 267, comments: 156, saves: 278, shares: 64, impressions: 33796, followers: 1045, profile_visits: 28, feed: 24317, profile_clicks: 4842, story: 2689, external_clicks: 41, follows: 9 },
+      { id: 4, name: "풍선껌 룩북 릴스", img: "images/ig_0402_9x16_2_1.jpg", date: "2026-04-02", time: "19:30", type: "[릴스]", likes: 421, comments: 145, saves: 89, shares: 367, impressions: 20806, followers: 756, profile_visits: 31, feed: 11824, profile_clicks: 3740, story: 2841, external_clicks: 44, follows: null },
+      { id: 5, name: "토이카메라(이벤트)", img: "images/ig_0403_3x4_1.jpg", date: "2026-04-03", time: "20:00", type: "[피드]", likes: 523, comments: 367, saves: 412, shares: 98, impressions: 41443, followers: 1234, profile_visits: 87, feed: 32654, profile_clicks: 6521, story: 5280, external_clicks: 98, follows: 15 },
+      { id: 6, name: "도넛", img: "images/ig_0405_4x5_1_1.jpg", date: "2026-04-05", time: "20:00", type: "[피드]", likes: 234, comments: 123, saves: 267, shares: 45, impressions: 23310, followers: 856, profile_visits: 19, feed: 16432, profile_clicks: 3891, story: 2987, external_clicks: null, follows: 7 },
+      { id: 7, name: "싱글 링거 티셔츠 화보컷", img: "images/ig_0406_3x4_1.jpg", date: "2026-04-06", time: "16:06", type: "[피드]", likes: 378, comments: 198, saves: 312, shares: 76, impressions: 35670, followers: 1287, profile_visits: 52, feed: 25894, profile_clicks: 5621, story: 4155, external_clicks: 73, follows: 19 },
+      { id: 8, name: "파프리카", img: "images/ig_0406_3x4_2.jpg", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 189, comments: 94, saves: 212, shares: 38, impressions: 18945, followers: 702, profile_visits: 15, feed: 13521, profile_clicks: 3287, story: 2137, external_clicks: 31, follows: null },
+      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", img: "images/ig_0407_3x4_1.jpg", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 345, comments: 167, saves: 289, shares: 61, impressions: 31204, followers: 1089, profile_visits: 38, feed: 22345, profile_clicks: 5234, story: 3625, external_clicks: 56, follows: 11 }
     ];
 
     function rp_rp_switchTab(tab) {
@@ -2465,7 +2468,7 @@ function goSub(id, btn) {
         return `
           <div class="card">
             <div class="card-header">
-              <div class="card-emoji">${post.emoji}</div>
+              <img class="card-thumb" src="${post.img}" alt="${post.name}">
               <div class="card-meta">
                 <div class="card-classification">${post.type}</div>
                 <div class="card-title">${post.name}</div>
