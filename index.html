@@ -2345,15 +2345,16 @@ function renderSummerReview(){
   nameOrder.forEach(function(name){
     var items=groups[name];
     items.forEach(function(r,i){
+      var isFirst=i===0;
+      var isLast=i===items.length-1;
+      var borderBottom=isLast?'2px solid var(--bds)':'1px solid var(--bd)';
       rows+='<tr>';
-      if(i===0){
-        rows+='<td rowspan="'+items.length+'" style="vertical-align:middle;border-right:1px solid var(--bd);font-weight:500;font-size:12px;white-space:nowrap">'+name+'</td>';
-      }
-      rows+='<td style="text-align:center">'+r.size+'</td>';
-      rows+='<td>'+r.product+'</td>';
-      rows+='<td style="text-align:center"><span style="font-size:10px;color:var(--ts)">'+r.date+'</span></td>';
-      rows+='<td style="text-align:right">'+r.cost.toLocaleString()+'원</td>';
-      rows+='<td style="text-align:center"><span class="bdg '+(r.buy==='구매'?'bok':'bno')+'">'+(r.buy==='구매'?'구매':'미구매')+'</span></td>';
+      rows+='<td style="font-weight:500;font-size:12px;white-space:nowrap;color:'+(isFirst?'var(--td)':'transparent')+';border-bottom:'+borderBottom+'">'+(isFirst?name:'&nbsp;')+'</td>';
+      rows+='<td style="text-align:center;border-bottom:'+borderBottom+'">'+r.size+'</td>';
+      rows+='<td style="border-bottom:'+borderBottom+'">'+r.product+'</td>';
+      rows+='<td style="text-align:center;border-bottom:'+borderBottom+'"><span style="font-size:10px;color:var(--ts)">'+r.date+'</span></td>';
+      rows+='<td style="text-align:right;border-bottom:'+borderBottom+'">'+r.cost.toLocaleString()+'원</td>';
+      rows+='<td style="text-align:center;border-bottom:'+borderBottom+'"><span class="bdg '+(r.buy==='구매'?'bok':'bno')+'">'+(r.buy==='구매'?'구매':'미구매')+'</span></td>';
       rows+='</tr>';
     });
   });
