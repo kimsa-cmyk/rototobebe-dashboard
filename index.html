@@ -97,6 +97,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 .prod-tbl td{font-size:11px;padding:6px 7px;border-bottom:1px solid var(--bd);vertical-align:top;}
 .prod-tbl tr:last-child td{border-bottom:none;}
 .dandog-badge{display:inline-flex;padding:2px 5px;border-radius:4px;font-size:9px;font-weight:600;background:var(--coral-l);color:#B03A26;}
+.sr-filter-btn{cursor:pointer;border:none;font-family:inherit;transition:all .15s;padding:3px 8px;}
+.sr-filter-btn.on{background:var(--coral-l);color:#B03A26;}
 
 /* ACT NUM */
 .anum{font-size:13px;font-weight:700;color:var(--td);text-align:center;}
@@ -1646,6 +1648,44 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
     </div>
   </div>
 
+  <!-- 여름 스탭리뷰 제품 리스트 -->
+  <div class="card" style="margin-bottom:11px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;flex-wrap:wrap;gap:8px">
+      <div class="ctitle">여름 스탭리뷰 제품 리스트</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+        <input class="srch" type="text" id="srReviewSearch" placeholder="이름·제품명 검색" oninput="srchSummerReview(this.value)" style="width:180px">
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button class="bdg sr-filter-btn on" onclick="filterSummerReview('전체',this)">전체</button>
+          <button class="bdg sr-filter-btn" onclick="filterSummerReview('김다정',this)">김다정</button>
+          <button class="bdg sr-filter-btn" onclick="filterSummerReview('김선애',this)">김선애</button>
+          <button class="bdg sr-filter-btn" onclick="filterSummerReview('김성은',this)">김성은</button>
+          <button class="bdg sr-filter-btn" onclick="filterSummerReview('김지선',this)">김지선</button>
+          <button class="bdg sr-filter-btn" onclick="filterSummerReview('배상현',this)">배상현</button>
+          <button class="bdg sr-filter-btn" onclick="filterSummerReview('임승수',this)">임승수</button>
+        </div>
+      </div>
+    </div>
+    <div class="tw"><table class="tbl" id="summerReviewTable" style="table-layout:fixed;width:100%">
+      <colgroup>
+        <col style="width:72px">
+        <col style="width:50px">
+        <col style="width:auto">
+        <col style="width:72px">
+        <col style="width:82px">
+        <col style="width:64px">
+      </colgroup>
+      <thead><tr>
+        <th>이름</th>
+        <th style="text-align:center">사이즈</th>
+        <th>제품명</th>
+        <th style="text-align:center">발송일</th>
+        <th style="text-align:right">원가</th>
+        <th style="text-align:center">구매여부</th>
+      </tr></thead>
+      <tbody id="summerReviewBody"></tbody>
+    </table></div>
+  </div>
+
   <!-- 인원별 진척도 + 제품 리스트 통합 테이블 -->
   <div class="card">
     <div class="ctitle" style="margin-bottom:13px">인원별 진행 진척도 · 제품 리스트</div>
@@ -1710,7 +1750,7 @@ function goTab(id,btn){
   btn.classList.add('on');
   if(id==='rodem') renderRodem();
   if(id==='buzz') renderBuzz('all');
-  if(id==='review') renderStaffReview();
+  if(id==='review'){renderSummerReview();renderStaffReview();}
 }
 
 // ── SNS 차트
@@ -2137,6 +2177,197 @@ function goToDetailContent(postId) {
     if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
   }, 100);
 }
+</script>
+
+<!-- ── 여름 스탭리뷰 데이터 & 렌더 (별도 script) -->
+<script>
+var SUMMER_REVIEW_DATA = [
+  // 1차 04/08 — 김다정
+  {name:'김다정',size:'120',product:'면모달 끈나시 고쟁이 실내복 · 스카이블루',date:'04/08',cost:6617,buy:'구매'},
+  {name:'김다정',size:'90',product:'면모달 끈나시 고쟁이 실내복 · 핑크',date:'04/08',cost:6617,buy:'구매'},
+  {name:'김다정',size:'120',product:'면모달 올오버 반팔 헐랭 실내복 · 민트',date:'04/08',cost:4866,buy:'구매'},
+  {name:'김다정',size:'90',product:'면모달 올오버 반팔 헐랭 실내복 · 핑크',date:'04/08',cost:4866,buy:'구매'},
+  {name:'김다정',size:'M',product:'삼중지 거즈 수면조끼 · 코랄',date:'04/08',cost:10658,buy:'X'},
+  {name:'김다정',size:'90',product:'미니쭈리 프릴 티셔츠 · 아이보리',date:'04/08',cost:4408,buy:'구매'},
+  {name:'김다정',size:'90',product:'싱글 베이직 티셔츠 · 네이비',date:'04/08',cost:3608,buy:'구매'},
+  {name:'김다정',size:'120',product:'싱글 소매 스트라이프 티셔츠 · 오트밀',date:'04/08',cost:4158,buy:'구매'},
+  {name:'김다정',size:'120',product:'언밸런스 스트라이프 티셔츠 · 스트라이프',date:'04/08',cost:4108,buy:'구매'},
+  {name:'김다정',size:'90',product:'골지 민소매 치마레깅스 셋업 · 핑크',date:'04/08',cost:7318,buy:'구매'},
+  {name:'김다정',size:'120',product:'와플 라인 포인트 셋업 · 라이트블루',date:'04/08',cost:6808,buy:'구매'},
+  {name:'김다정',size:'90',product:'와플 라인 포인트 셋업 · 라이트옐로우',date:'04/08',cost:6808,buy:'구매'},
+  {name:'김다정',size:'90',product:'주름지 올오버 실내복 · 옐로우',date:'04/08',cost:5958,buy:'구매'},
+  {name:'김다정',size:'90',product:'시어서커 끈나시 원피스 · 핑크',date:'04/08',cost:7533,buy:'구매'},
+  {name:'김다정',size:'90',product:'플라워 샤 레이어드 원피스 · 아이보리',date:'04/08',cost:7558,buy:'구매'},
+  {name:'김다정',size:'90',product:'코튼 벌룬 숏 팬츠 · 핑크',date:'04/08',cost:4858,buy:'구매'},
+  {name:'김다정',size:'90',product:'코튼 셔링 스커트 · 라이트블루',date:'04/08',cost:9428,buy:'구매'},
+  {name:'김다정',size:'90',product:'코튼 프릴 숏 팬츠 · 핑크',date:'04/08',cost:8990,buy:'구매'},
+  // 2차 04/09 — 김다정
+  {name:'김다정',size:'90',product:'싱글 퍼프 티셔츠 · 라이트핑크',date:'04/09',cost:4549,buy:'구매'},
+  {name:'김다정',size:'90',product:'요루 올오버 크롭 티셔츠 · 핑크',date:'04/09',cost:4167,buy:'구매'},
+  {name:'김다정',size:'90',product:'면모달 벌룬 점프슈트 · 베이지',date:'04/09',cost:7352,buy:'X'},
+  {name:'김다정',size:'90',product:'스트라이프 점프슈트 · 핑크',date:'04/09',cost:5986,buy:'X'},
+  {name:'김다정',size:'120',product:'골지 스트라이프 실내복 · 민트',date:'04/09',cost:6092,buy:'구매'},
+  {name:'김다정',size:'90',product:'골지 스트라이프 실내복 · 핑크',date:'04/09',cost:6092,buy:'구매'},
+  {name:'김다정',size:'90',product:'싱글 포인트 실내복 · 라이트핑크',date:'04/09',cost:5278,buy:'구매'},
+  {name:'김다정',size:'120',product:'싱글 포인트 실내복 · 멜란지그레이',date:'04/09',cost:5278,buy:'구매'},
+  {name:'김다정',size:'90',product:'싱글 배색 반팔 원피스 · 아이보리',date:'04/09',cost:5825,buy:'구매'},
+  {name:'김다정',size:'90',product:'우븐 벌룬 원피스 · 라이트옐로우',date:'04/09',cost:7617,buy:'구매'},
+  {name:'김다정',size:'90',product:'프릴 레이스 팬츠 · 라이트옐로우',date:'04/09',cost:5980,buy:'구매'},
+  {name:'김다정',size:'90',product:'프릴 레이스 팬츠 · 라이트핑크',date:'04/09',cost:5980,buy:'구매'},
+  // 3차 04/10 — 김다정
+  {name:'김다정',size:'100',product:'체크 포인트 래쉬가드 모자 세트 · 레드',date:'04/10',cost:24114,buy:'구매'},
+  {name:'김다정',size:'130',product:'체크 포인트 래쉬가드 모자 세트 · 블루',date:'04/10',cost:24114,buy:'구매'},
+  // 4차 04/13 — 김다정
+  {name:'김다정',size:'120',product:'싱글 링거 티셔츠 · 그린',date:'04/13',cost:4284,buy:'구매'},
+  {name:'김다정',size:'90',product:'싱글 링거 티셔츠 · 레드',date:'04/13',cost:4284,buy:'구매'},
+  // 1차 04/08 — 김선애
+  {name:'김선애',size:'90',product:'싱글 민소매 티셔츠 · 라이트그린',date:'04/08',cost:3173,buy:'구매'},
+  {name:'김선애',size:'90',product:'미니쭈리 마일드 셋업 · 민트',date:'04/08',cost:6092,buy:'구매'},
+  {name:'김선애',size:'90',product:'미니쭈리 민소매 셋업 · 멜란지그레이',date:'04/08',cost:5881,buy:'구매'},
+  {name:'김선애',size:'90',product:'면모달 올오버 반팔 헐랭 슈트 · 스카이블루',date:'04/08',cost:5916,buy:'구매'},
+  {name:'김선애',size:'90',product:'면모달 끈나시 고쟁이 실내복 · 스카이블루',date:'04/08',cost:6617,buy:'구매'},
+  {name:'김선애',size:'90',product:'가오리 슬리브 티셔츠 · 블루',date:'04/08',cost:4668,buy:'구매'},
+  {name:'김선애',size:'90',product:'언밸런스 스트라이프 티셔츠 · 스트라이프',date:'04/08',cost:4108,buy:'구매'},
+  {name:'김선애',size:'90',product:'테리 포인트 셋업 · 라이트퍼플',date:'04/08',cost:10277,buy:'구매'},
+  {name:'김선애',size:'90',product:'메쉬 수면조끼 · 블루',date:'04/08',cost:5808,buy:'X'},
+  {name:'김선애',size:'90',product:'싱글 허리 프릴 실내복 · 스카이블루',date:'04/08',cost:6358,buy:'구매'},
+  {name:'김선애',size:'80',product:'주름지 올오버 실내복 · 스카이블루',date:'04/08',cost:5958,buy:'구매'},
+  {name:'김선애',size:'80',product:'데님 7부 팬츠 · 연청',date:'04/08',cost:9467,buy:'구매'},
+  {name:'김선애',size:'80',product:'데님 올오버 버뮤다 팬츠 · 진청',date:'04/08',cost:12027,buy:'구매'},
+  // 2차 04/09 — 김선애
+  {name:'김선애',size:'90',product:'싱글 끈나시 · 그린',date:'04/09',cost:3175,buy:'구매'},
+  {name:'김선애',size:'90',product:'싱글 배색 민소매 셋업 · 네이비',date:'04/09',cost:5215,buy:'구매'},
+  {name:'김선애',size:'90',product:'면모달 끈나시 실내복 · 네이비',date:'04/09',cost:5146,buy:'구매'},
+  {name:'김선애',size:'80',product:'미니쭈리 포인트 고쟁이 팬츠 · 스카이블루',date:'04/09',cost:4350,buy:'구매'},
+  // 3차 04/10 — 김선애
+  {name:'김선애',size:'90',product:'체크 포인트 래쉬가드 모자 세트 · 레드',date:'04/10',cost:24114,buy:'구매'},
+  // 4차 04/13 — 김선애
+  {name:'김선애',size:'90',product:'싱글 링거 티셔츠 · 그린',date:'04/13',cost:4284,buy:'구매'},
+  // 5차 04/17 — 김선애
+  {name:'김선애',size:'90',product:'미니쭈리 배색 링거티 셋업 · 그린',date:'04/17',cost:7006,buy:'구매'},
+  // 1차 04/08 — 김성은
+  {name:'김성은',size:'120',product:'싱글 프릴 포인트 티셔츠 · 옐로우',date:'04/08',cost:4032,buy:'구매'},
+  {name:'김성은',size:'120',product:'면모달 끈나시 고쟁이 실내복 · 핑크',date:'04/08',cost:6617,buy:'구매'},
+  {name:'김성은',size:'120',product:'가오리 슬리브 티셔츠 · 핑크',date:'04/08',cost:4668,buy:'구매'},
+  {name:'김성은',size:'120',product:'골지 민소매 치마레깅스 셋업 · 핑크',date:'04/08',cost:7318,buy:'구매'},
+  {name:'김성은',size:'120',product:'미니쭈리 퍼프 셋업 · 라이트핑크',date:'04/08',cost:6508,buy:'구매'},
+  {name:'김성은',size:'120',product:'와플 라인 포인트 셋업 · 핑크',date:'04/08',cost:6808,buy:'구매'},
+  {name:'김성은',size:'120',product:'배색 단추 실내복 · 핑크',date:'04/08',cost:6608,buy:'구매'},
+  {name:'김성은',size:'120',product:'주름지 올오버 실내복 · 핑크',date:'04/08',cost:5958,buy:'구매'},
+  {name:'김성은',size:'120',product:'클라우드 경량 바람막이 · 핑크',date:'04/08',cost:13108,buy:'구매'},
+  {name:'김성은',size:'120',product:'클라우드 경량 바람막이 · 화이트',date:'04/08',cost:13108,buy:'구매'},
+  {name:'김성은',size:'120',product:'글로시 셔링 스커트 · 핑크',date:'04/08',cost:10165,buy:'구매'},
+  // 2차 04/09 — 김성은
+  {name:'김성은',size:'120',product:'요루 올오버 크롭 티셔츠 · 라이트옐로우',date:'04/09',cost:4167,buy:'구매'},
+  {name:'김성은',size:'120',product:'비비드 스트라이프 셋업 · 레드',date:'04/09',cost:8231,buy:'구매'},
+  {name:'김성은',size:'130',product:'거즈 고쟁이 팬츠 · 네이비',date:'04/09',cost:4335,buy:'구매'},
+  {name:'김성은',size:'130',product:'거즈 고쟁이 팬츠 · 핑크',date:'04/09',cost:4335,buy:'구매'},
+  // 3차 04/10 — 김성은
+  {name:'김성은',size:'120',product:'스카프 반팔 티셔츠 · 화이트',date:'04/10',cost:5406,buy:'구매'},
+  {name:'김성은',size:'120',product:'올오버 스커트 래쉬가드 · 핑크',date:'04/10',cost:20754,buy:'구매'},
+  // 4차 04/13 — 김성은
+  {name:'김성은',size:'120',product:'싱글 링거 티셔츠 · 레드',date:'04/13',cost:4284,buy:'구매'},
+  // 1차 04/08 — 김지선
+  {name:'김지선',size:'130',product:'미니쭈리 마일드 셋업 · 그레이',date:'04/08',cost:6092,buy:'구매'},
+  {name:'김지선',size:'130',product:'면모달 올오버 반팔 헐랭 실내복 · 스카이블루',date:'04/08',cost:4866,buy:'구매'},
+  {name:'김지선',size:'110',product:'면모달 올오버 반팔 헐랭 실내복 · 핑크',date:'04/08',cost:4866,buy:'구매'},
+  {name:'김지선',size:'130',product:'우븐 체크 고쟁이 팬츠 · 블랙',date:'04/08',cost:4516,buy:'구매'},
+  {name:'김지선',size:'M',product:'메쉬 배색블럭 캡모자 · 레드',date:'04/08',cost:11823,buy:'구매'},
+  {name:'김지선',size:'110',product:'미니쭈리 퍼프 셋업 · 라이트핑크',date:'04/08',cost:6508,buy:'구매'},
+  {name:'김지선',size:'110',product:'브리즈 브이넥 가디건 · 라이트핑크',date:'04/08',cost:4858,buy:'구매'},
+  {name:'김지선',size:'110',product:'코튼 셔링 스커트 · 라이트블루',date:'04/08',cost:9428,buy:'구매'},
+  // 2차 04/09 — 김지선
+  {name:'김지선',size:'110',product:'플라워 레이어드 끈나시 · 크림',date:'04/09',cost:3696,buy:'구매'},
+  {name:'김지선',size:'110',product:'우븐 민소매 블라우스 셋업 · 라이트블루',date:'04/09',cost:11657,buy:'구매'},
+  {name:'김지선',size:'130',product:'골지 스트라이프 실내복 · 민트',date:'04/09',cost:6092,buy:'구매'},
+  {name:'김지선',size:'110',product:'골지 스트라이프 실내복 · 핑크',date:'04/09',cost:6092,buy:'구매'},
+  {name:'김지선',size:'110',product:'우븐 벌룬 원피스 · 블랙',date:'04/09',cost:7617,buy:'구매'},
+  {name:'김지선',size:'110',product:'거즈 고쟁이 팬츠 · 아이보리',date:'04/09',cost:4335,buy:'구매'},
+  // 3차 04/10 — 김지선
+  {name:'김지선',size:'110',product:'스카프 반팔 티셔츠 · 라이트옐로우',date:'04/10',cost:5406,buy:'구매'},
+  // 4차 04/13 — 김지선
+  {name:'김지선',size:'130',product:'싱글 링거 티셔츠 · 레드',date:'04/13',cost:4284,buy:'구매'},
+  {name:'김지선',size:'130',product:'테이프 트리밍 숏 팬츠 · 네이비',date:'04/13',cost:6303,buy:'구매'},
+  // 6차 04/21 — 김지선
+  {name:'김지선',size:'130',product:'오트밀 라운드 티셔츠 · 오트밀',date:'04/21',cost:4182,buy:'구매'},
+  // 1차 04/08 — 배상현
+  {name:'배상현',size:'120',product:'미니쭈리 민소매 셋업 · 라이트옐로우',date:'04/08',cost:5881,buy:'구매'},
+  {name:'배상현',size:'M',product:'메쉬 배색블럭 캡모자 · 그린',date:'04/08',cost:11823,buy:'구매'},
+  {name:'배상현',size:'120',product:'올오버 시어서커 셔츠 · 아이보리',date:'04/08',cost:6308,buy:'구매'},
+  {name:'배상현',size:'120',product:'포켓 스트라이프 티셔츠 · 그린',date:'04/08',cost:4708,buy:'구매'},
+  {name:'배상현',size:'120',product:'미니쭈리 립나시 셋업 · 네이비',date:'04/08',cost:5908,buy:'구매'},
+  {name:'배상현',size:'120',product:'미니쭈리 포켓 셋업 · 멜란지그레이',date:'04/08',cost:6508,buy:'구매'},
+  {name:'배상현',size:'120',product:'싱글 배색블럭 셋업 · 아이보리',date:'04/08',cost:6408,buy:'구매'},
+  {name:'배상현',size:'120',product:'올오버 시어서커 숏 팬츠 · 아이보리',date:'04/08',cost:4458,buy:'구매'},
+  // 2차 04/09 — 배상현
+  {name:'배상현',size:'120',product:'비비드 스트라이프 셋업 · 그린',date:'04/09',cost:8231,buy:'구매'},
+  {name:'배상현',size:'120',product:'면모달 올오버 반팔 딱붙 실내복 · 스카이블루',date:'04/09',cost:4593,buy:'구매'},
+  // 3차 04/10 — 배상현
+  {name:'배상현',size:'120',product:'올오버 팬츠 래쉬가드 · 아이보리',date:'04/10',cost:17142,buy:'구매'},
+  {name:'배상현',size:'120',product:'체크 포인트 래쉬가드 모자 세트 · 블루',date:'04/10',cost:24114,buy:'구매'},
+  // 4차 04/13 — 배상현
+  {name:'배상현',size:'120',product:'미니쭈리 콘서트 셋업 · 그린',date:'04/13',cost:7006,buy:'구매'},
+  {name:'배상현',size:'120',product:'미니쭈리 하프 스트라이프 셋업 · 네이비',date:'04/13',cost:7852,buy:'구매'},
+  {name:'배상현',size:'120',product:'아웃포켓 숏 팬츠 · 그린',date:'04/13',cost:4284,buy:'구매'},
+  // 1차 04/08 — 임승수
+  {name:'임승수',size:'130',product:'면모달 올오버 반팔 헐랭 실내복 · 아이보리',date:'04/08',cost:4866,buy:'구매'},
+  {name:'임승수',size:'130',product:'미니쭈리 프릴 티셔츠 · 아이보리',date:'04/08',cost:4408,buy:'구매'},
+  {name:'임승수',size:'130',product:'싱글 소매 스트라이프 티셔츠 · 라이트핑크',date:'04/08',cost:4158,buy:'구매'},
+  {name:'임승수',size:'130',product:'싱글 라인배색 셋업 · 피치',date:'04/08',cost:5908,buy:'구매'},
+  {name:'임승수',size:'130',product:'와플 라인 포인트 셋업 · 오트밀',date:'04/08',cost:6808,buy:'구매'},
+  {name:'임승수',size:'130',product:'주름지 올오버 실내복 · 핑크',date:'04/08',cost:5958,buy:'구매'},
+  {name:'임승수',size:'130',product:'데님 절개 디테일 버뮤다 팬츠 · 중청',date:'04/08',cost:9567,buy:'구매'},
+  {name:'임승수',size:'130',product:'시어서커 올오버 팬츠 · 라이트베이지',date:'04/08',cost:5453,buy:'구매'},
+  {name:'임승수',size:'130',product:'코튼 프릴 숏 팬츠 · 라이트블루',date:'04/08',cost:8990,buy:'구매'},
+  // 2차 04/09 — 임승수
+  {name:'임승수',size:'130',product:'우븐 끈나시 셋업 · 핑크',date:'04/09',cost:8298,buy:'구매'},
+  // 4차 04/13 — 임승수
+  {name:'임승수',size:'130',product:'레이어드 끈나시 · 멜란지그레이',date:'04/13',cost:4182,buy:'구매'},
+];
+
+var srFilter='전체', srSearch='';
+
+function renderSummerReview(){
+  var body=document.getElementById('summerReviewBody');
+  if(!body) return;
+  var data=SUMMER_REVIEW_DATA;
+  if(srFilter!=='전체') data=data.filter(function(r){return r.name===srFilter;});
+  if(srSearch){var q=srSearch;data=data.filter(function(r){return r.name.includes(q)||r.product.includes(q);});}
+
+  // 이름별 그룹화
+  var groups={}, nameOrder=[];
+  data.forEach(function(r){
+    if(!groups[r.name]){groups[r.name]=[];nameOrder.push(r.name);}
+    groups[r.name].push(r);
+  });
+
+  var rows='';
+  nameOrder.forEach(function(name){
+    var items=groups[name];
+    items.forEach(function(r,i){
+      rows+='<tr>';
+      if(i===0){
+        rows+='<td rowspan="'+items.length+'" style="vertical-align:middle;border-right:1px solid var(--bd);font-weight:500;font-size:12px;white-space:nowrap">'+name+'</td>';
+      }
+      rows+='<td style="text-align:center">'+r.size+'</td>';
+      rows+='<td>'+r.product+'</td>';
+      rows+='<td style="text-align:center"><span style="font-size:10px;color:var(--ts)">'+r.date+'</span></td>';
+      rows+='<td style="text-align:right">'+r.cost.toLocaleString()+'원</td>';
+      rows+='<td style="text-align:center"><span class="bdg '+(r.buy==='구매'?'bok':'bno')+'">'+(r.buy==='구매'?'구매':'미구매')+'</span></td>';
+      rows+='</tr>';
+    });
+  });
+  body.innerHTML=rows;
+}
+
+function filterSummerReview(name,el){
+  srFilter=name;
+  document.querySelectorAll('.sr-filter-btn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  renderSummerReview();
+}
+
+function srchSummerReview(q){srSearch=q;renderSummerReview();}
 </script>
 
 </body>
