@@ -1530,15 +1530,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
           ec.options.scales.y1 = {position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v}};
         } else {
           const wk = {
-            w1: {lbl:'1주차 3/29-4/4', likes:1928, saves:297, comments:700, shares:1281},
-            w2: {lbl:'2주차 4/5-4/11', likes:1702, saves:276, comments:816, shares:1161}
+            w1: {lbl:'1주차 3/29-4/4 (5개)', likes:386, saves:59, comments:140, shares:256},
+            w2: {lbl:'2주차 4/5-4/11 (7개)', likes:264, saves:44, comments:129, shares:197}
           };
           const w = wk[key];
           const prev = key === 'w2' ? wk['w1'] : null;
-          document.getElementById('engChartTitle').textContent = '주간 인게이지먼트 비교';
+          document.getElementById('engChartTitle').textContent = '주간 인게이지먼트 비교 (콘텐츠당 평균)';
           document.getElementById('engChartSub').textContent = prev
             ? w.lbl + ' (막대) vs ' + prev.lbl + ' (꺾은선)'
-            : w.lbl + ' · 좋아요+저장+댓글+공유';
+            : w.lbl + ' · 콘텐츠당 평균';
           ec.config.type = 'bar';
           ec.data.labels = ['좋아요','저장','댓글','공유'];
           ec.data.datasets = [
