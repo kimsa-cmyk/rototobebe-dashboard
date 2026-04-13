@@ -860,20 +860,20 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       <div class="section" id="typeSection"></div>
 
       <div class="section">
-        <div class="section-title">📅 주간 성과 트렌드</div>
-        <div class="chart-row">
-          <div class="chart-box">
-            <div class="chart-title">일일 평균 조회수</div>
-            <div class="mini-bar">
-              <div class="bar highlight" style="height:68%" title="월"><div class="bar-value">31.2K</div><div class="bar-label">월</div></div>
-              <div class="bar" style="height:62%" title="화"><div class="bar-value">28.4K</div><div class="bar-label">화</div></div>
-              <div class="bar" style="height:58%" title="수"><div class="bar-value">26.5K</div><div class="bar-label">수</div></div>
-              <div class="bar" style="height:71%" title="목"><div class="bar-value">32.8K</div><div class="bar-label">목</div></div>
-              <div class="bar highlight" style="height:90%" title="금"><div class="bar-value">41.4K</div><div class="bar-label">금</div></div>
-              <div class="bar" style="height:52%" title="토"><div class="bar-value">23.9K</div><div class="bar-label">토</div></div>
-              <div class="bar" style="height:48%" title="일"><div class="bar-value">22.1K</div><div class="bar-label">일</div></div>
-            </div>
+        <div class="section-title">📅 주간 채널 성과 트렌드 <span style="font-size:10px;font-weight:400;color:#999;margin-left:4px">1/4 ~ 4/11 · 13주 (3/29-4/4 데이터 미확보)</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="chart-box" style="background:#f8f9fb;border-radius:11px;padding:14px">
+            <div class="chart-title">주간 노출·도달 추이</div>
+            <div class="csub" style="font-size:10px;color:#999;margin-bottom:8px">노출(좌축) · 도달(우축)</div>
+            <div style="position:relative;height:160px"><canvas id="weeklyViewsChart"></canvas></div>
           </div>
+          <div class="chart-box" style="background:#f8f9fb;border-radius:11px;padding:14px">
+            <div class="chart-title">주간 총 반응·팔로워 순증</div>
+            <div class="csub" style="font-size:10px;color:#999;margin-bottom:8px">반응(좌축) · 팔로워순증(우축)</div>
+            <div style="position:relative;height:160px"><canvas id="weeklyEngChart"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-row" style="margin-top:12px">
           <div class="chart-box" id="metricsBox"></div>
         </div>
       </div>
@@ -2579,6 +2579,53 @@ function downloadMgmtCsv() {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+// ── 주간 채널 트렌드 차트 (sns_weekly.js 데이터)
+(function(){
+  const wkLabels = ['1/4','1/11','1/18','1/25','2/1','2/8','2/15','2/22','3/1','3/8','3/15','3/22','4/5'];
+  const impressions = [307061,275567,1068664,576027,779493,1103744,777330,1263879,1534312,2374369,1483859,1222779,909603];
+  const reach       = [68088,61656,194166,85114,100923,216078,208054,291516,325713,424302,330906,300152,174706];
+  const engagement  = [1049,485,8583,8845,7010,2468,2151,3670,6409,11787,1212,5802,null];
+  const netChange   = [-90,23,169,248,95,152,77,98,278,337,126,102,null];
+
+  new Chart(document.getElementById('weeklyViewsChart'),{
+    type:'line',
+    data:{
+      labels:wkLabels,
+      datasets:[
+        {label:'노출',data:impressions,borderColor:'#E8614A',backgroundColor:'rgba(232,97,74,.1)',tension:.3,pointRadius:3,borderWidth:2,fill:true,yAxisID:'y'},
+        {label:'도달',data:reach,borderColor:'#7A9E8E',backgroundColor:'transparent',tension:.3,pointRadius:3,borderWidth:2,borderDash:[4,3],yAxisID:'y1'}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:9}}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}},
+        y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:9},callback:v=>v>=1000000?(v/1000000).toFixed(1)+'M':v>=1000?(v/1000).toFixed(0)+'K':v}},
+        y1:{position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v}}
+      }
+    }
+  });
+
+  new Chart(document.getElementById('weeklyEngChart'),{
+    type:'bar',
+    data:{
+      labels:wkLabels,
+      datasets:[
+        {label:'총 반응',data:engagement,backgroundColor:'rgba(155,142,196,.75)',borderRadius:3,yAxisID:'y'},
+        {label:'팔로워 순증',data:netChange,backgroundColor:'rgba(122,158,142,.75)',borderRadius:3,yAxisID:'y1',type:'line',tension:.3,pointRadius:3,borderColor:'#7A9E8E',borderWidth:2}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{font:{size:10},boxWidth:9}}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}},
+        y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v}},
+        y1:{position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:9}}}
+      }
+    }
+  });
+})();
 
 // ── SNS 차트 (초기: 여름 탭 = 월간 비교)
 new Chart(document.getElementById('engChart'),{type:'bar',data:{labels:['2월','3월'],datasets:[
