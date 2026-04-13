@@ -1336,8 +1336,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
           { cls:'c4', label:'인게이지먼트율', value:'4.8%',    delta:'up', note:'▲ 반응 8,819 / 도달 183,896', comment:'4월 인게이지먼트율 4.8%. 무신사 단독-반팔 13.4% · 민소매 7.4%로 무신사 시리즈 구매전환 효과 두드러짐.' }
         ],
         kpi: [
-          { label:'총 조회수',  value:'411.7K',  note:'12개 콘텐츠 누적 (4월 평균 : 34.3K)',   cls:'up', accent:'' },
-          { label:'총 도달',    value:'183,896', note:'콘텐츠당 평균 15,325',        cls:'up', accent:'accent2' },
+          { label:'총 조회수',  value:'411.7K',  avg:'34.3K',  note:'12개 콘텐츠 누적 (4월 평균 : 34.3K)',   cls:'up', accent:'' },
+          { label:'총 도달',    value:'183,896', avg:'15,325', note:'콘텐츠당 평균 15,325',        cls:'up', accent:'accent2' },
           { label:'총 반응',    value:'8,819',   note:'콘텐츠당 평균 735',           cls:'up', accent:'accent3' },
           { label:'총 공유',    value:'2,662',   note:'콘텐츠당 평균 222',           cls:'up', accent:'accent4' }
         ],
@@ -1380,9 +1380,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
           { cls:'c4', label:'인게이지먼트율', value:'3.4%',  delta:'up', note:'▲ 반응 4,294 / 도달 124,524', vs:'4월 전체 평균(4.7%) 대비 ▼ -1.3%p (광고 도달 분모 확대 영향)', comment:'토이카메라 광고 도달(75,127)이 전체를 견인. 광고 제외 오가닉 기준은 더 높음.' }
         ],
         kpi: [
-          { label:'총 조회수',  value:'245.6K', note:'5개 콘텐츠 기준',         cls:'up', accent:'' },
-          { label:'총 도달',    value:'124,524', note:'콘텐츠당 평균 24,905',   cls:'up', accent:'accent2' },
-          { label:'총 좋아요',  value:'1,928',  note:'콘텐츠당 평균 386개',     cls:'up', accent:'accent3' },
+          { label:'총 조회수',  value:'245.6K',  avg:'49.1K',  note:'5개 콘텐츠 기준',         cls:'up', accent:'' },
+          { label:'총 도달',    value:'124,524', avg:'24,905', note:'콘텐츠당 평균 24,905',   cls:'up', accent:'accent2' },
+          { label:'총 좋아요',  value:'1,928',   avg:'386',    note:'콘텐츠당 평균 386개',     cls:'up', accent:'accent3' },
           { label:'평균 조회',  value:'49.1K',  note:'토이카메라 포함 기준',    cls:'up', accent:'accent4' }
         ],
         types: [
@@ -1422,9 +1422,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
           { cls:'c4', label:'인게이지먼트율', value:'7.6%',  delta:'up', note:'▲ 반응 4,525 / 도달 59,372', vs:'1주차(3.4%) 대비 ▲ +4.2%p — 팔로워 타겟 콘텐츠 전환 효율 ↑', comment:'무신사 단독-반팔 반응 1,135건(좋아요 644) — 이벤트 댓글 유입 효과. 무신사 민소매도 7.4%.' }
         ],
         kpi: [
-          { label:'총 조회수',  value:'166.1K', note:'7개 콘텐츠 기준',         cls:'',   accent:'' },
-          { label:'총 도달',    value:'59,372', note:'콘텐츠당 평균 8,482',     cls:'',   accent:'accent2' },
-          { label:'총 좋아요',  value:'1,847',  note:'콘텐츠당 평균 264개',     cls:'',   accent:'accent3' },
+          { label:'총 조회수',  value:'166.1K',  avg:'23.7K', note:'7개 콘텐츠 기준',         cls:'',   accent:'' },
+          { label:'총 도달',    value:'59,372',  avg:'8,482', note:'콘텐츠당 평균 8,482',     cls:'',   accent:'accent2' },
+          { label:'총 좋아요',  value:'1,847',   avg:'264',   note:'콘텐츠당 평균 264개',     cls:'',   accent:'accent3' },
           { label:'평균 조회',  value:'23.7K',  note:'콘텐츠당 평균 성과',      cls:'',   accent:'accent4' }
         ],
         types: [
@@ -1479,7 +1479,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       document.getElementById('kpiGrid').innerHTML = d.kpi.map(k => `
         <div class="kpi-card ${k.accent}">
           <div class="kpi-label">${k.label}</div>
-          <div class="kpi-value">${k.value}</div>
+          <div class="kpi-value">${k.value}${k.avg ? `<span style="font-size:0.55em;color:#888;font-weight:400;margin-left:6px;vertical-align:middle">avg ${k.avg}</span>` : ''}</div>
           <div class="kpi-change ${k.cls}">${k.cls==='up'?'↑ ':''}${k.note}</div>
         </div>`).join('');
 
