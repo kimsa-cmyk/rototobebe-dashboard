@@ -1479,13 +1479,41 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
           ];
           ec.options.scales.y1 = {position:'right',grid:{drawOnChartArea:false},ticks:{font:{size:10},callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v}};
         } else {
-          const wk = {w1:{lbl:'1주차 3/29-4/4',likes:1928,saves:297,comments:700,shares:1281},w2:{lbl:'2주차 4/5-4/11',likes:1702,saves:276,comments:816,shares:1161}};
+          const wk = {
+            w1: {lbl:'1주차 3/29-4/4', likes:1928, saves:297, comments:700, shares:1281},
+            w2: {lbl:'2주차 4/5-4/11', likes:1702, saves:276, comments:816, shares:1161}
+          };
           const w = wk[key];
-          document.getElementById('engChartTitle').textContent = '주간 인게이지먼트';
-          document.getElementById('engChartSub').textContent = w.lbl + ' · 좋아요+저장+댓글+공유';
+          const prev = key === 'w2' ? wk['w1'] : null;
+          document.getElementById('engChartTitle').textContent = '주간 인게이지먼트 비교';
+          document.getElementById('engChartSub').textContent = prev
+            ? w.lbl + ' (막대) vs ' + prev.lbl + ' (꺾은선)'
+            : w.lbl + ' · 좋아요+저장+댓글+공유';
           ec.config.type = 'bar';
           ec.data.labels = ['좋아요','저장','댓글','공유'];
-          ec.data.datasets = [{label:w.lbl,data:[w.likes,w.saves,w.comments,w.shares],backgroundColor:['rgba(232,97,74,.75)','rgba(122,158,142,.75)','rgba(244,162,97,.75)','rgba(155,142,196,.75)'],borderRadius:4}];
+          ec.data.datasets = [
+            {
+              type: 'bar',
+              label: w.lbl,
+              data: [w.likes, w.saves, w.comments, w.shares],
+              backgroundColor: ['rgba(232,97,74,.75)','rgba(122,158,142,.75)','rgba(244,162,97,.75)','rgba(155,142,196,.75)'],
+              borderRadius: 4,
+              order: 2
+            },
+            ...(prev ? [{
+              type: 'line',
+              label: prev.lbl,
+              data: [prev.likes, prev.saves, prev.comments, prev.shares],
+              borderColor: 'rgba(100,100,100,.6)',
+              borderDash: [5,4],
+              borderWidth: 2,
+              pointBackgroundColor: 'rgba(100,100,100,.6)',
+              pointRadius: 4,
+              fill: false,
+              tension: 0,
+              order: 1
+            }] : [])
+          ];
           ec.options.scales.y1 = undefined;
         }
         ec.update();
