@@ -1034,7 +1034,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
         caption: "\"엄마, 나 좀 봐요! 지구를 지키는 슈퍼 히어로로 변신했거든요.\"\n히어로 그래픽 티셔츠와 햇볕을 가려줄 가벼운 바람막이의 만남, 우리 아이의 용감한 여름 외출을 완성합니다.\n2026. 04. 13 AM 11:00 무신사 단독 오픈" },
       { id: 8, name: "파프리카", url: "https://www.instagram.com/p/DWyiy0gE-kA/?img_index=1", img: "images/0406_02.jpg", date: "2026-04-06", time: "21:11", type: "[피드]", likes: 186, comments: 62, saves: 34, shares: 224, impressions: 25674, reach: 8867, followers: 521, profile_activity: 638, profile_visits: 532, feed: 19974, profile_clicks: 4775, story: 796, external_clicks: 105, follows: 1, repost: 15,
         caption: "\"나 좀 봐요! 커다란 파프리카 집을 입고 우리 텐트 속으로 쏙- 들어가면요. 알록달록한 무지개 꿈들이 몽글몽글 피어날 것 같아요!\"\n익숙한 텐트 안에서 장난을 주고받는 사소한 순간들이 모여 아이들에게는 가장 소중한 여름의 기억이 됩니다." },
-      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", url: "https://www.instagram.com/p/DW0uOU1Ey_C/?img_index=1", img: "images/0407.jpg", date: "2026-04-07", time: "17:29", type: "[피드]", likes: null, comments: null, saves: null, shares: null, impressions: null, reach: null, followers: null, profile_activity: null, profile_visits: null, feed: null, profile_clicks: null, story: null, external_clicks: null, follows: null, repost: null,
+      { id: 9, name: "싱글 소매 스트라이프 티셔츠 화보컷", url: "https://www.instagram.com/p/DW0uOU1Ey_C/?img_index=1", img: "images/0407.jpg", date: "2026-04-07", time: "17:29", type: "[피드]", likes: 145, comments: 82, saves: 35, shares: 220, impressions: 17713, reach: 6351, followers: 492, profile_activity: 314, profile_visits: 254, feed: 11549, profile_clicks: 5013, story: 1010, external_clicks: 60, follows: 0, repost: 10,
         caption: "\"아이들의 에너지도 햇살을 받아 더 눈부시게 빛나요!\"\n'빠방이' 라인과 컬러 포인트, 시어서커 셔츠 셋업까지\n하루 종일 뛰어놀아도 걱정 없는 편안함과 툭 걸쳐도 멋스러운 로토토베베의 여름" },
       { id: 10, name: "무신사 단독-민소매", url: "https://www.instagram.com/p/DW3kv89Ey9g/?img_index=1", img: "images/0408.jpg", date: "2026-04-08", time: "20:04", type: "[피드]", likes: 324, comments: 221, saves: 82, shares: 254, impressions: 36205, reach: 12145, followers: 896, profile_activity: 1099, profile_visits: 825, feed: 29688, profile_clicks: 4236, story: 1991, external_clicks: 263, follows: 11, repost: 15,
         caption: "\"이 삽으로 모래 떠서, 버킷에 담고, 부으면 우리 집이 완성돼요!\"\n면모달 끈나시 고쟁이 실내복, 미니쭈리 민소매 셋업은 무신사에서만 만나볼 수 있습니다.\n26 SUMMER #EVENT — 오늘의 원픽 제품과 컬러를 남겨주세요 (이벤트 기간 4/8~4/22)" },
@@ -1205,6 +1205,56 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
                 </div>
               </div>
 
+              <!-- 팬덤 지표 -->
+              ${(post.impressions && post.reach && post.saves != null) ? (() => {
+                const saveRate = post.reach > 0 ? ((post.saves / post.reach) * 100).toFixed(1) : '-';
+                const spreadRate = post.reach > 0 ? (((post.saves + (post.shares||0)) / post.reach) * 100).toFixed(1) : '-';
+                const followRate = post.reach > 0 ? (((post.follows||0) / post.reach) * 100).toFixed(2) : '-';
+                const pureComments = post.comments != null ? post.comments : '-';
+                const organicPct = post.impressions > 0 ? (((post.reach||0) / post.impressions) * 100).toFixed(1) : '-';
+                return `
+              <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #f0f0f0;">
+                <div style="font-size:12px;font-weight:600;color:#333;margin-bottom:6px;">📊 팬덤 지표 — 핵심 KPI</div>
+                <div style="font-size:10px;color:#E8614A;margin-bottom:8px;">대표가 보고 싶은 건 '이 콘텐츠가 자발적으로 퍼지고 있나'. 조회수·광고 효율보다 <b>저장률·확산률</b>이 핵심.</div>
+                <table style="width:100%;border-collapse:collapse;font-size:10px;">
+                  <thead>
+                    <tr style="border-bottom:1px solid #eee;">
+                      <th style="text-align:left;padding:4px 6px;color:#999;font-weight:500">지표</th>
+                      <th style="text-align:left;padding:4px 6px;color:#999;font-weight:500">계산식</th>
+                      <th style="text-align:right;padding:4px 6px;color:#999;font-weight:500">값</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                      <td style="padding:5px 6px;font-weight:700;color:#E8614A">저장률</td>
+                      <td style="padding:5px 6px;color:#888">저장 ÷ 도달</td>
+                      <td style="padding:5px 6px;text-align:right;font-weight:700;color:#E8614A">${saveRate}%</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                      <td style="padding:5px 6px;font-weight:700;color:#7A9E8E">확산률</td>
+                      <td style="padding:5px 6px;color:#888">(저장+공유) ÷ 도달</td>
+                      <td style="padding:5px 6px;text-align:right;font-weight:700;color:#7A9E8E">${spreadRate}%</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                      <td style="padding:5px 6px;color:#555">팔로우율</td>
+                      <td style="padding:5px 6px;color:#888">팔로우 ÷ 도달</td>
+                      <td style="padding:5px 6px;text-align:right;font-weight:600">${followRate}%</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+                      <td style="padding:5px 6px;color:#555">순수 댓글</td>
+                      <td style="padding:5px 6px;color:#888">전체 댓글 (로덬 제외 미분리)</td>
+                      <td style="padding:5px 6px;text-align:right;font-weight:600">${pureComments}건</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:5px 6px;color:#555">도달/조회 비율</td>
+                      <td style="padding:5px 6px;color:#888">도달 ÷ 전체 조회</td>
+                      <td style="padding:5px 6px;text-align:right;font-weight:600">${organicPct}%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>`;
+              })() : ''}
+
               ${post.caption ? `
               <!-- 캡션 -->
               <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #f0f0f0;">
@@ -1281,27 +1331,27 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       all: {
         krow: [
           { cls:'c1', label:'팔로워',        value:'113,645', delta:'up', note:'▲ +848 (3월 순증)', comment:'팔로우 +1,982 / 취소 -1,134 = 순증 +848명(+0.8%). 2월 +440 대비 2배 성장.' },
-          { cls:'c2', label:'게시물 저장수',  value:'573',     delta:'up', note:'4월 누적 11개 콘텐츠 (4월 평균 저장수 : 52건)', comment:'4월 총 저장 573건. 토이카메라(이벤트) 108건 최다. 무신사 단독-민소매 82건.' },
-          { cls:'c3', label:'총 조회',        value:'394.0K',  delta:'up', note:'▲ 11개 콘텐츠 누적 (4월 평균 : 35.8K)', comment:'4월 전체 조회 393,988회. 콘텐츠당 평균 35.8K. 토이카메라 118.9K로 압도적 1위 (광고 효과).' },
-          { cls:'c4', label:'인게이지먼트율', value:'4.7%',    delta:'up', note:'▲ 반응 8,327 / 도달 177,545', comment:'4월 인게이지먼트율 4.7%. 무신사 단독-반팔 13.4% · 민소매 7.4%로 무신사 시리즈 구매전환 효과 두드러짐.' }
+          { cls:'c2', label:'게시물 저장수',  value:'608',     delta:'up', note:'4월 누적 12개 콘텐츠 (4월 평균 저장수 : 51건)', comment:'4월 총 저장 608건. 토이카메라(이벤트) 108건 최다. 무신사 단독-민소매 82건.' },
+          { cls:'c3', label:'총 조회',        value:'411.7K',  delta:'up', note:'▲ 12개 콘텐츠 누적 (4월 평균 : 34.3K)', comment:'4월 전체 조회 411,701회. 콘텐츠당 평균 34.3K. 토이카메라 118.9K로 압도적 1위 (광고 효과).' },
+          { cls:'c4', label:'인게이지먼트율', value:'4.8%',    delta:'up', note:'▲ 반응 8,819 / 도달 183,896', comment:'4월 인게이지먼트율 4.8%. 무신사 단독-반팔 13.4% · 민소매 7.4%로 무신사 시리즈 구매전환 효과 두드러짐.' }
         ],
         kpi: [
-          { label:'총 조회수',  value:'394.0K',  note:'11개 콘텐츠 누적 (4월 평균 : 35.8K)',   cls:'up', accent:'' },
-          { label:'총 도달',    value:'177,545', note:'콘텐츠당 평균 16,140',        cls:'up', accent:'accent2' },
-          { label:'총 반응',    value:'8,327',   note:'콘텐츠당 평균 757',           cls:'up', accent:'accent3' },
-          { label:'총 공유',    value:'2,442',   note:'콘텐츠당 평균 222',           cls:'up', accent:'accent4' }
+          { label:'총 조회수',  value:'411.7K',  note:'12개 콘텐츠 누적 (4월 평균 : 34.3K)',   cls:'up', accent:'' },
+          { label:'총 도달',    value:'183,896', note:'콘텐츠당 평균 15,325',        cls:'up', accent:'accent2' },
+          { label:'총 반응',    value:'8,819',   note:'콘텐츠당 평균 735',           cls:'up', accent:'accent3' },
+          { label:'총 공유',    value:'2,662',   note:'콘텐츠당 평균 222',           cls:'up', accent:'accent4' }
         ],
         types: [
-          { icon:'📸', label:'피드',   value:'10개', pct:'전체 11개 중 91%' },
+          { icon:'📸', label:'피드',   value:'11개', pct:'전체 12개 중 92%' },
           { icon:'🎬', label:'릴스',   value:'1개', pct:'풍선껌 룩북 릴스' },
           { icon:'⭐', label:'최고 성과', value:'118.9K', pct:'토이카메라(이벤트)' }
         ],
         metrics: [
-          { label:'총 좋아요',   value:'3,630건 · 콘텐츠당 평균 330' },
-          { label:'총 댓글',     value:'1,516건 · 콘텐츠당 평균 138' },
-          { label:'총 저장',     value:'573건 · 콘텐츠당 평균 52' },
-          { label:'총 공유',     value:'2,442건 · 콘텐츠당 평균 222' },
-          { label:'총 리포스트', value:'151건 · 콘텐츠당 평균 14' }
+          { label:'총 좋아요',   value:'3,775건 · 콘텐츠당 평균 315' },
+          { label:'총 댓글',     value:'1,598건 · 콘텐츠당 평균 133' },
+          { label:'총 저장',     value:'608건 · 콘텐츠당 평균 51' },
+          { label:'총 공유',     value:'2,662건 · 콘텐츠당 평균 222' },
+          { label:'총 리포스트', value:'161건 · 콘텐츠당 평균 13' }
         ],
         insight: {
           strengths: [
@@ -1312,8 +1362,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
           ],
           improve: [
             '릴스 1편(풍선껌 23.7K)만 발행 — 릴스 비중 확대 필요',
-            '풍선 원피스 공유 21건 — 다른 콘텐츠 대비 현저히 낮음, CTA 강화 필요',
-            '싱글 소매 스트라이프 캡처 미확보 — 데이터 관리 보완'
+            '풍선 원피스 공유 21건 — 다른 콘텐츠 대비 현저히 낮음, CTA 강화 필요'
           ],
           action: [
             '무신사 이벤트 형식(댓글 참여 유도) 지속 — 높은 반응수 검증됨',
@@ -1325,10 +1374,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       },
       w1: {
         krow: [
-          { cls:'c1', label:'팔로워',        value:'113,645', delta:'up', note:'▲ +848 (3월 순증)', comment:'토이카메라 이벤트·광고 집중 주차. 팔로워 27명 신규 유입 (토이카메라 단일).' },
-          { cls:'c2', label:'게시물 저장수', value:'297',    delta:'up', note:'5개 콘텐츠 합산', comment:'토이카메라 108건으로 최다. 스케이트보드 61건, 비눗방울 54건.' },
-          { cls:'c3', label:'릴스 평균 조회', value:'23.7K', delta:'up', note:'▲ 풍선껌 릴스', comment:'풍선껌 릴스 1편 기준 23,697회. 비팔로워 비중 65%로 외부 확산 양호.' },
-          { cls:'c4', label:'인게이지먼트율', value:'3.4%',  delta:'up', note:'▲ 반응 4,294 / 도달 124,524', comment:'토이카메라 광고 도달(75,127)이 전체를 견인. 광고 제외 오가닉 기준은 더 높음.' }
+          { cls:'c1', label:'팔로워',        value:'113,645', delta:'up', note:'▲ +848 (3월 순증)', vs:'전월(3월) 순증 +848명 / 2월 +440 대비 ▲ +408명', comment:'토이카메라 이벤트·광고 집중 주차. 팔로워 27명 신규 유입 (토이카메라 단일).' },
+          { cls:'c2', label:'게시물 저장수', value:'297',    delta:'up', note:'5개 콘텐츠 합산', vs:'콘텐츠당 평균 59건 | 4월 전체 평균(52건) 대비 ▲ +7건', comment:'토이카메라 108건으로 최다. 스케이트보드 61건, 비눗방울 54건.' },
+          { cls:'c3', label:'릴스 평균 조회', value:'23.7K', delta:'up', note:'▲ 풍선껌 릴스', vs:'피드 평균 조회 32.3K 대비 ▼ -8.6K (릴스 1편 기준)', comment:'풍선껌 릴스 1편 기준 23,697회. 비팔로워 비중 65%로 외부 확산 양호.' },
+          { cls:'c4', label:'인게이지먼트율', value:'3.4%',  delta:'up', note:'▲ 반응 4,294 / 도달 124,524', vs:'4월 전체 평균(4.7%) 대비 ▼ -1.3%p (광고 도달 분모 확대 영향)', comment:'토이카메라 광고 도달(75,127)이 전체를 견인. 광고 제외 오가닉 기준은 더 높음.' }
         ],
         kpi: [
           { label:'총 조회수',  value:'245.6K', note:'5개 콘텐츠 기준',         cls:'up', accent:'' },
@@ -1367,28 +1416,28 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
       },
       w2: {
         krow: [
-          { cls:'c1', label:'팔로워',       value:'113,645', delta:'up', note:'▲ +848 (3월 순증)', comment:'무신사 단독 오픈(4/13) 준비 주차. 단독-반팔 이벤트 댓글로 반응수 급증.' },
-          { cls:'c2', label:'게시물 저장수', value:'276',    delta:'',  note:'6개 콘텐츠 합산', comment:'무신사 단독-민소매 82건 최다. 화보컷 34건 수준. 싱글 스트라이프 캡처 미확보.' },
-          { cls:'c3', label:'릴스 평균 조회', value:'-',     delta:'',  note:'릴스 없음', comment:'이번 주차 릴스 미발행. 다음 주차에 릴스 최소 1편 보완 필요.' },
-          { cls:'c4', label:'인게이지먼트율', value:'7.6%',  delta:'up', note:'▲ 반응 4,033 / 도달 53,021', comment:'무신사 단독-반팔 반응 1,135건(좋아요 644) — 이벤트 댓글 유입 효과. 무신사 민소매도 7.4%.' }
+          { cls:'c1', label:'팔로워',       value:'113,645', delta:'up', note:'▲ +848 (3월 순증)', vs:'전월(3월) 순증 +848명 / 2월 +440 대비 ▲ +408명', comment:'무신사 단독 오픈(4/13) 준비 주차. 단독-반팔 이벤트 댓글로 반응수 급증.' },
+          { cls:'c2', label:'게시물 저장수', value:'311',    delta:'',  note:'7개 콘텐츠 합산', vs:'콘텐츠당 평균 44건 | 1주차 평균(59건) 대비 ▼ -15건', comment:'무신사 단독-민소매 82건 최다. 싱글 스트라이프 35건.' },
+          { cls:'c3', label:'릴스 평균 조회', value:'-',     delta:'',  note:'릴스 없음', vs:'1주차 릴스(23.7K) 대비 미발행 — 다양성 보완 필요', comment:'이번 주차 릴스 미발행. 다음 주차에 릴스 최소 1편 보완 필요.' },
+          { cls:'c4', label:'인게이지먼트율', value:'7.6%',  delta:'up', note:'▲ 반응 4,525 / 도달 59,372', vs:'1주차(3.4%) 대비 ▲ +4.2%p — 팔로워 타겟 콘텐츠 전환 효율 ↑', comment:'무신사 단독-반팔 반응 1,135건(좋아요 644) — 이벤트 댓글 유입 효과. 무신사 민소매도 7.4%.' }
         ],
         kpi: [
-          { label:'총 조회수',  value:'148.4K', note:'6개 콘텐츠 기준',         cls:'',   accent:'' },
-          { label:'총 도달',    value:'53,021', note:'콘텐츠당 평균 8,837',     cls:'',   accent:'accent2' },
-          { label:'총 좋아요',  value:'1,702',  note:'콘텐츠당 평균 284개',     cls:'',   accent:'accent3' },
-          { label:'평균 조회',  value:'24.7K',  note:'콘텐츠당 평균 성과',      cls:'',   accent:'accent4' }
+          { label:'총 조회수',  value:'166.1K', note:'7개 콘텐츠 기준',         cls:'',   accent:'' },
+          { label:'총 도달',    value:'59,372', note:'콘텐츠당 평균 8,482',     cls:'',   accent:'accent2' },
+          { label:'총 좋아요',  value:'1,847',  note:'콘텐츠당 평균 264개',     cls:'',   accent:'accent3' },
+          { label:'평균 조회',  value:'23.7K',  note:'콘텐츠당 평균 성과',      cls:'',   accent:'accent4' }
         ],
         types: [
-          { icon:'📸', label:'피드',    value:'6개',   pct:'평균 24.7K 조회' },
+          { icon:'📸', label:'피드',    value:'7개',   pct:'평균 23.7K 조회' },
           { icon:'🎬', label:'릴스',    value:'0개',   pct:'-' },
           { icon:'⭐', label:'최고 성과', value:'36.2K', pct:'무신사 단독-민소매' }
         ],
         metrics: [
-          { label:'콘텐츠당 평균 좋아요', value:'284개' },
-          { label:'콘텐츠당 평균 저장',  value:'46개' },
-          { label:'콘텐츠당 평균 댓글',  value:'136개' },
-          { label:'콘텐츠당 평균 공유',  value:'194개' },
-          { label:'전체 반응',           value:'4,033건' }
+          { label:'콘텐츠당 평균 좋아요', value:'264개' },
+          { label:'콘텐츠당 평균 저장',  value:'44개' },
+          { label:'콘텐츠당 평균 댓글',  value:'129개' },
+          { label:'콘텐츠당 평균 공유',  value:'197개' },
+          { label:'전체 반응',           value:'4,525건' }
         ],
         insight: {
           strengths: [
@@ -1397,7 +1446,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
             '인게이지먼트율 7.6%로 1주차(3.4%) 대비 2배 이상 — 팔로워 타겟 콘텐츠 효율 ↑'
           ],
           improve: [
-            '1주차 대비 전반적 조회수 하락 (49.1K → 24.7K) — 광고 도달 감소 영향',
+            '1주차 대비 전반적 조회수 하락 (49.1K → 23.7K) — 광고 도달 감소 영향',
             '릴스 콘텐츠 부재 — 다양성 보완 필요',
             '풍선 원피스 공유 21건 — 확산력 약함, CTA 강화 필요'
           ],
@@ -1422,6 +1471,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
           <div class="klbl">${k.label}</div>
           <div class="kinp" style="font-weight:600;font-size:15px;padding:4px 0">${k.value}</div>
           <div class="kdelta ${k.delta}">${k.note}</div>
+          ${k.vs ? `<div style="margin-top:5px;font-size:10px;color:#888;background:#f4f4f4;border-radius:6px;padding:4px 8px;line-height:1.5">${k.vs}</div>` : ''}
           ${k.comment ? `<div class="kcomment">${k.comment}</div>` : ''}
         </div>`).join('');
 
