@@ -98,6 +98,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:12p
   <div class="tab active" onclick="showPage('p1',this)">채널 리뷰</div>
   <div class="tab" onclick="showPage('p2',this)">콘텐츠 리뷰</div>
   <div class="tab" onclick="showPage('p3',this)">팬덤 생성</div>
+  <div class="tab" onclick="showPage('p4',this)">콘텐츠 상세</div>
 </div>
 
 <!-- PAGE 1 -->
@@ -264,6 +265,57 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:12p
   <div class="fn"><span>팬덤 신호 건수 = 오가닉 댓글 수동 카운트 ±2건</span><span>시즌 연속성 언급 추세가 팬덤 형성의 핵심</span><span>🔶 무신사 관련은 콘텐츠 기준값 제외지만 팬덤 신호는 포함</span><span>다음 업데이트: 5월 첫 주</span></div>
 </div>
 
+<!-- PAGE 4 -->
+<div class="page" id="p4">
+  <div class="fbar">
+    <span class="flbl">기간 단위</span>
+    <div class="ptog">
+      <button class="pbtn active" id="p4bm" onclick="p4mode('monthly')">월간</button>
+      <button class="pbtn" id="p4bw" onclick="p4mode('weekly')">주간</button>
+    </div>
+    <div class="fsep"></div>
+    <span class="flbl">기간 선택</span>
+    <select class="psel" id="p4ms" onchange="p4r()">
+      <option value="2026-04">2026/04</option>
+      <option value="2026-03">2026/03</option>
+      <option value="2026-02">2026/02</option>
+      <option value="2026-01">2026/01</option>
+    </select>
+    <select class="psel" id="p4ws" style="display:none" onchange="p4r()">
+      <option value="2026-04-06">4/6주 (4/6 – 4/10)</option>
+      <option value="2026-03-30">3/30주 (4/1 – 4/5)</option>
+    </select>
+    <div class="fsep"></div>
+    <span class="pinfo" id="p4inf">2026/04 · 월간</span>
+  </div>
+  <div class="krow" style="grid-template-columns:repeat(5,1fr);">
+    <div class="kcard"><div class="klbl">총 게시물</div><div class="kval" id="p4k1">–</div></div>
+    <div class="kcard"><div class="klbl">총 조회수</div><div class="kval" id="p4k2">–</div></div>
+    <div class="kcard"><div class="klbl">총 저장</div><div class="kval" id="p4k3">–</div></div>
+    <div class="kcard"><div class="klbl">총 공유</div><div class="kval" id="p4k4">–</div></div>
+    <div class="kcard"><div class="klbl">평균 저장률</div><div class="kval" id="p4k5">–</div></div>
+  </div>
+  <div class="card row3">
+    <div class="ctit">콘텐츠별 수치 상세 <span class="csub">저장률·확산률·방문률·클릭률 = 조회수 기준</span></div>
+    <div class="tw">
+      <table class="dt" id="p4tbl">
+        <thead><tr>
+          <th style="text-align:left;min-width:120px;">콘텐츠</th>
+          <th>업로드</th><th>유형</th>
+          <th>조회수</th>
+          <th>저장</th><th>저장률</th>
+          <th>공유</th><th>확산률</th>
+          <th>방문</th><th>방문률</th>
+          <th>클릭</th><th>클릭률</th>
+          <th>오가닉댓글</th><th>비고</th>
+        </tr></thead>
+        <tbody id="p4tb"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="fn"><span>저장률·확산률·방문률·클릭률 = 조회수 기준</span><span>🔶 무신사 관련 = 기준값 제외</span><span>⚠️ 이벤트광고 / 방문 오류 의심 포함</span></div>
+</div>
+
 <script>
 const W=[
   {w:'1/4-1/10',조회:307061,도달:68088,저장:38,공유:27,sr:.000558,cr:.000955,방문:3372,클릭:1270,순증:-90,ad:.588},
@@ -303,7 +355,7 @@ function tg(d){const sc={S:4,A:3,B:2,C:1};const gs=[gr(d.저장/d.조회,B.sr),g
 function fp(v){return v==null?'–':(v*100).toFixed(2)+'%';}
 function fn(v){return v==null?'–':v.toLocaleString();}
 
-let m1='monthly',m2='monthly';
+let m1='monthly',m2='monthly',m4='monthly';
 
 function p1mode(m){
   m1=m;
@@ -384,13 +436,63 @@ function p2r(){
   });
 }
 
+function p4mode(m){
+  m4=m;
+  document.getElementById('p4ms').style.display=m==='monthly'?'':'none';
+  document.getElementById('p4ws').style.display=m==='weekly'?'':'none';
+  document.getElementById('p4bm').classList.toggle('active',m==='monthly');
+  document.getElementById('p4bw').classList.toggle('active',m==='weekly');
+  p4r();
+}
+function p4r(){
+  const sel=m4==='monthly'?document.getElementById('p4ms').value:document.getElementById('p4ws').value;
+  document.getElementById('p4inf').textContent=sel+' · '+(m4==='monthly'?'월간':'주간');
+  let rows=m4==='weekly'?C.filter(d=>d.wk===sel):[...C];
+  const totalV=rows.reduce((s,d)=>s+d.조회,0);
+  const totalS=rows.reduce((s,d)=>s+(d.저장||0),0);
+  const totalC=rows.reduce((s,d)=>s+(d.공유||0),0);
+  const avgSr=totalV?totalS/totalV:0;
+  document.getElementById('p4k1').innerHTML=rows.length+'<span class="u">개</span>';
+  document.getElementById('p4k2').innerHTML=totalV.toLocaleString();
+  document.getElementById('p4k3').innerHTML=totalS.toLocaleString();
+  document.getElementById('p4k4').innerHTML=totalC.toLocaleString();
+  document.getElementById('p4k5').innerHTML=(avgSr*100).toFixed(3)+'<span class="u">%</span>';
+  const tb=document.getElementById('p4tb');tb.innerHTML='';
+  rows.forEach(d=>{
+    const sr=d.저장/d.조회,cr=d.공유/d.조회;
+    const vr=d.방문!=null?d.방문/d.조회:null;
+    const lr=d.클릭!=null?d.클릭/d.조회:null;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${d.t} ${d.fl}</td>
+      <td>${d.up}</td>
+      <td>${d.tp}</td>
+      <td>${fn(d.조회)}</td>
+      <td>${fn(d.저장)}</td><td class="${sr>=B.sr?'up-t':sr<B.sr*.6?'dn-t':'fl-t'}">${fp(sr)}</td>
+      <td>${fn(d.공유)}</td><td class="${cr>=B.cr?'up-t':'fl-t'}">${fp(cr)}</td>
+      <td>${fn(d.방문)}</td><td>${vr!=null?'<span class="'+(vr>=B.vr?'up-t':'fl-t')+'">'+fp(vr)+'</span>':'–'}</td>
+      <td>${fn(d.클릭)}</td><td>${lr!=null?'<span class="'+(lr>=B.lr?'up-t':'fl-t')+'">'+fp(lr)+'</span>':'–'}</td>
+      <td>${d.댓글}</td>
+      <td style="font-size:10px;color:var(--muted);">${d.비고}</td>`;
+    tb.appendChild(tr);
+  });
+  // 합계 행
+  const tot=document.createElement('tr');tot.className='tr';
+  const avgCr=totalV?totalC/totalV:0;
+  tot.innerHTML=`<td colspan="3">합계 / 평균</td>
+    <td>${totalV.toLocaleString()}</td>
+    <td>${totalS.toLocaleString()}</td><td>${(avgSr*100).toFixed(3)}%</td>
+    <td>${totalC.toLocaleString()}</td><td>${(avgCr*100).toFixed(3)}%</td>
+    <td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td>`;
+  tb.appendChild(tot);
+}
+
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.subnav .tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   el.classList.add('active');
 }
-p1r();p2r();
+p1r();p2r();p4r();
 </script>
 </body>
 </html>
