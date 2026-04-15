@@ -2610,7 +2610,17 @@ function goTab(id,btn){
   if(id==='review') renderStaffReview();
   if(id==='weekly') {}
   if(id==='mgmt') renderMgmt();
+  history.replaceState(null,'','#'+id);
 }
+// 페이지 로드 시 URL 해시로 탭 복원
+(function(){
+  const hash=location.hash.replace('#','');
+  const valid=['sns','rodem','buzz','review','weekly','mgmt'];
+  if(valid.includes(hash)){
+    const btn=document.querySelector('.tab[onclick*='''+ hash +''']');
+    if(btn) goTab(hash,btn);
+  }
+})();
 
 
 // ── 경영지원팀
