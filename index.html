@@ -2732,7 +2732,7 @@ function goTab(id,btn){
   const hash=location.hash.replace('#','');
   const valid=['sns','rodem','buzz','review','weekly','mgmt'];
   if(valid.includes(hash)){
-    const btn=document.querySelector('.tab[onclick*='''+ hash +''']');
+    const btn=document.querySelector('.tab[onclick*="' + hash + '"]');
     if(btn) goTab(hash,btn);
   }
 })();
