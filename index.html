@@ -850,7 +850,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
   </div>
   <div class="tabs">
     <button class="tab on" onclick="goTab('sns',this)">SNS 성과</button>
-    <button class="tab" onclick="goTab('rodem',this)">로덬메이트</button>
+    <button class="tab" onclick="goTab('rodem',this)">RODUK</button>
     <button class="tab" onclick="goTab('buzz',this)">버즈 모니터링</button>
     <button class="tab" onclick="goTab('review',this)">스탭 리뷰</button>
     <button class="tab" onclick="goTab('weekly',this)">주간 인사이트</button>
@@ -2909,6 +2909,64 @@ function p2r(){
 // SNS 채널 성과 초기화
 p1r();
 p2r();
+let mcb='monthly';
+function cbmode(m){
+  mcb=m;
+  document.getElementById('cb_ms').style.display=m==='monthly'?'':'none';
+  document.getElementById('cb_ws').style.display=m==='weekly'?'':'none';
+  document.getElementById('cbm_btn').style.background=m==='monthly'?'var(--coral)':'white';
+  document.getElementById('cbm_btn').style.color=m==='monthly'?'white':'#888';
+  document.getElementById('cbw_btn').style.background=m==='weekly'?'var(--coral)':'white';
+  document.getElementById('cbw_btn').style.color=m==='weekly'?'white':'#888';
+  cbr();
+}
+function cbr(){
+  const sel=mcb==='monthly'?'all':document.getElementById('cb_ws').value;
+  document.getElementById('cb_inf').textContent=(mcb==='monthly'?'2026/04 전체':sel.replace('2026-','').replace('-','/')+'주')+' · '+(mcb==='monthly'?'월간':'주간');
+  let rows=mcb==='weekly'?C.filter(d=>d.wk===sel):[...C];
+  const go={'S':0,'A':1,'B':2,'C':3,'–':4};
+  rows.sort((a,b)=>go[tg(a)]-go[tg(b)]);
+  document.getElementById('cbk1').innerHTML=rows.length+'<span style="font-size:11px;color:var(--ts)">개</span>';
+  const au=rows.filter(d=>['S','A'].includes(tg(d))).length;
+  document.getElementById('cbk2').innerHTML=au+'<span style="font-size:11px;color:var(--ts)">개</span>';
+  document.getElementById('cbk2b').textContent=rows.length?Math.round(au/rows.length*100)+'%':'–';
+  const sS=rows.filter(d=>gr(d['저장']/d['조회'],B.sr)==='S').length;
+  const cS=rows.filter(d=>gr(d['공유']/d['조회'],B.cr)==='S').length;
+  document.getElementById('cbk3').innerHTML=sS+'<span style="font-size:11px;color:var(--ts)">개</span>';
+  document.getElementById('cbk4').innerHTML=cS+'<span style="font-size:11px;color:var(--ts)">개</span>';
+  const tb=document.getElementById('cbtb');tb.innerHTML='';
+  let lg=null;
+  rows.forEach(d=>{
+    const g=tg(d);
+    const sr=d['저장']/d['조회'],cr=d['공유']/d['조회'],vr=d['방문']?d['방문']/d['조회']:null,lr=d['클릭']?d['클릭']/d['조회']:null;
+    if(g!==lg&&g!=='–'){
+      const dr=document.createElement('tr');
+      dr.innerHTML='<td colspan="15" style="padding:4px 8px;font-size:10px;font-weight:600;color:#888;background:#f5f5f3;border-bottom:1px solid #e4e4e0">'+g+' 등급</td>';
+      tb.appendChild(dr);lg=g;
+    }
+    const upC='color:#1a6b3a;font-weight:500',dnC='color:#c03020',flC='color:#555';
+    const tr=document.createElement('tr');
+    const col1=sr>=B.sr?upC:(sr<B.sr*0.6?dnC:flC);
+    const col2=cr>=B.cr?upC:flC;
+    tr.innerHTML='<td style="padding:5px 8px">'+d.t+' '+d.fl+'</td>'
+      +'<td style="padding:5px 8px;font-size:10px;color:#888">'+d.up+'</td>'
+      +'<td style="padding:5px 8px;font-size:10px">'+d.tp+'</td>'
+      +'<td style="padding:5px 8px;text-align:right">'+fn(d['조회'])+'</td>'
+      +'<td style="padding:5px 8px;text-align:right;'+col1+'">'+fn(d['저장'])+'/'+fp(sr)+'</td>'
+      +'<td style="padding:5px 8px;text-align:center"><span class="gp '+gc(gr(sr,B.sr))+'">'+gr(sr,B.sr)+'</span></td>'
+      +'<td style="padding:5px 8px;text-align:right;'+col2+'">'+fn(d['공유'])+'/'+fp(cr)+'</td>'
+      +'<td style="padding:5px 8px;text-align:center"><span class="gp '+gc(gr(cr,B.cr))+'">'+gr(cr,B.cr)+'</span></td>'
+      +'<td style="padding:5px 8px;text-align:right">'+(d['방문']?fn(d['방문'])+'/'+fp(vr):'–')+'</td>'
+      +'<td style="padding:5px 8px;text-align:center"><span class="gp '+gc(gr(vr,B.vr))+'">'+gr(vr,B.vr)+'</span></td>'
+      +'<td style="padding:5px 8px;text-align:right">'+(d['클릭']?fn(d['클릭'])+'/'+fp(lr):'–')+'</td>'
+      +'<td style="padding:5px 8px;text-align:center"><span class="gp '+gc(gr(lr,B.lr))+'">'+gr(lr,B.lr)+'</span></td>'
+      +'<td style="padding:5px 8px;text-align:right">'+d['댓글']+'</td>'
+      +'<td style="padding:5px 8px;text-align:center"><span class="gp '+gc(g)+'">'+g+'</span></td>'
+      +'<td style="padding:5px 8px;font-size:10px;color:#888">'+d['비고']+'</td>';
+    tb.appendChild(tr);
+  });
+}
+cbr();
 
 
 const RAW={"010-3379-1223": {"post": 0, "comment": 0, "cheer": 2}, "010-2546-7403": {"post": 0, "comment": 0, "cheer": 4}, "010-2583-6249": {"post": 0, "comment": 0, "cheer": 9}, "010-2573-7414": {"post": 6, "comment": 1, "cheer": 6}, "010-3759-5293": {"post": 0, "comment": 2, "cheer": 7}, "010-9797-0355": {"post": 0, "comment": 1, "cheer": 4}, "010-2312-0067": {"post": 0, "comment": 0, "cheer": 8}, "010-4209-9509": {"post": 0, "comment": 0, "cheer": 0}, "010-2828-0941": {"post": 0, "comment": 0, "cheer": 1}, "010-8020-7868": {"post": 0, "comment": 0, "cheer": 10}, "010-9555-3019": {"post": 0, "comment": 0, "cheer": 0}, "010-7638-1156": {"post": 5, "comment": 2, "cheer": 9}, "010-2358-7602": {"post": 1, "comment": 0, "cheer": 3}, "010-2250-1608": {"post": 1, "comment": 4, "cheer": 9}, "010-2247-2064": {"post": 0, "comment": 0, "cheer": 0}, "010-2338-6486": {"post": 0, "comment": 0, "cheer": 1}, "010-9744-0990": {"post": 0, "comment": 1, "cheer": 9}, "010-7772-9992": {"post": 0, "comment": 0, "cheer": 7}, "010-7475-6555": {"post": 0, "comment": 8, "cheer": 7}, "010-7795-2616": {"post": 0, "comment": 0, "cheer": 3}, "010-5165-9509": {"post": 0, "comment": 0, "cheer": 9}, "010-6671-0556": {"post": 0, "comment": 2, "cheer": 10}, "010-2282-9642": {"post": 0, "comment": 0, "cheer": 4}, "010-5780-3099": {"post": 0, "comment": 0, "cheer": 2}, "010-5052-9376": {"post": 0, "comment": 0, "cheer": 6}, "010-9320-5460": {"post": 0, "comment": 0, "cheer": 4}, "010-4150-4028": {"post": 0, "comment": 2, "cheer": 0}, "010-9982-8696": {"post": 0, "comment": 0, "cheer": 7}, "010-3155-0155": {"post": 0, "comment": 7, "cheer": 8}, "010-6519-1103": {"post": 0, "comment": 0, "cheer": 5}, "010-3131-0694": {"post": 1, "comment": 0, "cheer": 6}, "010-9287-3529": {"post": 0, "comment": 0, "cheer": 0}, "010-2379-6778": {"post": 0, "comment": 0, "cheer": 9}, "010-4031-7539": {"post": 1, "comment": 0, "cheer": 0}, "010-8306-8905": {"post": 0, "comment": 0, "cheer": 2}, "010-2018-9219": {"post": 0, "comment": 0, "cheer": 6}, "010-3582-4851": {"post": 0, "comment": 0, "cheer": 8}, "010-5198-9938": {"post": 1, "comment": 8, "cheer": 0}, "010-9823-9328": {"post": 0, "comment": 0, "cheer": 0}, "010-3163-1149": {"post": 2, "comment": 0, "cheer": 0}, "010-6570-3890": {"post": 0, "comment": 0, "cheer": 0}, "010-3900-7216": {"post": 1, "comment": 0, "cheer": 2}, "010-3229-0928": {"post": 1, "comment": 1, "cheer": 7}, "010-7313-2324": {"post": 0, "comment": 0, "cheer": 9}, "010-8892-3423": {"post": 6, "comment": 34, "cheer": 11}, "010-3731-0900": {"post": 1, "comment": 6, "cheer": 8}, "010-8887-6368": {"post": 0, "comment": 0, "cheer": 4}, "010-4225-9971": {"post": 0, "comment": 3, "cheer": 8}, "010-3236-2238": {"post": 0, "comment": 0, "cheer": 5}, "010-3487-8824": {"post": 0, "comment": 0, "cheer": 7}, "010-6655-1378": {"post": 0, "comment": 1, "cheer": 6}, "010-9277-8239": {"post": 0, "comment": 0, "cheer": 7}, "010-8525-5246": {"post": 0, "comment": 0, "cheer": 1}, "010-2373-2974": {"post": 0, "comment": 0, "cheer": 2}, "010-4170-7108": {"post": 2, "comment": 9, "cheer": 10}, "010-2600-3200": {"post": 0, "comment": 0, "cheer": 3}, "010-2512-3118": {"post": 0, "comment": 0, "cheer": 6}, "010-5374-9072": {"post": 0, "comment": 0, "cheer": 1}, "010-3390-0506": {"post": 1, "comment": 0, "cheer": 5}, "010-3062-1217": {"post": 1, "comment": 0, "cheer": 5}, "010-9344-9389": {"post": 1, "comment": 0, "cheer": 0}, "010-9232-3735": {"post": 0, "comment": 1, "cheer": 4}, "010-4056-2658": {"post": 1, "comment": 1, "cheer": 3}, "010-2353-8476": {"post": 0, "comment": 0, "cheer": 0}, "010-7552-7710": {"post": 3, "comment": 4, "cheer": 10}, "010-2883-5848": {"post": 0, "comment": 0, "cheer": 4}, "010-4789-1180": {"post": 0, "comment": 2, "cheer": 5}, "010-3494-4070": {"post": 0, "comment": 0, "cheer": 2}, "010-9475-4517": {"post": 0, "comment": 0, "cheer": 8}, "010-6241-5394": {"post": 0, "comment": 0, "cheer": 0}, "010-4375-2468": {"post": 0, "comment": 0, "cheer": 9}, "010-4495-0887": {"post": 1, "comment": 8, "cheer": 12}, "010-8235-9991": {"post": 0, "comment": 0, "cheer": 0}, "010-6602-5937": {"post": 0, "comment": 0, "cheer": 9}, "010-6252-2747": {"post": 1, "comment": 0, "cheer": 6}, "010-7726-8439": {"post": 0, "comment": 0, "cheer": 11}, "010-6531-2601": {"post": 1, "comment": 3, "cheer": 7}, "010-4386-2845": {"post": 0, "comment": 0, "cheer": 1}, "010-4519-0912": {"post": 0, "comment": 0, "cheer": 1}, "010-4000-1560": {"post": 0, "comment": 0, "cheer": 2}, "010-8717-5501": {"post": 0, "comment": 0, "cheer": 0}, "010-3034-4040": {"post": 0, "comment": 0, "cheer": 4}, "010-9107-1794": {"post": 1, "comment": 0, "cheer": 0}, "010-2275-4176": {"post": 0, "comment": 0, "cheer": 6}, "010-5767-8601": {"post": 0, "comment": 0, "cheer": 4}, "010-4589-1566": {"post": 0, "comment": 0, "cheer": 0}, "010-7132-7875": {"post": 0, "comment": 0, "cheer": 5}, "010-5141-7785": {"post": 0, "comment": 0, "cheer": 8}, "010-8835-5198": {"post": 0, "comment": 2, "cheer": 1}, "010-5191-3729": {"post": 0, "comment": 0, "cheer": 8}, "010-6556-9914": {"post": 0, "comment": 1, "cheer": 9}};
