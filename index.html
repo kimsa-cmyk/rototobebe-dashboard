@@ -869,8 +869,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 
   <!-- 서브탭 -->
   <div class="sub-tabs">
-    <button class="sub-tab on" onclick="goSub('overview',this)">채널 성과</button>
+    <button class="sub-tab on" onclick="goSub('overview',this)">채널 종합</button>
+    <button class="sub-tab" onclick="goSub('content',this)">콘텐츠별</button>
     <button class="sub-tab" onclick="goSub('report',this)">콘텐츠 세부</button>
+    <button class="sub-tab" onclick="goSub('fandom',this)">팬덤 신호</button>
   </div>
 
   <!-- 채널 성과 패널 -->
@@ -1559,7 +1561,120 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
     switchPeriod('all', document.querySelector('.ptab'));
   </script>
 
-</div>
+
+  <!-- 콘텐츠별 패널 -->
+  <div class="sub-panel" id="sub-content">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;background:#f8f9fb;border:1px solid #e4e4e0;border-radius:7px;padding:9px 14px">
+      <span style="font-size:10px;color:#888;font-family:monospace">기간 단위</span>
+      <div style="display:flex;border:1px solid #e4e4e0;border-radius:5px;overflow:hidden">
+        <button id="cbm_btn" onclick="cbmode('monthly')" style="padding:4px 12px;font-size:11px;cursor:pointer;background:var(--coral);color:white;border:none;outline:none;font-family:inherit">월간</button>
+        <button id="cbw_btn" onclick="cbmode('weekly')" style="padding:4px 12px;font-size:11px;cursor:pointer;background:white;color:#888;border:none;outline:none;font-family:inherit">주간</button>
+      </div>
+      <select id="cb_ms" onchange="cbr()" style="padding:4px 10px;border:1px solid #e4e4e0;border-radius:5px;font-size:11px;outline:none;font-family:inherit"><option value="all">2026/04 전체</option></select>
+      <select id="cb_ws" onchange="cbr()" style="display:none;padding:4px 10px;border:1px solid #e4e4e0;border-radius:5px;font-size:11px;outline:none;font-family:inherit">
+        <option value="2026-04-06">4/6주 (4/6 – 4/10)</option>
+        <option value="2026-03-30">3/30주 (4/1 – 4/5)</option>
+      </select>
+      <span id="cb_inf" style="font-size:11px;color:var(--td);font-weight:500">2026/04 전체 · 월간</span>
+    </div>
+    <div class="krow" style="grid-template-columns:repeat(5,1fr);margin-bottom:12px">
+      <div class="kcard"><div class="klbl">총 게시물</div><div class="kval" id="cbk1" style="font-size:20px">13<span style="font-size:11px;color:var(--ts)">개</span></div><div style="font-size:10px;color:var(--ts)">오가닉 9개</div></div>
+      <div class="kcard"><div class="klbl">A등급 이상</div><div class="kval" id="cbk2" style="font-size:20px">6<span style="font-size:11px;color:var(--ts)">개</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:var(--ts)">전체의</span><span id="cbk2b" style="font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;background:#eaf4ee;color:#1a6b3a">46%</span></div></div>
+      <div class="kcard"><div class="klbl">저장률 S</div><div class="kval" id="cbk3" style="font-size:20px">0<span style="font-size:11px;color:var(--ts)">개</span></div><div style="font-size:10px;color:#C03020">전 지표 중 유일</div></div>
+      <div class="kcard"><div class="klbl">확산률 S</div><div class="kval" id="cbk4" style="font-size:20px">4<span style="font-size:11px;color:var(--ts)">개</span></div><div style="font-size:10px;color:var(--ts)">C도 5개 · 양극화</div></div>
+      <div class="kcard"><div class="klbl">평균 조회 (오가닉)</div><div class="kval" id="cbk5" style="font-size:20px">22,382</div><div style="font-size:10px;color:var(--ts)">전체 31,166</div></div>
+    </div>
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:8px">콘텐츠별 지표 <span style="font-size:10px;font-weight:400;color:#999">기준값 — 저장률 0.185% / 확산률 0.571% / 방문률 2.030% / 클릭률 0.425%</span></div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px;min-width:900px">
+        <thead><tr style="background:#f2f2f0">
+          <th style="padding:5px 8px;text-align:left;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0;min-width:80px">콘텐츠</th>
+          <th style="padding:5px 8px;text-align:left;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">업로드</th>
+          <th style="padding:5px 8px;text-align:left;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">유형</th>
+          <th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">조회</th>
+          <th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">저장 건/률</th>
+          <th style="padding:5px 8px;text-align:center;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">저장</th>
+          <th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">공유 건/률</th>
+          <th style="padding:5px 8px;text-align:center;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">확산</th>
+          <th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">방문 건/률</th>
+          <th style="padding:5px 8px;text-align:center;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">방문</th>
+          <th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">클릭 건/률</th>
+          <th style="padding:5px 8px;text-align:center;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">클릭</th>
+          <th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">오가닉댓글</th>
+          <th style="padding:5px 8px;text-align:center;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">종합</th>
+          <th style="padding:5px 8px;text-align:left;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">비고</th>
+        </tr></thead>
+        <tbody id="cbtb"></tbody>
+      </table></div>
+      <div style="margin-top:8px;font-size:10px;color:#888;font-family:monospace">🔶 무신사 = 기준값 제외 &nbsp;|&nbsp; S≥기준×1.5 / A≥×1.0 / B≥×0.6 / C미만</div>
+    </div>
+  </div><!-- /sub-content -->
+
+  <!-- 팬덤 신호 패널 -->
+  <div class="sub-panel" id="sub-fandom">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;background:#f8f9fb;border:1px solid #e4e4e0;border-radius:7px;padding:9px 14px">
+      <div style="display:flex;border:1px solid #e4e4e0;border-radius:5px;overflow:hidden"><button style="padding:4px 12px;font-size:11px;cursor:pointer;background:var(--coral);color:white;border:none;font-family:inherit">월간</button><button style="padding:4px 12px;font-size:11px;background:#f2f2f0;color:#bbb;border:none;font-family:inherit" disabled>주간</button></div>
+      <select style="padding:4px 10px;border:1px solid #e4e4e0;border-radius:5px;font-size:11px;outline:none;font-family:inherit"><option>2026/04</option></select>
+      <span style="font-size:10px;color:#888;font-family:monospace">주간 집계는 5월부터 · 오가닉 댓글만 집계</span>
+    </div>
+    <div class="krow" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px">
+      <div class="kcard"><div class="klbl">재구매 언급</div><div class="kval" style="font-size:20px">8<span style="font-size:11px;color:var(--ts)">건</span></div><div style="font-size:10px;color:var(--ts)">전월 – · 추적시작</div></div>
+      <div class="kcard"><div class="klbl">실사용 후기</div><div class="kval" style="font-size:20px">3<span style="font-size:11px;color:var(--ts)">건</span></div><div style="font-size:10px;color:var(--ts)">전월 – · 추적시작</div></div>
+      <div class="kcard"><div class="klbl">자발적 전파 (태그 소환)</div><div class="kval" style="font-size:20px">52<span style="font-size:11px;color:var(--ts)">건</span></div><div style="font-size:10px;color:var(--ts)">전월 – · 추적시작</div></div>
+      <div class="kcard"><div class="klbl">제품 질문 (구매의도)</div><div class="kval" style="font-size:20px">12<span style="font-size:11px;color:var(--ts)">건</span></div><div style="font-size:10px;color:#1a6b3a;font-weight:500">구매의도↑</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="card">
+        <div class="ctitle" style="margin-bottom:10px">게시물별 팬덤 신호 밀도</div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#f2f2f0"><th style="padding:5px 8px;text-align:left;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">게시물</th><th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">재구매</th><th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">실사용</th><th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">전파</th><th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">질문</th><th style="padding:5px 8px;text-align:right;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">댓글</th><th style="padding:5px 8px;text-align:center;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">밀도</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:5px 8px">무신사 민소매 🔶</td><td style="padding:5px 8px;text-align:right;color:#1a6b3a;font-weight:500">2</td><td style="padding:5px 8px;text-align:right">1</td><td style="padding:5px 8px;text-align:right;color:#1a6b3a;font-weight:500">8</td><td style="padding:5px 8px;text-align:right;color:#1a6b3a;font-weight:500">4</td><td style="padding:5px 8px;text-align:right">171</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#eaf4ee;color:#1a6b3a">높음</span></td></tr>
+          <tr><td style="padding:5px 8px">무신사 반팔 🔶</td><td style="padding:5px 8px;text-align:right;color:#1a6b3a;font-weight:500">2</td><td style="padding:5px 8px;text-align:right">1</td><td style="padding:5px 8px;text-align:right;color:#1a6b3a;font-weight:500">7</td><td style="padding:5px 8px;text-align:right;color:#1a6b3a;font-weight:500">3</td><td style="padding:5px 8px;text-align:right">147</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#eaf4ee;color:#1a6b3a">높음</span></td></tr>
+          <tr><td style="padding:5px 8px">여아라인</td><td style="padding:5px 8px;text-align:right">1</td><td style="padding:5px 8px;text-align:right">0</td><td style="padding:5px 8px;text-align:right;color:#1a6b3a;font-weight:500">6</td><td style="padding:5px 8px;text-align:right">2</td><td style="padding:5px 8px;text-align:right">104</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#f5f5f3;color:#555">중간</span></td></tr>
+          <tr><td style="padding:5px 8px">스케이트보드</td><td style="padding:5px 8px;text-align:right">1</td><td style="padding:5px 8px;text-align:right">0</td><td style="padding:5px 8px;text-align:right">4</td><td style="padding:5px 8px;text-align:right">2</td><td style="padding:5px 8px;text-align:right">36</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#f5f5f3;color:#555">중간</span></td></tr>
+          <tr><td style="padding:5px 8px">아이스크림</td><td style="padding:5px 8px;text-align:right">0</td><td style="padding:5px 8px;text-align:right">1</td><td style="padding:5px 8px;text-align:right">3</td><td style="padding:5px 8px;text-align:right">1</td><td style="padding:5px 8px;text-align:right">29</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#f5f5f3;color:#555">중간</span></td></tr>
+          <tr><td style="padding:5px 8px;color:#888">나머지 8개</td><td style="padding:5px 8px;text-align:right">2</td><td style="padding:5px 8px;text-align:right">0</td><td style="padding:5px 8px;text-align:right">24</td><td style="padding:5px 8px;text-align:right">0</td><td style="padding:5px 8px;text-align:right">281</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#faecea;color:#c03020">낮음</span></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="ctitle" style="margin-bottom:10px">콘텐츠 메시지 인사이트 <span style="font-size:10px;font-weight:400;color:#999">오가닉 768건 기반</span></div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#f2f2f0"><th style="padding:5px 8px;text-align:left;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">키워드</th><th style="padding:5px 8px;text-align:center;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">빈도</th><th style="padding:5px 8px;text-align:left;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">시사점</th><th style="padding:5px 8px;text-align:center;font-size:10px;color:#888;border-bottom:1px solid #e4e4e0">현황</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:5px 8px">색감·분위기</td><td style="padding:5px 8px;text-align:center;color:#1a6b3a">★★★</td><td style="padding:5px 8px">색이 첫 클릭 만듦</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#eaf4ee;color:#1a6b3a">잘됨</span></td></tr>
+          <tr><td style="padding:5px 8px">장면 상상</td><td style="padding:5px 8px;text-align:center;color:#1a6b3a">★★☆</td><td style="padding:5px 8px">장면 먼저 → 저장률↑</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#f5f5f3;color:#555">강화필요</span></td></tr>
+          <tr><td style="padding:5px 8px">관계·멀티룩</td><td style="padding:5px 8px;text-align:center;color:#555">★★☆</td><td style="padding:5px 8px">2인 착용 → 공유율↑</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#f5f5f3;color:#555">강화필요</span></td></tr>
+          <tr><td style="padding:5px 8px">구매 결정</td><td style="padding:5px 8px;text-align:center;color:#555">★★☆</td><td style="padding:5px 8px">제품명+컬러 시 폭발</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#eaf4ee;color:#1a6b3a">무신사작동</span></td></tr>
+          <tr><td style="padding:5px 8px">시즌 연속성</td><td style="padding:5px 8px;text-align:center;color:#c03020">★☆☆</td><td style="padding:5px 8px">팬덤 핵심 — 아직 적음</td><td style="padding:5px 8px;text-align:center"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#faecea;color:#c03020">추적시작</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:12px">주목 오가닉 댓글 · 유형별 + 출처 게시물 <span style="font-size:10px;font-weight:400;color:#999">로덬메이트 제외 · 오가닉 768건 중 선별</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:10px;font-weight:600;color:#888;margin-bottom:8px">🔁 재구매 언급</div>
+          <div style="border-left:3px solid #1a6b3a;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#eaf4ee;color:#1a6b3a">재구매</span><span style="font-size:9px;color:#888">스케이트보드</span></div><div style="font-size:11px">"이번 봄 진짜 예뻤는데 여름도 기대돼요"</div></div>
+          <div style="border-left:3px solid #1a6b3a;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#eaf4ee;color:#1a6b3a">재구매</span><span style="font-size:9px;color:#888">무신사 단독-민소매</span></div><div style="font-size:11px">"봄부터 여름도 로토토는 감다살"</div></div>
+          <div style="border-left:3px solid #1a6b3a;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#eaf4ee;color:#1a6b3a">재구매</span><span style="font-size:9px;color:#888">무신사 단독-민소매</span></div><div style="font-size:11px">"실내복 로토토베베만 입는 은우네도 신청합니다"</div></div>
+          <div style="font-size:10px;font-weight:600;color:#888;margin:12px 0 8px">🏠 실사용 후기</div>
+          <div style="border-left:3px solid #1a5fbb;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#e8f0fe;color:#1a5fbb">실사용</span><span style="font-size:9px;color:#888">풍선껌 룩북 릴스</span></div><div style="font-size:11px">"입혀보면 더 예쁜 로베.. 지갑열어 🔥"</div></div>
+          <div style="border-left:3px solid #1a5fbb;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#e8f0fe;color:#1a5fbb">실사용</span><span style="font-size:9px;color:#888">여아라인</span></div><div style="font-size:11px">"블랙에 레드 하뚜 로토토라니♡ 벌룬핏은 말해모해"</div></div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:#888;margin-bottom:8px">📲 자발적 전파</div>
+          <div style="border-left:3px solid #B8860B;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#fef3c7;color:#92400e">전파</span><span style="font-size:9px;color:#888">아이스크림</span></div><div style="font-size:11px">"남매룩으로 딱이에요 ❤️💚"</div></div>
+          <div style="border-left:3px solid #B8860B;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#fef3c7;color:#92400e">전파</span><span style="font-size:9px;color:#888">파프리카</span></div><div style="font-size:11px">"찐친들 딱 3명인데 파자마파티 겸 가야하나!!!!"</div></div>
+          <div style="border-left:3px solid #B8860B;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#fef3c7;color:#92400e">전파</span><span style="font-size:9px;color:#888">여아라인</span></div><div style="font-size:11px">"자매맘 취향저격이에요 🥹🖤💛 너무 이뽀요오"</div></div>
+          <div style="font-size:10px;font-weight:600;color:#888;margin:12px 0 8px">❓ 제품 질문 (구매의도)</div>
+          <div style="border-left:3px solid #6B3FA0;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#eeedfe;color:#6B3FA0">질문</span><span style="font-size:9px;color:#888">스케이트보드</span></div><div style="font-size:11px">"원피스 130 나오길 기원 🙏🙏"</div></div>
+          <div style="border-left:3px solid #6B3FA0;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#eeedfe;color:#6B3FA0">질문</span><span style="font-size:9px;color:#888">무신사 단독-민소매</span></div><div style="font-size:11px">"140사이즈도 만들어주세염 ㅠㅡㅠ"</div></div>
+          <div style="border-left:3px solid #6B3FA0;padding:8px 10px;margin-bottom:6px;background:#f8f9fb;border-radius:0 5px 5px 0"><div style="display:flex;gap:6px;margin-bottom:4px"><span style="font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px;background:#eeedfe;color:#6B3FA0">질문</span><span style="font-size:9px;color:#888">스트라이프 티셔츠</span></div><div style="font-size:11px">"수영복도 있을까요 기대됩니댱"</div></div>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:#888;font-family:monospace">팬덤 신호 건수 = 오가닉 댓글 수동 카운트 ±2건 &nbsp;|&nbsp; 🔶 무신사 관련은 팬덤 신호 포함 &nbsp;|&nbsp; 다음 업데이트: 5월 첫 주</div>
+    </div>
+  </div><!-- /sub-fandom -->
+
   </div><!-- /sub-report -->
 </section>
 
