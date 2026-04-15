@@ -19,7 +19,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:12p
 .upd{font-family:var(--mono);font-size:10px;color:var(--muted);}
 .btn-refresh{font-family:var(--mono);font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--white);color:var(--accent);cursor:pointer;}
 .btn-refresh:hover{background:var(--accent);color:#fff;}
-.subnav{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:stretch;height:36px;position:sticky;top:44px;z-index:100;}
+.subnav{background:var(--white);border-bottom:1px solid var(--border);padding:0;display:flex;align-items:stretch;height:36px;position:sticky;top:44px;z-index:100;}
+.subnav-inner{max-width:1600px;margin:0 auto;padding:0 24px;display:flex;align-items:stretch;width:100%;}
 .tab{padding:0 14px;font-size:11px;color:var(--muted);cursor:pointer;display:flex;align-items:center;border-bottom:2px solid transparent;white-space:nowrap;}
 .tab:hover{color:var(--ink);}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
@@ -102,10 +103,12 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:12p
   </div>
 </div>
 <div class="subnav">
-  <div class="tab active" onclick="showPage('p1',this)">채널 리뷰</div>
-  <div class="tab" onclick="showPage('p2',this)">콘텐츠 리뷰</div>
-  <div class="tab" onclick="showPage('p3',this)">팬덤 생성</div>
-  <div class="tab" onclick="showPage('p4',this)">콘텐츠 상세</div>
+  <div class="subnav-inner">
+    <div class="tab active" onclick="showPage('p1',this)">채널 리뷰</div>
+    <div class="tab" onclick="showPage('p2',this)">콘텐츠 리뷰</div>
+    <div class="tab" onclick="showPage('p3',this)">팬덤 생성</div>
+    <div class="tab" onclick="showPage('p4',this)">콘텐츠 상세</div>
+  </div>
 </div>
 
 <div class="main">
