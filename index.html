@@ -6,6 +6,7 @@
 <title>rototobebe 마케팅 대시보드</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{
   --cream:#FDF8F3;--warm:#FEFCFA;
@@ -794,9 +795,47 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
 .report-wrap .container .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:1.2rem;}
 .report-wrap .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;max-width:100%;}
 .report-wrap .post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;padding:1.2rem;overflow-x:visible;}
+
+/* LOGIN OVERLAY */
+#loginOverlay{
+  position:fixed;inset:0;background:var(--cream);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;flex-direction:column;gap:1.5rem;
+}
+#loginOverlay.hidden{display:none;}
+.login-box{
+  background:#fff;border-radius:20px;padding:2.5rem 2.5rem 2rem;
+  box-shadow:0 8px 40px rgba(0,0,0,.10);
+  display:flex;flex-direction:column;align-items:center;gap:1.2rem;
+  max-width:340px;width:90%;
+}
+.login-logo{width:48px;height:48px;background:var(--coral);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:700;}
+.login-title{font-size:18px;font-weight:700;color:var(--td);}
+.login-sub{font-size:12px;color:var(--ts);text-align:center;line-height:1.6;}
+#googleBtn{margin-top:.3rem;}
+.login-footer{font-size:11px;color:var(--ts);}
+
+/* USER INFO in NAV */
+.nav-user{margin-left:auto;display:flex;align-items:center;gap:8px;padding-right:4px;flex-shrink:0;}
+.nav-user img{width:26px;height:26px;border-radius:50%;border:1px solid var(--bd);}
+.nav-user-name{font-size:11px;color:var(--tm);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.logout-btn{font-size:10px;color:var(--ts);background:none;border:1px solid var(--bd);border-radius:6px;padding:3px 8px;cursor:pointer;}
+.logout-btn:hover{background:var(--bd);}
 </style>
 </head>
 <body>
+
+<!-- GOOGLE LOGIN OVERLAY -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">LB</div>
+    <div class="login-title">rototobebe</div>
+    <div class="login-sub">마케팅 대시보드에 접근하려면<br>Google 계정으로 로그인하세요</div>
+    <div id="googleBtn"></div>
+  </div>
+  <div class="login-footer">rototobebe internal dashboard</div>
+</div>
 
 <nav class="nav">
   <div class="brand">
@@ -811,7 +850,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--t
     <button class="tab" onclick="goTab('weekly',this)">주간 인사이트</button>
     <button class="tab" onclick="goTab('mgmt',this)">경영지원팀</button>
   </div>
-  <div class="nav-r"><div class="nav-date" id="ndate"></div></div>
+  <div class="nav-r"><div class="nav-date" id="ndate"></div>  <div class="nav-user" id="navUser" style="display:none"><img id="navUserImg" src="" alt=""><span class="nav-user-name" id="navUserName"></span><button class="logout-btn" onclick="handleLogout()">로그아웃</button></div>
 </nav>
 
 <main class="main">
@@ -3053,5 +3092,64 @@ function goToDetailContent(postId) {
 }
 </script>
 
+
+<script>
+// ===== GOOGLE LOGIN =====
+const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // ← Google Cloud Console에서 발급한 Client ID 입력
+
+function initGoogleLogin() {
+  const saved = sessionStorage.getItem('g_user');
+  if (saved) {
+    showDashboard(JSON.parse(saved));
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: CLIENT_ID,
+    callback: onGoogleLogin,
+    auto_select: false,
+    cancel_on_tap_outside: false,
+  });
+  google.accounts.id.renderButton(
+    document.getElementById('googleBtn'),
+    { theme: 'outline', size: 'large', text: 'signin_with', locale: 'ko' }
+  );
+}
+
+function onGoogleLogin(response) {
+  const payload = parseJwt(response.credential);
+  const user = { name: payload.name, email: payload.email, picture: payload.picture };
+  sessionStorage.setItem('g_user', JSON.stringify(user));
+  showDashboard(user);
+}
+
+function showDashboard(user) {
+  document.getElementById('loginOverlay').classList.add('hidden');
+  const navUser = document.getElementById('navUser');
+  navUser.style.display = 'flex';
+  document.getElementById('navUserImg').src = user.picture || '';
+  document.getElementById('navUserName').textContent = user.name || user.email;
+}
+
+function handleLogout() {
+  sessionStorage.removeItem('g_user');
+  google.accounts.id.disableAutoSelect();
+  location.reload();
+}
+
+function parseJwt(token) {
+  const base64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+  return JSON.parse(decodeURIComponent(atob(base64).split('').map(c =>
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+}
+
+window.addEventListener('load', () => {
+  if (typeof google !== 'undefined' && google.accounts) {
+    initGoogleLogin();
+  } else {
+    document.querySelector('script[src*="accounts.google.com"]')
+      .addEventListener('load', initGoogleLogin);
+  }
+});
+</script>
 </body>
 </html>
