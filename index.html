@@ -190,6 +190,75 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:12p
     <div class="fsep"></div>
     <span class="pinfo" id="p2inf">2026/04 전체 · 월간</span>
   </div>
+  <!-- 인사이트 카드 -->
+  <div class="card" style="margin-bottom:13px;">
+    <div class="ctit" style="cursor:pointer;user-select:none;" onclick="toggleInsight()">
+      <span>📊 콘텐츠 인사이트 <span class="csub">릴스 vs 슬라이드 · 가설 검증</span></span>
+      <span id="insightToggleIcon" style="font-size:11px;color:var(--muted);font-family:var(--mono);">▼ 펼치기</span>
+    </div>
+    <div id="insightBody" style="display:none;margin-top:2px;">
+      <!-- 릴스 vs 슬라이드 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <div style="font-size:10px;font-weight:600;color:var(--ink);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);">🎬 릴스</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:4px;letter-spacing:.04em;">장점</div>
+          <div style="font-size:11px;line-height:2;margin-bottom:8px;">
+            <div><span class="up-t">✅</span> 비팔로워 유입 40% <span style="color:var(--muted);font-size:10px;">(슬라이드 5% 대비 8배)</span></div>
+            <div style="padding-left:16px;font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:2px;">= 신규 고객 발굴 최고의 채널</div>
+            <div><span class="up-t">✅</span> 알고리즘 추천 강함 <span style="color:var(--muted);font-size:10px;">(광고 없이도 유입)</span></div>
+            <div><span class="up-t">✅</span> 좋아요 많음 <span style="color:var(--muted);font-size:10px;">(350개 vs 슬라이드 247개)</span></div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:4px;letter-spacing:.04em;">약점</div>
+          <div style="font-size:11px;line-height:2;">
+            <div><span class="dn-t">❌</span> 저장율 매우 낮음 <span style="color:var(--muted);font-size:10px;">(3.2개 vs 슬라이드 52개)</span></div>
+            <div style="padding-left:16px;font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:2px;">= 구매 의도로 연결 약함</div>
+            <div><span class="dn-t">❌</span> 도달이 작음 <span style="color:var(--muted);font-size:10px;">(팬덤 2.2배 적음)</span></div>
+            <div><span class="dn-t">❌</span> 시간대별 세부 데이터 없음</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:var(--ink);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);">🖼 이미지/슬라이드</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:4px;letter-spacing:.04em;">장점</div>
+          <div style="font-size:11px;line-height:2;margin-bottom:8px;">
+            <div><span class="up-t">✅</span> 높은 저장율 <span style="color:var(--muted);font-size:10px;">(52개 = 구매 고려)</span></div>
+            <div><span class="up-t">✅</span> 높은 도달 <span style="color:var(--muted);font-size:10px;">(팬덤이 많이 봄)</span></div>
+            <div><span class="up-t">✅</span> 디테일한 데이터 제공</div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:4px;letter-spacing:.04em;">약점</div>
+          <div style="font-size:11px;line-height:2;">
+            <div><span class="dn-t">❌</span> 비팔로워 유입 매우 낮음 <span style="color:var(--muted);font-size:10px;">(5%)</span></div>
+            <div style="padding-left:16px;font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:2px;">= 신규 고객 발굴 불가</div>
+            <div><span class="dn-t">❌</span> 팔로워 수가 천장선</div>
+          </div>
+        </div>
+      </div>
+      <!-- 가설 검증 -->
+      <div style="border-top:1px solid var(--border);padding-top:12px;">
+        <div style="font-size:10px;font-weight:600;color:var(--ink);margin-bottom:10px;">💡 현재 인스타그램 진행 사항의 가설 검증</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div style="background:var(--bg);border-radius:5px;padding:10px 12px;">
+            <div style="font-size:10px;font-weight:600;margin-bottom:5px;">가설 1 <span class="up-t">✅ 맞음</span></div>
+            <div style="font-size:10px;color:var(--muted);line-height:1.8;">"제품이 좋아서 고객들이 반응"</div>
+            <div style="font-size:10px;line-height:1.8;margin-top:4px;">근거: 도달 상위 10개의 80%가 오가닉 (광고 없음)</div>
+            <div style="font-size:10px;color:var(--up);margin-top:4px;font-weight:500;">→ 제품-콘텐츠-팬 선순환 중</div>
+          </div>
+          <div style="background:var(--bg);border-radius:5px;padding:10px 12px;">
+            <div style="font-size:10px;font-weight:600;margin-bottom:5px;">가설 2 <span class="up-t">✅ 맞음</span></div>
+            <div style="font-size:10px;color:var(--muted);line-height:1.8;">"조회 팔로워 낮음 = 팬덤 확장성 없음"</div>
+            <div style="font-size:10px;line-height:1.8;margin-top:4px;">전체 도달의 89% = 팔로워 (신규 11%)</div>
+            <div style="font-size:10px;color:var(--dn);margin-top:4px;font-weight:500;">→ 기존 4만 팔로워에만 의존 중</div>
+          </div>
+          <div style="background:var(--bg);border-radius:5px;padding:10px 12px;">
+            <div style="font-size:10px;font-weight:600;margin-bottom:5px;">가설 3 <span class="up-t">✅ 부분 맞음</span></div>
+            <div style="font-size:10px;color:var(--muted);line-height:1.8;">"조회 미팔로워 = 유입성 좋음 or 광고"</div>
+            <div style="font-size:10px;line-height:1.8;margin-top:4px;">① 알고리즘 추천 (릴스) = 광고 아님<br>② 실제 광고 (Meta Ads) = 데이터상 20%만</div>
+            <div style="font-size:10px;color:var(--accent);margin-top:4px;font-weight:500;">→ ②확대 시 신규 유입 더 늘릴 수 있음</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="krow" style="grid-template-columns:repeat(5,1fr);">
     <div class="kcard"><div class="klbl">총 게시물</div><div class="kval" id="p2k1">13<span class="u">개</span></div><div class="ksub"><span class="kprev">오가닉 9개</span></div></div>
     <div class="kcard"><div class="klbl">A등급 이상</div><div class="kval" id="p2k2">6<span class="u">개</span></div><div class="ksub"><span class="kprev">전체의</span><span class="badge up-bg" id="p2k2b">46%</span></div></div>
@@ -495,6 +564,14 @@ function p4r(){
     <td>${totalC.toLocaleString()}</td><td>${(avgCr*100).toFixed(3)}%</td>
     <td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td>`;
   tb.appendChild(tot);
+}
+
+function toggleInsight(){
+  const body = document.getElementById('insightBody');
+  const icon = document.getElementById('insightToggleIcon');
+  const open = body.style.display === 'none';
+  body.style.display = open ? '' : 'none';
+  icon.textContent = open ? '▲ 접기' : '▼ 펼치기';
 }
 
 function showPage(id,el){
