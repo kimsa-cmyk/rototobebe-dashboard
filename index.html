@@ -397,7 +397,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:12p
 </div>
 
 <script>
-const W=[
+const GAS_URL='https://script.google.com/macros/s/AKfycbxH5MUV4X9pjnTaYGOwxfRlu0O8X_AQdnI_8TmjRT4rfIcoNbxc8BokIg_Eq7-gckNhZw/exec';
+
+// ── 폴백 (캐시) 데이터 ──
+const W0=[
   {w:'1/4-1/10',조회:307061,도달:68088,저장:38,공유:27,sr:.000558,cr:.000955,방문:3372,클릭:1270,순증:-90,ad:.588},
   {w:'1/11-1/17',조회:275567,도달:61656,저장:9,공유:16,sr:.000146,cr:.000405,방문:4192,클릭:1257,순증:23,ad:.543},
   {w:'1/18-1/24',조회:1068664,도달:194166,저장:765,공유:1138,sr:.003940,cr:.009801,방문:9195,클릭:2118,순증:169,ad:.621},
@@ -412,7 +415,7 @@ const W=[
   {w:'3/22-3/28',조회:1222779,도달:300152,저장:99,공유:1328,sr:.000330,cr:.004754,방문:7536,클릭:2413,순증:102,ad:.850},
   {w:'4/5-4/11',조회:909603,도달:174706,저장:null,공유:null,sr:null,cr:null,방문:10656,클릭:2936,순증:null,ad:.639},
 ];
-const C=[
+const C0=[
   {t:'스케이트보드',up:'04-01',wk:'2026-03-30',tp:'슬라이드',조회:28551,저장:41,공유:39,방문:537,클릭:59,댓글:'36/142',fl:'',비고:'전반저조'},
   {t:'아이스크림',up:'04-02',wk:'2026-03-30',tp:'슬라이드',조회:30619,저장:75,공유:61,방문:671,클릭:125,댓글:'29/108',fl:'',비고:'저장↑공유↓'},
   {t:'비눗방울',up:'04-02',wk:'2026-03-30',tp:'슬라이드',조회:20048,저장:44,공유:48,방문:599,클릭:154,댓글:'–',fl:'',비고:'구매유도형'},
@@ -428,6 +431,87 @@ const C=[
   {t:'오픈 상하복 릴스',up:'04-02',wk:'2026-03-30',tp:'릴스',조회:24389,저장:34,공유:272,방문:3,클릭:null,댓글:'–',fl:'🔶⚠️',비고:'방문오류의심'},
 ];
 const B={sr:.00185,cr:.00571,vr:.0203,lr:.00425};
+
+let W=[...W0],C=[...C0];
+
+// ── ISO 날짜 → 해당 주 월요일 ──
+function getMonday(dateStr){
+  if(!dateStr||!dateStr.match(/\d{4}-\d{2}-\d{2}/))return'';
+  const d=new Date(dateStr+'T00:00:00');
+  const day=d.getDay();
+  const diff=day===0?-6:1-day;
+  d.setDate(d.getDate()+diff);
+  return d.toISOString().slice(0,10);
+}
+
+// ── 주간채널 행 매핑 ──
+function mapW(item){
+  const g=(...ks)=>{for(const k of ks){if(item[k]!==undefined&&item[k]!==null&&item[k]!=='')return item[k];}return null;};
+  const n=v=>{if(v===null||v===''||v===undefined)return null;const f=parseFloat(v);return isNaN(f)?null:f;};
+  const rate=v=>{if(v===null)return null;return v>1?v/100:v;}; // 퍼센트값 자동 보정
+  return{
+    w:String(g('기간','주차')||''),
+    조회:n(g('전체조회','조회수','조회')),
+    도달:n(g('도달','도달수')),
+    저장:n(g('저장','저장수')),
+    공유:n(g('공유','공유수')),
+    sr:rate(n(g('저장률','저장율'))),
+    cr:rate(n(g('확산률','확산율'))),
+    방문:n(g('프로필방문','방문','프로필 방문')),
+    클릭:n(g('링크클릭','클릭','링크 클릭')),
+    순증:n(g('팔로워순증','순증','팔로워 순증','팔로워순증(주간)')),
+    ad:rate(n(g('광고비율','광고 비율','광고비율(%)'))),
+  };
+}
+
+// ── 일간콘텐츠 행 매핑 ──
+function mapC(item){
+  const n=v=>{if(v===''||v===null||v===undefined)return null;const f=parseFloat(v);return isNaN(f)?null:f;};
+  const up=(item.upload||'').length>=10?(item.upload||'').slice(5):item.upload||'';
+  return{
+    t:item.title||'',
+    up:up,
+    wk:getMonday(item.upload||''),
+    tp:item.type||'',
+    조회:n(item.views)||0,
+    저장:n(item.saves),
+    공유:n(item.shares),
+    방문:n(item.visits),
+    클릭:n(item.clicks),
+    댓글:(item.comments!==''&&item.comments!=null)?String(item.comments):'–',
+    fl:'',
+    비고:''
+  };
+}
+
+// ── GAS API fetch ──
+async function fetchData(){
+  const btn=document.getElementById('btnRefresh');
+  const upd=document.getElementById('updTime');
+  btn.textContent='⟳ 로딩중...';btn.disabled=true;
+  try{
+    const resp=await fetch(GAS_URL);
+    const data=await resp.json();
+    if(data.error)throw new Error(data.error);
+    if(data.weekly&&data.weekly.length){
+      const mapped=data.weekly.map(mapW).filter(x=>x.w);
+      if(mapped.length)W=mapped;
+    }
+    if(data.contents&&data.contents.length){
+      const mapped=data.contents.map(mapC).filter(x=>x.t);
+      if(mapped.length)C=mapped;
+    }
+    if(data.updated)upd.textContent=data.updated+' 기준\u00a0|\u00a0오가닉 기준값: 4월 설정';
+    p1r();p2r();p4r();
+  }catch(e){
+    console.error('GAS fetch 실패:',e);
+    upd.textContent='새로고침 실패 — 캐시 데이터 표시 중';
+    W=[...W0];C=[...C0];
+    p1r();p2r();p4r();
+  }finally{
+    btn.textContent='↻ 새로고침';btn.disabled=false;
+  }
+}
 
 function gr(v,b){if(v==null||!b)return'–';const r=v/b;if(r>=1.5)return'S';if(r>=1.0)return'A';if(r>=0.6)return'B';return'C';}
 function gc(g){return{S:'gs',A:'ga',B:'gb',C:'gc','–':'ge'}[g]||'ge';}
@@ -580,7 +664,10 @@ function showPage(id,el){
   document.getElementById(id).classList.add('active');
   el.classList.add('active');
 }
+
+document.getElementById('btnRefresh').addEventListener('click',fetchData);
 p1r();p2r();p4r();
+fetchData(); // 페이지 로드 시 자동 갱신
 </script>
 </div><!-- /.main -->
 </body>
